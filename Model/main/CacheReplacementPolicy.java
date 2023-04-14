@@ -1,4 +1,4 @@
-package SecondMileStone;
+package main;
 
 public interface CacheReplacementPolicy{
 	void add(String word);

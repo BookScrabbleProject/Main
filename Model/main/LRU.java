@@ -1,4 +1,4 @@
-package SecondMileStone;
+package main;
 
 
 import java.util.Collection;

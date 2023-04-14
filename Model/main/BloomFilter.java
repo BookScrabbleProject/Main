@@ -1,5 +1,4 @@
-package SecondMileStone;
-
+package main;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +12,10 @@ public class BloomFilter {
     public String[] hashFuncs;
     BigInteger bigInt;
     MessageDigest md;
+
+
+    //gets a string and hashes it using the hashFunctions that are passed in the constructor,
+    // then turn all these bits on to 1.
     public BloomFilter(int bits, String... algs){
         bitSet = new BitSet(bits);
         size = bits;
@@ -20,14 +23,14 @@ public class BloomFilter {
         System.arraycopy(algs, 0, hashFuncs, 0, algs.length);
     }
 
+    //gets a string and hashes it using the hashFunctions that are passed in the constructor,
+    // then turn all these bits on to 1.
     public void add(String word) {
-        // TODO Auto-generated method stub
         byte[] bytes = null;
         for(String s: hashFuncs){
             /*try {
                 md = MessageDigest.getInstance(s);
             } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             byte[] bts = md.digest(word.getBytes());
@@ -37,7 +40,6 @@ public class BloomFilter {
             try{
                 md = MessageDigest.getInstance(s);
             } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             bytes = md.digest(word.getBytes());
@@ -48,13 +50,14 @@ public class BloomFilter {
         }
 
     }
+
+    //checks if the bloomFilter contains a given string
     public boolean contains(String word){
         byte[] bytes = null;
         for(String s: hashFuncs){
             try{
                 md = MessageDigest.getInstance(s);
             } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             bytes = md.digest(word.getBytes());
@@ -69,7 +72,7 @@ public class BloomFilter {
 
 
 
-
+    //convert the bloomfilter's bits into a string
     @Override
     public String toString() {
         // TODO Auto-generated method stub

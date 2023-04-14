@@ -1,7 +1,7 @@
-package ThirdMileStone;
+package main;
 
 
-import SecondMileStone.Dictionary;
+import main.Dictionary;
 
 import java.util.HashMap;
 import java.util.Map;

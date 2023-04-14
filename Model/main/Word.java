@@ -1,4 +1,4 @@
-package FirstMileStone;
+package main;
 
 
 import java.util.Arrays;
