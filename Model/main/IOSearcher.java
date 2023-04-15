@@ -7,6 +7,12 @@ import java.util.Scanner;
 
 public class IOSearcher {
 
+    /**
+     *
+     * @param word a given string to search if it exists in the dictionary
+     * @param fileNames the dictionaries names to search in
+     * @return returns if the word exists
+     */
     public static boolean search(String word, String... fileNames){
         for(String fileName : fileNames){
             try {

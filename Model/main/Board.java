@@ -9,6 +9,7 @@ public class Board {
 
 
     //Gives a reference to the board - or creates it - Single Tone
+
     public static Board getBoard() {
         if (single_Board == null) {
             single_Board = new Board();

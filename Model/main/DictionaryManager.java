@@ -29,6 +29,7 @@ public class DictionaryManager {
         }
         return ok;
     }
+
     public boolean challenge(String...args){
         boolean ok = false;
         for(int i=0;i<args.length-1;i++){

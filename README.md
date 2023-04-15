@@ -40,7 +40,7 @@ Our project is built using the following technologies:
 * [Omer Ben-David]()
 
 ## GANTT chart
-An image will be uploaded here.
+![Gantt chart](./GanttChart.png)
 
 
 
