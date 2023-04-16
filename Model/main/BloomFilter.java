@@ -14,8 +14,12 @@ public class BloomFilter {
     MessageDigest md;
 
 
-    //gets a string and hashes it using the hashFunctions that are passed in the constructor,
-    // then turn all these bits on to 1.
+    /**
+     * gets a string and hashes it using the hashFunctions that are passed in the constructor,
+     * then turn all these bits on to 1.
+     * @param bits the length of the bit vector
+     * @param algs the name of the HashFunctions we will use
+     */
     public BloomFilter(int bits, String... algs){
         bitSet = new BitSet(bits);
         size = bits;
@@ -23,8 +27,10 @@ public class BloomFilter {
         System.arraycopy(algs, 0, hashFuncs, 0, algs.length);
     }
 
-    //gets a string and hashes it using the hashFunctions that are passed in the constructor,
-    // then turn all these bits on to 1.
+    /**
+     * put a given word in the bloom filter
+     * @param word the word we will put in the bloom filter
+     */
     public void add(String word) {
         byte[] bytes = null;
         for(String s: hashFuncs){
@@ -51,7 +57,11 @@ public class BloomFilter {
 
     }
 
-    //checks if the bloomFilter contains a given string
+    /**
+     * Check if a given word exists in the bloom filter
+     * @param word the word we will check if it exists in the bloom filter
+     * @return true if the word exists (may be false positive), false if the word doesn't exist.
+     */
     public boolean contains(String word){
         byte[] bytes = null;
         for(String s: hashFuncs){
@@ -71,11 +81,12 @@ public class BloomFilter {
     }
 
 
-
-    //convert the bloomfilter's bits into a string
+    /**
+     * converts the bitset into a string
+     * @return a string of the bitset vector
+     */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         StringBuilder sb = new StringBuilder(bitSet.length());
         for(int i = 0; i < bitSet.length(); i++){
             if(bitSet.get(i)){

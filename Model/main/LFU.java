@@ -13,6 +13,11 @@ public class LFU implements CacheReplacementPolicy {
         cache = new LinkedHashMap<String, Integer>();
     }
 
+
+    /**
+     *
+     * @param word add a word to the LFU cache
+     */
     public void add(String word) {
         // TODO Auto-generated method stub
         if(cache.containsKey(word)) {
@@ -28,6 +33,10 @@ public class LFU implements CacheReplacementPolicy {
         }
     }
 
+    /**
+     *
+     * @return the string that has been removed from the cache
+     */
     public String remove(){
         // TODO Auto-generated method stub
         int min = Integer.MAX_VALUE;

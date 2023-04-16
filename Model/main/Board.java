@@ -8,8 +8,10 @@ public class Board {
     private static Board single_Board = null;
 
 
-    //Gives a reference to the board - or creates it - Single Tone
-
+    /**
+     * Gives a reference to the board - or creates it - Single Tone
+     * @return returns the state of the board
+     */
     public static Board getBoard() {
         if (single_Board == null) {
             single_Board = new Board();
@@ -17,13 +19,17 @@ public class Board {
         return single_Board;
     }
 
-    //Builds the board
+    /**
+     * the board constructor. Initializes the gameboard and builds it.
+     */
     public Board() {
         gameBoard = new BoardSquare[size][size];
         buildBoard();
     }
 
-    //Assigning all the squares according to the given template.
+    /**
+     * Assigning all the squares according to the given template.
+     */
     public void buildBoard() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -105,7 +111,10 @@ public class Board {
 
     }
 
-    //Creates a 2-D array of tiles and copy the status of the tiles in the board;
+    /**
+     * Creates a 2-D array of tiles and copy the status of the tiles in the board.
+     * @return a 2D array of the tiles in the board.
+     */
     public Tile[][] getTiles() {
         Tile[][] theTiles = new Tile[size][size];
         for (int i = 0; i < size; i++) {
@@ -121,7 +130,11 @@ public class Board {
 
     }
 
-    //checks if the word assignment on the board is legal
+    /**
+     * Checks if a given word assignment on the board is legal
+     * @param word a given word to check whether we can place it on the board
+     * @return if the word placement is legal or not
+     */
     public boolean boardLegal(Word word) {
         int col = word.getCol();
         int row = word.getRow();
@@ -148,7 +161,11 @@ public class Board {
         return true;*/
     }
 
-    //get the whole score for placing the word
+    /**
+     * get the whole score for placing the word
+     * @param word a given word to check the score we will get after placing iot
+     * @return an int which represent the score we will get after the word placement
+     */
     private int getScore(Word word) {
         int sum=0;
         int mul=1;
@@ -188,12 +205,20 @@ public class Board {
         return sum*mul;
     }
 
-    //check if the word is a valid word from the game dictionary
+    /**
+     * Checks if the word is a valid word from the game dictionary
+     * @param word - to check if it is a valid word
+     * @return if the word is valid or not.
+     */
     public boolean dictionaryLegal(Word word) {
         return true;
     }
 
-    //gets all the possible word that are created if we would place the given word
+    /**
+     * Gets all the possible words that are created if a given word would be placed.
+     * @param word a given word that the user might place.
+     * @return a list of words that are created by the given word.
+     */
     private ArrayList<Word> getWords(Word word) {
         ArrayList<Word> createdWords = new ArrayList<Word>();
         int col = word.getCol();
@@ -222,22 +247,27 @@ public class Board {
                         createdWords.add(getWord(row, col, word, i, true));
                     }
                 }
-
-
             }
             if(word.isVertical())
                 row++;
             else{
                 col++;
             }
-
         }
         if(!flag)
             createdWords.add(fullWord(word));
         return createdWords;
     }
 
-    //gets the word that is created if we would place the given word
+    /**
+     * gets a word that is created by placing a letter of a given word
+     * @param row the row of the first letter of the given word
+     * @param col the col of the first letter of the given word
+     * @param word a given word
+     * @param i the index of a letter in the word
+     * @param vertical if the given word is vertical or horizontal
+     * @return a word that is creater by placing the i's letter of the given word.
+     */
     private Word getWord(int row, int col, Word word, int i, boolean vertical){
         int startRow = row;
         int startCol = col;
@@ -306,8 +336,11 @@ public class Board {
     }
 
 
-
-    //checks all the condition and tries to place the word. return the score by placing that word.
+    /**
+     * checks all the condition and tries to place the word.
+     * @param word a word that the user tries to place.
+     * @return return the score by placing that word (0 if didn't succeed).
+     */
     public int tryPlaceWord(Word word){
         ArrayList<Word> createdWords = new ArrayList<Word>();
         int sum=0;
@@ -329,7 +362,10 @@ public class Board {
         return sum;
     }
 
-    //really placing the word.
+    /**
+     * Actually places the word on the board
+     * @param word a given word to actually place on the board
+     */
     private void wordPlacing(Word word){
         int row = word.getRow();
         int col = word.getCol();
@@ -345,6 +381,9 @@ public class Board {
             }
         }
     }
+
+    /*
+    //////////////Old Functions instead of GetWord///////////////////
 
     //finds new word from left
     private Word leftWord(int row, int col, Word w, int index) {
@@ -443,9 +482,13 @@ public class Board {
         }
         toReturn = new Word(wordTiles, startRow, col, true);
         return toReturn;
-    }
+    }*/
 
-    //Checks if the whole word is in the board
+    /**
+     * Checks if the whole word is inside the board borders.
+     * @param word a given word to check.
+     * @return if the whole word is inside the borders or not.
+     */
     private boolean isWordInBorders(Word word) {
         int col = word.getCol();
         int row = word.getRow();
@@ -462,7 +505,11 @@ public class Board {
         return true;
     }
 
-    //checks if the word is placed on the Star Square (middle square)
+    /**
+     * checks if the word is placed on the Star Square (middle square)
+     * @param word
+     * @return if the given word touches the Star square
+     */
     private boolean isWordOnStarSquare(Word word) {
         int col = word.getCol();
         int row = word.getRow();
@@ -480,7 +527,11 @@ public class Board {
         return true;
     }
 
-    //checks that the word doesn't change any letter
+    /**
+     * checks that the word doesn't change any letter
+     * @param word
+     * @return
+     */
     private boolean donotReplaceLetter(Word word) {
         if (word.isVertical()) {
             for (int i = 0; i < word.getTiles().length; i++) {
@@ -500,7 +551,11 @@ public class Board {
         return true;
     }
 
-    //checks if the word leans on another word (or uses any letter of it)
+    /**
+     * checks if the word leans on another word (or uses any letter of it)
+     * @param word
+     * @return
+     */
     private boolean isLeaning(Word word) {
         int row = word.getRow();
         int col = word.getCol();
@@ -523,7 +578,11 @@ public class Board {
         return false;
     }
 
-    //gets the full word without null tiles
+    /**
+     * gets the full word without null tiles
+     * @param word a given word that could be with under lines (for example F_RM).
+     * @return the full word
+     */
     private Word fullWord(Word word) {
         int len = word.getTiles().length;
         int col = word.getCol();
@@ -547,7 +606,9 @@ public class Board {
         return fullWord;
     }
 
-    //This class represents every square in the board - it has a Tile and a color
+    /**
+     * This class represents every square in the board - it has a Tile and a color
+     */
     public static class BoardSquare {
         private int color;
         private Tile tile;
@@ -557,25 +618,41 @@ public class Board {
             tile = null;
         }
 
-        // Green = 0
-        // Cyan - 1
-        //Blue - 2
-        //Yellow - 3
-        //Red - 4
-        //Star - 5
+        /**
+         *
+         * @param color an int that represent the following colors:
+         * Green = 0
+         * Cyan - 1
+         * Blue - 2
+         * Yellow - 3
+         * Red - 4
+         * Star - 5
+         */
         public void setColor(int color) {
             if (color >= 1 && color <= 5)
                 this.color = color;
         }
 
+        /**
+         * initialize a given tile into a square
+         * @param tile a tile to place on the square
+         */
         public void setTile(Tile tile) {
             this.tile = tile;
         }
 
+        /**
+         * get the square color
+         * @return the color of the square
+         */
         public int getColor() {
             return color;
         }
 
+        /**
+         *
+         * @return the tile that placed on this square
+         */
         public Tile getTile() {
             return tile;
         }

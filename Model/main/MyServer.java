@@ -17,6 +17,9 @@ public class MyServer {
         stop=false;
     }
 
+    /**
+     * runServer function --> to run the server and handle clients
+     */
     private void runServer(){
         ServerSocket server = null;
         try {

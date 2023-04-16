@@ -5,15 +5,28 @@ public class Tile {
     public final char letter;
     public final int score;
 
+    /**
+     *
+     * @param letter a letter that the tile represents
+     * @param score the score that the tile holds
+     */
     private Tile(char letter, int score) {
         this.letter = letter;
         this.score = score;
     }
 
+    /**
+     *
+     * @return the letter that the tile represents
+     */
     public char getLetter() {
         return letter;
     }
 
+    /**
+     *
+     * @return the score that the tile holds
+     */
     public int getScore() {
         return score;
     }
@@ -51,6 +64,11 @@ public class Tile {
                 this.tiles[i] = new Tile(c, this.scores[i]);
             }
         }
+
+        /**
+         *
+         * @return a random tile from the bag
+         */
         public Tile getRand(){
             if(size()==0){
                 return null;
@@ -65,6 +83,12 @@ public class Tile {
                 } // else continue look for another tile.
             }
         }
+
+        /**
+         *
+         * @param c an alphabetic letter
+         * @return a tile that represents the given letter
+         */
         public Tile getTile(char c) {
 
             if(c > 'Z' || c < 'A'){
@@ -78,6 +102,11 @@ public class Tile {
             this.letters[indexchar]--;
             return this.tiles[indexchar];
         }
+
+        /**
+         *
+         * @param t return a tile to the bag
+         */
         public void put(Tile t){
             if(this.letters[t.letter-'A']==this.originalAmountOfLetters[t.letter-'A']){
                 return;
@@ -86,14 +115,29 @@ public class Tile {
             this.totalTiles++;
 
         }
+
+        /**
+         *
+         * @return the total amount of tiles in the bag
+         */
         public int size(){
             return this.totalTiles;
         }
+
+        /**
+         *
+         * @return an amounts array of the tiles in the bag
+         */
         public int[] getQuantities(){
             int[] Quantities = new int[26];
             System.arraycopy(this.letters, 0, Quantities, 0, 26);
             return Quantities;
         }
+
+        /**
+         *
+         * @return the bag - Singleton
+         */
         public static Bag getBag(){
             if(single_Bag == null){
                 single_Bag = new Bag();

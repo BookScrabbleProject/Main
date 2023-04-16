@@ -12,6 +12,12 @@ public class LRU implements CacheReplacementPolicy {
     LRU(){
         cache = new LinkedHashSet<String>();
     }
+
+    /**
+     *
+     * @param word a word that has been asked
+     * @return whether the word exists or not
+     */
     public boolean check(String word){
         if(!cache.contains(word)){
             return false;
@@ -20,6 +26,11 @@ public class LRU implements CacheReplacementPolicy {
         cache.add(word);
         return true;
     }
+
+    /**
+     *
+     * @param word a word to be added to LRU cache
+     */
     public void add(String word) {
         // TODO Auto-generated method stub
         if(cache.contains(word)) {
@@ -31,6 +42,11 @@ public class LRU implements CacheReplacementPolicy {
         cache.add(word);
 
     }
+
+    /**
+     *
+     * @return the word that has been removed from the cache
+     */
     public String remove() {
         // TODO Auto-generated method stub
         String toReturn = cache.iterator().next();

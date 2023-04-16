@@ -5,7 +5,11 @@ import java.io.*;
 
 public class BookScrabbleHandler implements ClientHandler {
 
-
+    /**
+     * a Handler to communicate with a client.
+     * @param inFromclient an input stream from the client
+     * @param outToClient and output stream to the client
+     */
     @Override
     public void handleClient(InputStream inFromclient, OutputStream outToClient) {
         String line;

@@ -13,6 +13,10 @@ public class Dictionary {
     private BloomFilter bloomFilter;
     String[] fileNames;
 
+    /**
+     * The Dictionary constructor gets string(s) of file(s) name(s) and create a LRU cache for placing the exist words and LFU for the notExists
+     * @param fileNames array of given name(s) of file(s)
+     */
     public Dictionary(String...fileNames){
         this.fileNames = fileNames.clone();
         exists = new CacheManager(400, new LRU());
@@ -34,12 +38,17 @@ public class Dictionary {
         }
     }
 
+    /**
+     *
+     * @param word check if the word has been asken recently, if not - searching it line by line
+     * @return
+     */
     public boolean query(String word){
         if(exists.query(word)){
             return true;
         }
         else if(notExists.query(word)){
-            return true;
+            return false;
         }
         else if(bloomFilter.contains(word)){
             exists.add(word);
@@ -49,6 +58,11 @@ public class Dictionary {
         return challenge(word);
     }
 
+    /**
+     *
+     * @param word checks if the word is in the "BOOKS" by searching line by line - and add the word to the relevant cache.
+     * @return
+     */
     public boolean challenge(String word){
         if(IOSearcher.search(word, fileNames)){
             exists.add(word);
