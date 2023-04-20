@@ -1,0 +1,3 @@
+[submodule "src/View/BookScrabbleGUI"]
+	path = src/View/BookScrabbleGUI
+	url = https://github.com/BookScrabbleProject/Main
