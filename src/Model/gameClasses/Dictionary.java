@@ -39,9 +39,9 @@ public class Dictionary {
     }
 
     /**
-     *
-     * @param word check if the word has been asken recently, if not - searching it line by line
-     * @return
+     * check if the word has been asked recently, if not - searching it line by line (and add to the relevant cache)
+     * @param word the word we want to ask for.
+     * @return true if the word is valid, false if invalid
      */
     public boolean query(String word){
         if(exists.query(word)){
@@ -60,8 +60,8 @@ public class Dictionary {
 
     /**
      *
-     * @param word checks if the word is in the "BOOKS" by searching line by line - and add the word to the relevant cache.
-     * @return
+     * @param word to check with IO searching
+     * @return if the word is in the "BOOKS" by searching it line by line - and add the word to the relevant cache.
      */
     public boolean challenge(String word){
         if(IOSearcher.search(word, fileNames)){
