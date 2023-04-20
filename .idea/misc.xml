@@ -4,6 +4,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/BookScrabbleGUI/pom.xml" />
+        <option value="$PROJECT_DIR$/src/View/BookScrabbleApp/pom.xml" />
       </list>
     </option>
   </component>
