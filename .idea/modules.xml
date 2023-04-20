@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/src/View/BookScrabbleGUI/BookScrabbleGUI.iml" filepath="$PROJECT_DIR$/src/View/BookScrabbleGUI/BookScrabbleGUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/Main.iml" filepath="$PROJECT_DIR$/Main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/View/demo/demo.iml" filepath="$PROJECT_DIR$/src/View/demo/demo.iml" />
     </modules>
   </component>
 </project>
