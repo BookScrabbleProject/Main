@@ -11,7 +11,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.bookscrabbleapp.HelloController">
    <left>
-      <VBox prefHeight="1024.0" prefWidth="458.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="1024.0" prefWidth="485.0" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="bookScrabbleLable" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="315.0" text="BookScrabble">
                <VBox.margin>
@@ -63,7 +63,7 @@
             </HBox>
             <HBox prefHeight="23.0" prefWidth="322.0">
                <children>
-                  <Label prefHeight="29.0" prefWidth="97.0" style="-fx-background-color: #FFFF97; -fx-border-style: solid inside; -fx-border-width: 2; -fx-border-insets: 1; -fx-background-radius: 20; -fx-border-radius: 20;" text="x2 Word Score">
+                  <Label prefHeight="28.0" prefWidth="110.0" style="-fx-background-color: #FFFF97; -fx-border-style: solid inside; -fx-border-width: 2; -fx-border-insets: 1; -fx-background-radius: 20; -fx-border-radius: 20;" text="x2 Word Score">
                      <HBox.margin>
                         <Insets left="40.0" top="2.0" />
                      </HBox.margin>
@@ -74,7 +74,7 @@
                         <Font name="System Bold" size="11.0" />
                      </font>
                   </Label>
-                  <Label prefHeight="29.0" prefWidth="97.0" style="-fx-background-color: #FE3032; -fx-border-style: solid inside; -fx-border-width: 2; -fx-border-insets: 1; -fx-background-radius: 20; -fx-border-radius: 20;" text="x3 Word Score ">
+                  <Label prefHeight="28.0" prefWidth="95.0" style="-fx-background-color: #FE3032; -fx-border-style: solid inside; -fx-border-width: 2; -fx-border-insets: 1; -fx-background-radius: 20; -fx-border-radius: 20;" text="x3 Word Score ">
                      <HBox.margin>
                         <Insets left="2.0" top="2.0" />
                      </HBox.margin>

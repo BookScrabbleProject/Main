@@ -47,15 +47,16 @@ public class Dictionary {
         if(exists.query(word)){
             return true;
         }
-        else if(notExists.query(word)){
+        if(notExists.query(word)){
             return false;
         }
-        else if(bloomFilter.contains(word)){
+        if(bloomFilter.contains(word)){
             exists.add(word);
             return true;
         }
+        notExists.add(word);
+            return false;
 
-        return challenge(word);
     }
 
     /**
@@ -70,7 +71,6 @@ public class Dictionary {
         }
         notExists.add(word);
         return false;
-
     }
 
 }
