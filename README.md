@@ -38,6 +38,7 @@ Our project is built using the following technologies:
 * [Tal Mekler](https://github.com/TalMekler)
 * [Yuval Ofek](https://github.com/YuvalOfek1)
 * [Omer Ben-David](https://github.com/OmerBendaa)
+* [Ilay Cohen](https://github.com/ilaycohen2712)
 
 ## GANTT chart
 ![Gantt chart](./GanttChart.png)
