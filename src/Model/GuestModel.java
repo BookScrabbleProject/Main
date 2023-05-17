@@ -46,11 +46,6 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public Player getCurrentPlayer() {
-        return null;
-    }
-
-    @Override
     public HashMap<Integer, Integer> getPlayersScores() {
         return null;
     }
@@ -58,11 +53,6 @@ public class GuestModel extends PlayerModel implements Observer {
     @Override
     public HashMap<Integer, String> getPlayersNumberOfTiles() {
         return null;
-    }
-
-    @Override
-    public List<Tile> getMyTiles() {
-        return new ArrayList<Tile>();
     }
 
     @Override
