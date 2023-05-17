@@ -1,10 +1,9 @@
 package Model;
 
+import Model.gameClasses.Player;
 import Model.gameClasses.Tile;
 
-import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 public class GuestModel extends PlayerModel implements Observer {
     ClientCommunication clientCommunication;
@@ -47,7 +46,7 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public Model.Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return null;
     }
 
@@ -62,8 +61,8 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public Tile[] getMyTiles() {
-        return new Tile[0];
+    public List<Tile> getMyTiles() {
+        return new ArrayList<Tile>();
     }
 
     @Override

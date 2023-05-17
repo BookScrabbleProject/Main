@@ -1,6 +1,7 @@
 package Model;
 
 import Model.gameClasses.Board;
+import Model.gameClasses.Player;
 import Model.gameClasses.Tile;
 
 import java.util.HashMap;
