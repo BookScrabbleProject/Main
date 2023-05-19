@@ -13,6 +13,7 @@ public class HostModel extends PlayerModel implements Observer {
     HashMap<Integer, Player> connectedPlayers;
     HostServer hostServer;
     Board board;
+    Tile[][] prevBoard;
     Tile.Bag bag;
 
 
