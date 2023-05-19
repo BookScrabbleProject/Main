@@ -10,7 +10,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="BookScrabbleApp" target="11" />
       <module name="BookScrabbleGUI" target="11" />
       <module name="demo" target="11" />
     </bytecodeTargetLevel>

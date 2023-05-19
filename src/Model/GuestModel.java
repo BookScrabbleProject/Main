@@ -6,6 +6,7 @@ import Model.gameClasses.Tile;
 import java.util.*;
 
 public class GuestModel extends PlayerModel implements Observer {
+   // start to write the guest model-Benda
     ClientCommunication clientCommunication;
     Tile[][] boardStatus;
     int numberOfTilesInBag;
