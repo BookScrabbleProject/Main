@@ -7,6 +7,7 @@ import java.util.*;
 
 public class GuestModel extends PlayerModel implements Observer {
    // start to write the guest model-Benda
+ // commit to jira
     ClientCommunication clientCommunication;
     Tile[][] boardStatus;
     int numberOfTilesInBag;
