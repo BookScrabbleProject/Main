@@ -7,7 +7,7 @@ import Model.gameClasses.Tile;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-
+//
 public class HostModel extends PlayerModel implements Observer {
     private static HostModel hostModel = null;
     HashMap<Integer, Player> connectedPlayers;
@@ -37,6 +37,7 @@ public class HostModel extends PlayerModel implements Observer {
     public void challenge(String word) {
 
     }
+// ilay
 
     @Override
     public void takeTileFromBag() {
