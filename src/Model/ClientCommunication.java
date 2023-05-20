@@ -46,7 +46,7 @@ public class ClientCommunication extends Observable {
     /**
      * check if the server send a message and notify the observers
      */
-    public void checkForMessage() {
+    private void checkForMessage() {
         while (socket.isConnected() && !socket.isClosed()) {
             try {
                 Scanner in = new Scanner(socket.getInputStream());
