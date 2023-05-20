@@ -12,12 +12,12 @@ public class ClientCommunication extends Observable {
     /**
      * Creates a new client communication
      *
-     * @param host the host to connect to
+     * @param ip the host to connect to
      * @param port the port to connect to
      */
-    public ClientCommunication(String host, int port) {
+    public ClientCommunication(String ip, int port) {
         try {
-            socket = new Socket(host, port);
+            socket = new Socket(ip, port);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
