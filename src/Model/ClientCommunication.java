@@ -55,7 +55,10 @@ public class ClientCommunication extends Observable {
                     setChanged();
                     notifyObservers(message);
                 }
+                Thread.sleep(250);
             } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
