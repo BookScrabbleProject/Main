@@ -59,4 +59,12 @@ public class ClientCommunication extends Observable {
             }
         }
     }
+
+    public void close() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
