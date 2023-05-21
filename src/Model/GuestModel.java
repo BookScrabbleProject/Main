@@ -1,6 +1,5 @@
 package Model;
 
-import Model.gameClasses.Player;
 import Model.gameClasses.Tile;
 
 import java.util.*;
@@ -32,7 +31,6 @@ public class GuestModel extends PlayerModel implements Observer {
 
     @Override
     public void setBoardStatus(Tile[][] board) {
-
     }
 
     @Override
@@ -51,7 +49,7 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public HashMap<Integer, String> getPlayersNumberOfTiles() {
+    public HashMap<Integer, Integer> getPlayersNumberOfTiles() {
         return null;
     }
 
