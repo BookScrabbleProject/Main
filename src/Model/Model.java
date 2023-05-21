@@ -19,7 +19,7 @@ public interface Model {
     public int getNumberOfTilesInBag();
     public int getCurrentPlayerId();
     public HashMap<Integer, Integer> getPlayersScores();
-    public HashMap<Integer, String> getPlayersNumberOfTiles();
+    public HashMap<Integer, Integer> getPlayersNumberOfTiles();
     public List<Tile> getMyTiles();
 
 
