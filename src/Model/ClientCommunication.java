@@ -10,8 +10,7 @@ public class ClientCommunication extends Observable {
     Socket socket;
 
     /**
-     * Creates a new client communication
-     *
+     * Creates a new client communication with the server and starts a new thread to check for messages from the server
      * @param ip   the host to connect to
      * @param port the port to connect to
      */
@@ -26,8 +25,7 @@ public class ClientCommunication extends Observable {
     }
 
     /**
-     * Sends a message to the server
-     *
+     * Sends a message to the server, protocol: id:method:input1,input2,...
      * @param id         the id of the client
      * @param methodName the method name to call
      * @param inputs     the inputs to the method
@@ -44,7 +42,7 @@ public class ClientCommunication extends Observable {
     }
 
     /**
-     * check if the server send a message and notify the observers
+     * check if the server send a message and notify the observers, 4 times a second
      */
     private void checkForMessage() {
         while (socket.isConnected() && !socket.isClosed()) {
