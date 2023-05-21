@@ -60,6 +60,9 @@ public class ClientCommunication extends Observable {
         }
     }
 
+    /**
+     * close the socket connection to the server -> stop the thread
+     */
     public void close() {
         try {
             socket.close();
