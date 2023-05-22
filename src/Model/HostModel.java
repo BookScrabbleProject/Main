@@ -17,6 +17,7 @@ public class HostModel extends PlayerModel implements Observer {
     Tile[][] prevBoard;
     Tile.Bag bag;
     int requestedId;
+    int nextId;
     String password;
 //    HashMap<String, Function<T, R> func >functionMap; // func to replace the if-else in update
 
@@ -42,9 +43,9 @@ public class HostModel extends PlayerModel implements Observer {
      * restart the password
      */
     private HostModel() {
-
+        nextId = 0;
         connectedPlayers = new HashMap<>();
-        myPlayer.setId(0);
+        myPlayer.setId(generateId());
         connectedPlayers.put(myPlayer.getId(), myPlayer);
         hostServer = new HostServer();
         hostServer.hostServer.start();
@@ -54,6 +55,19 @@ public class HostModel extends PlayerModel implements Observer {
         bag = Tile.Bag.getBag();
         password = null;
         requestedId = -1;
+    }
+
+    int generateId() {
+        return nextId++;
+    }
+    void connect(){
+        // create player + create id + insert into the map + update the id of the player + update the other players that this player connect to the game
+        Player p = new Player(generateId(),null,0,null); // create player + update the next id
+        connectedPlayers.put(p.getId(),p); // insert the player into the map
+        hasChanged();
+        String toNotify = requestedId + ":" + "connect";
+        notifyObservers(toNotify); // notify the other player that there is a new player that connected to the game
+
     }
 
 //    /**
@@ -87,6 +101,9 @@ public class HostModel extends PlayerModel implements Observer {
      * @param row        represent the starting row of the word in the board
      * @param isVertical represrmt if the word is vertical or not with boolean paramater
      */
+
+
+
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) {
         List<Tile> t = new ArrayList<>();
@@ -247,6 +264,10 @@ public class HostModel extends PlayerModel implements Observer {
         String[] inputs = null;
 
         switch (methodName) {
+            case "connect":{
+                connect();
+                break;
+            }
             case "tryPlaceWord": {
                 inputs = newrequest[2].split(",");
                 String word = inputs[0];
