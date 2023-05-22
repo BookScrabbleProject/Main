@@ -15,7 +15,26 @@ import java.util.Observer;
 public class ClientCommunicationTest {
 
     public static void testSend() {
+        ServerSocket server = null;
+        ClientCommunication client = null;
+        Test test = null;
+        try{
+            server = new ServerSocket(1234);
+            client = new ClientCommunication("localhost", 1234);
+            Socket socket = server.accept();
+            client.send(1, "testMethod", "input1", "input2");
+            Thread.sleep(1000);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String line = in.readLine();
+            System.out.println("server response: " + line);
+            line = in.readLine();
+            System.out.println("server response: " + line);
+            client.close();
 
+        }catch (Exception e) {
+            System.out.println("ERROR: " + e);
+            throw new RuntimeException("testSend failed");
+        }
     }
 
     public static void testCheckForMessage() {
@@ -23,8 +42,8 @@ public class ClientCommunicationTest {
         ClientCommunication client = null;
         Test test = null;
         try {
-            server = new ServerSocket(1234);
-            client = new ClientCommunication("localhost", 1234);
+            server = new ServerSocket(1235);
+            client = new ClientCommunication("localhost", 1235);
             test = new Test(client);
             Socket socket = server.accept();
             socket.getOutputStream().write("test1\n".getBytes());
@@ -64,8 +83,11 @@ public class ClientCommunicationTest {
     }
 
     public static void main(String[] args) {
+        System.out.println("- - - - Testing ClientCommunication - - - -");
+        System.out.println("> > > checkForMassage < < <");
         testCheckForMessage();
-        System.out.println("CheckForMessage passed!");
+        System.out.println("CheckForMessage passed!\n");
+        System.out.println("> > > send < < <");
         testSend();
         System.out.println("Send passed!");
 
