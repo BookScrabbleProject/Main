@@ -7,7 +7,7 @@ import Model.gameClasses.Word;
 
 import java.util.*;
 import java.util.function.Function;
-// the hostmodel class
+
 
 public class HostModel extends PlayerModel implements Observer {
     private static HostModel hostModel = null;
