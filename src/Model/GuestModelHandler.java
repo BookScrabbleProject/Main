@@ -9,7 +9,7 @@ public class GuestModelHandler implements ClientHandler {
     public void handleClient(InputStream inFromclient, OutputStream outToClient) {
         String line;
         HostServer hostServer = HostModel.getHost().hostServer;
-        String[] args = new String[0];
+        String[] args = null;
         try{
             BufferedReader readFromGuest = new BufferedReader(new InputStreamReader(inFromclient));
             PrintWriter sendToGuest = new PrintWriter(outToClient);
@@ -17,37 +17,29 @@ public class GuestModelHandler implements ClientHandler {
             String[] splitted = line.split(":");
             String id = splitted[0];
             String methodName = splitted[1];
-            if(splitted.length>2) {
-                args = new String[splitted.length - 2];
-                System.arraycopy(splitted, 2, args, 0, splitted.length - 2);
-            }
-            PrintWriter toGameServer = new PrintWriter(HostModel.getHost().hostServer.getSocketToGameServer().getOutputStream());
-            Scanner fromGameServer = new Scanner(HostModel.getHost().hostServer.getSocketToGameServer().getInputStream());
+            String inputs = splitted[2];
+            Scanner fromBookScrabbleServer = new Scanner(HostModel.getHost().hostServer.getSocketToGameServer().getInputStream());
             String answer;
             switch (methodName){
                 case "tryPlaceWord": {
-                    toGameServer.println("Q," + String.join(",", HostModel.getHost().hostServer.bookNames) + ","+args[0]);
-                    toGameServer.flush();
-                    answer = fromGameServer.nextLine();
-                    hostServer.notifyObservers(id + ":" + "tryPlaceWord:" + args[0] + ":" + args[1]+ ":" + args[2] + ":" + answer);
+                    hostServer.sendToBookScrabbleServer("Q", inputs.split(",")[0]);
+                    answer = fromBookScrabbleServer.nextLine();
+                    hostServer.hasChanged();
+                    hostServer.notifyObservers(id + ":" + "tryPlaceWord:" + inputs + "," + answer.toString());
                     break;
+
                 }
                 case "challenge": {
-                    toGameServer.println("C," + String.join(",", HostModel.getHost().hostServer.bookNames) + ",");
-                    toGameServer.flush();
-                    answer = fromGameServer.nextLine();
-                    hostServer.notifyObservers(id + ":" + "challenge:" + args[0] + ":" + args[1]+ ":" + args[2] + ":" + answer);
+                    hostServer.sendToBookScrabbleServer("C", inputs.split(",")[0]);
+                    answer = fromBookScrabbleServer.nextLine();
+                    hostServer.hasChanged();
+                    hostServer.notifyObservers(id + ":" + "challenge:" + inputs + "," + answer.toString());
                     break;
-                }
-                case "passTheTurn":{
-                    hostServer.notifyObservers(id + ":" + "passTheTurn");
-                    break;
-                }
-                case "getTileFromBag":{
-                    hostServer.notifyObservers(id + ":" + "getTileFromBag");
-                    break;
-                }
 
+                }
+                default:
+                    hostServer.hasChanged();
+                    hostServer.notifyObservers(line);
 
 
             }
