@@ -26,7 +26,7 @@ public class HostModel extends PlayerModel implements Observer {
      * @return hostmodel
      */
 
-    static HostModel getHost() {
+    public static HostModel getHost() {
         if (hostModel == null) {
             hostModel = new HostModel();
         }
@@ -40,7 +40,8 @@ public class HostModel extends PlayerModel implements Observer {
      * build the board
      * create the bag
      */
-    public HostModel() {
+    private HostModel() {
+
         connectedPlayers = new HashMap<>();
         myPlayer.setId(0);
         connectedPlayers.put(myPlayer.getId(), myPlayer);
@@ -54,27 +55,27 @@ public class HostModel extends PlayerModel implements Observer {
         requestedId = -1;
     }
 
-    /**
-     * constructor method to the host model
-     * create map from id to player
-     * start the host server
-     * build the board
-     * create the bag
-     *
-     * @param pass that reset the password of the game
-     */
-    public HostModel(String pass) {
-        connectedPlayers = new HashMap<>();
-        connectedPlayers.put(myPlayer.getId(), myPlayer);
-        hostServer = new HostServer();
-        hostServer.hostServer.start();
-        board = new Board();
-        board.buildBoard();
-        prevBoard = board.getTiles();
-        bag = Tile.Bag.getBag();
-        password = pass;
-        requestedId = -1; // how to look at it with another func?
-    }
+//    /**
+//     * constructor method to the host model
+//     * create map from id to player
+//     * start the host server
+//     * build the board
+//     * create the bag
+//     *
+//     * @param pass that reset the password of the game
+//     */
+//    public HostModel(String pass) {
+//        connectedPlayers = new HashMap<>();
+//        connectedPlayers.put(myPlayer.getId(), myPlayer);
+//        hostServer = new HostServer();
+//        hostServer.hostServer.start();
+//        board = new Board();
+//        board.buildBoard();
+//        prevBoard = board.getTiles();
+//        bag = Tile.Bag.getBag();
+//        password = pass;
+//        requestedId = -1; // how to look at it with another func?
+//    }
 
     /**
      * A method that try to place the word on the board
