@@ -22,13 +22,23 @@ public class ClientCommunicationTest {
             server = new ServerSocket(1234);
             client = new ClientCommunication("localhost", 1234);
             Socket socket = server.accept();
-            client.send(1, "testMethod", "input1", "input2");
             Thread.sleep(1000);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String line = in.readLine();
-            System.out.println("server response: " + line);
+            if(line == null || !line.equals("-1:connect:")){
+                System.out.println("expected: -1:connect: -> received: " + line);
+                System.out.println("ERROR: testSend failed (1)");
+            }else {
+                System.out.println("testSend passed (1)");
+            }
+            client.send(1, "testMethod", "input1", "input2");
             line = in.readLine();
-            System.out.println("server response: " + line);
+            if(line == null || !line.equals("1:testMethod:input1,input2")){
+                System.out.println("expected: 1:testMethod:input1,input2 -> received: " + line);
+                System.out.println("ERROR: testSend failed (2)");
+            }else {
+                System.out.println("testSend passed (2)");
+            }
             client.close();
 
         }catch (Exception e) {
@@ -104,7 +114,6 @@ public class ClientCommunicationTest {
 
         public void update(java.util.Observable o, Object arg) {
             lastMessage = (String) arg;
-            System.out.println("Received message: " + arg);
         }
     }
 }
