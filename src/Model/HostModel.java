@@ -18,9 +18,7 @@ public class HostModel extends PlayerModel implements Observer {
     Tile.Bag bag;
     int requestedId;
     String password;
-
-    HashMap<String, Function<T, R> func >functionMap; // func to replace the if-else in update
-
+//    HashMap<String, Function<T, R> func >functionMap; // func to replace the if-else in update
 
     /**
      * method that return the host model itself
@@ -44,6 +42,7 @@ public class HostModel extends PlayerModel implements Observer {
      */
     public HostModel() {
         connectedPlayers = new HashMap<>();
+        myPlayer.setId(0);
         connectedPlayers.put(myPlayer.getId(), myPlayer);
         hostServer = new HostServer();
         hostServer.hostServer.start();
@@ -51,8 +50,8 @@ public class HostModel extends PlayerModel implements Observer {
         board.buildBoard();
         prevBoard = board.getTiles();
         bag = Tile.Bag.getBag();
-        password = "default";
-        requestedId = -1; // how to look at it with another func?
+        password = null;
+        requestedId = -1;
     }
 
     /**
@@ -196,9 +195,7 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public Tile[][] getBoardStatus() {
-
         return board.getTiles();
-
     }
 
     /**
@@ -208,7 +205,6 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public int getNumberOfTilesInBag() {
-
         return bag.totalTiles;
     }
 
@@ -219,11 +215,9 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public HashMap<Integer, Integer> getPlayersScores() {
-
         HashMap<Integer, Integer> playersScore = new HashMap<>();
         for (Integer idP : connectedPlayers.keySet())
             playersScore.put(idP, myPlayer.getScore());
-
         return playersScore;
     }
 
@@ -237,7 +231,6 @@ public class HostModel extends PlayerModel implements Observer {
         HashMap<Integer, Integer> playerNumOfTiles = new HashMap<>();
         for (Integer idP : connectedPlayers.keySet())
             playerNumOfTiles.put(idP, myPlayer.getTiles().size());
-
         return playerNumOfTiles;
     }
 
@@ -251,13 +244,11 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-
         String request = (String) arg;
         String[] newrequest = request.split(":");
         requestedId = Integer.parseInt(newrequest[0]);
         String methodName = newrequest[1];
         String[] inputs = null;
-
 
         switch (methodName) {
             case "tryPlaceWord": {
