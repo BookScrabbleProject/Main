@@ -102,7 +102,7 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void takeTileFromBag() {
-        //todo help func in futher
+        //todo help func in feature
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         Tile t = bag.getRand();
