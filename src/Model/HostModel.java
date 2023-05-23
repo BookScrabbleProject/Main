@@ -70,28 +70,6 @@ public class HostModel extends PlayerModel implements Observer {
 
     }
 
-//    /**
-//     * constructor method to the host model
-//     * create map from id to player
-//     * start the host server
-//     * build the board
-//     * create the bag
-//     *
-//     * @param pass that reset the password of the game
-//     */
-//    public HostModel(String pass) {
-//        connectedPlayers = new HashMap<>();
-//        connectedPlayers.put(myPlayer.getId(), myPlayer);
-//        hostServer = new HostServer();
-//        hostServer.hostServer.start();
-//        board = new Board();
-//        board.buildBoard();
-//        prevBoard = board.getTiles();
-//        bag = Tile.Bag.getBag();
-//        password = pass;
-//        requestedId = -1; // how to look at it with another func?
-//    }
-
     /**
      * A method that try to place the word on the board
      * create tile[] from the string word, create Word.
@@ -101,9 +79,6 @@ public class HostModel extends PlayerModel implements Observer {
      * @param row        represent the starting row of the word in the board
      * @param isVertical represrmt if the word is vertical or not with boolean paramater
      */
-
-
-
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) {
         List<Tile> t = new ArrayList<>();
