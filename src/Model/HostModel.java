@@ -137,9 +137,9 @@ public class HostModel extends PlayerModel implements Observer {
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         Tile t = bag.getRand();
-        myPlayer.addTile(t);
+        connectedPlayers.get(requestedId).addTile(t);
         hasChanged();
-        String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + "," + t.getScore(); // see other player hand or not? - send to the direct player or to all players
+        String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + ":" + t.getScore(); // see other player hand or not? - send to the direct player or to all players
         notifyObservers(toNotify);
         requestedId = -1;
     }
