@@ -116,7 +116,7 @@ public class GuestModel extends PlayerModel implements Observer {
             case"newPlayerConnected":
                 for (String ids:arguments) {
                     scoreMap.put(Integer.parseInt(ids),0);
-                    numberOfTilesMap.put(Integer.parseInt(ids),0);// either 0 or 7 depends if we create the hand before the game started
+                    numberOfTilesMap.put(Integer.parseInt(ids),0);// either 0 or 7 depends if we create the hand before the game started.
                     break;
                 }
             case"tryPlaceWord":
