@@ -80,7 +80,8 @@ public class ClientCommunicationTest {
             test2.lastMessage = null;
 
             socket.getOutputStream().write("test2\n".getBytes());
-            while(test.lastMessage == null) {
+            socket2.getOutputStream().write("socket2, test2\n".getBytes());
+            while(test.lastMessage == null || test2.lastMessage == null) {
                 Thread.sleep(1);
             }
             if(test.lastMessage == null || !test.lastMessage.equals("test2")) {
@@ -89,8 +90,15 @@ public class ClientCommunicationTest {
                 System.out.println("testCheckForMessage test2 passed");
             }
             test.lastMessage = null;
+            if(test2.lastMessage == null || !test2.lastMessage.equals("socket2, test2")) {
+                System.out.println("ERROR: testCheckForMessage failed -100pts");
+            }else {
+                System.out.println("testCheckForMessage socket2-test2 passed");
+            }
+            test2.lastMessage = null;
 
             socket.getOutputStream().write("test3\n".getBytes());
+            socket2.getOutputStream().write("socket2, test3\n".getBytes());
             while(test.lastMessage == null) {
                 Thread.sleep(1);
             }
@@ -101,6 +109,12 @@ public class ClientCommunicationTest {
                 System.out.println("testCheckForMessage test3 passed");
             }
             test.lastMessage = null;
+            if(test2.lastMessage == null || !test2.lastMessage.equals("socket2, test3")) {
+                System.out.println("ERROR: testCheckForMessage failed -100pts");
+            }else {
+                System.out.println("testCheckForMessage socket2-test3 passed");
+            }
+            test2.lastMessage = null;
 
             client.close();
             client2.close();
