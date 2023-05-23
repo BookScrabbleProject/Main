@@ -6,10 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="BookScrabbleApp" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="BookScrabbleApp" target="11" />
       <module name="BookScrabbleGUI" target="11" />
       <module name="demo" target="11" />
     </bytecodeTargetLevel>

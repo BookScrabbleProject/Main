@@ -8,10 +8,25 @@ public class GuestModel extends PlayerModel implements Observer {
    // start to write the guest model-Benda
  // commit to jira
     ClientCommunication clientCommunication;
+    int numOfTileInBag;
+    char[][] currentBoard;
+    HashMap<Integer,Integer> scoreMap;
+    HashMap<Integer,Integer> numberOfTilesMap;
 
 
-    GuestModel(String ip,int port,PlayerModel model ){ // build a model for a player that logged in, with the port and ip address of the host of the server
-      clientCommunication=new ClientCommunication();
+    GuestModel(String ip,int port){ // build a model for a player that logged in, with the port and ip address of the host of the server
+        scoreMap=new HashMap<>();
+        numberOfTilesMap=new HashMap<>();
+        numOfTileInBag=0;
+        currentBoard=new char[15][15];
+        for(int i=0;i<15;i++)
+        {
+            for(int j=0;j<15;j++)
+            {
+             currentBoard[i][j]='_';
+            }
+        }
+        clientCommunication=new ClientCommunication(ip,port);
     }
 
     @Override
@@ -55,38 +70,26 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public void setBoardStatus(Tile[][] board) {
+    public void setBoardStatus(Tile[][] board) {// need to implement
     }
 
     @Override
-    public Tile[][] getBoardStatus() {
-        String methodName = new Object() {}
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(),methodName);
+    public Tile[][] getBoardStatus() { // need to implement
+        return new char[15][15];
     }
 
     @Override
     public int getNumberOfTilesInBag() {
-        String methodName = new Object() {}
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(),methodName);
+        return numOfTileInBag;
+
     } // returns the number of tiles currently in the bag
 
     @Override
     public HashMap<Integer, Integer> getPlayersScores() {
-        String methodName = new Object() {}
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(),methodName);
+        return scoreMap;
     } // map from player id to the players scores
 
-    @Override
-    public HashMap<Integer, Integer> getPlayersNumberOfTiles() { // should be integer to integer? map from players id to the number of tiles that the player has
+    public void refillPlayerHand(){
         String methodName = new Object() {}
                 .getClass()
                 .getEnclosingMethod()
@@ -95,7 +98,52 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public HashMap<Integer, Integer> getPlayersNumberOfTiles() { //map from players id to the number of tiles that the player has
+        return numberOfTilesMap;
+    }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        String argString=(String)arg;
+        String[] splitedArgString = argString.split(",");
+        int id=Integer.parseInt(splitedArgString[0]);
+        String methodName=splitedArgString[1];
+        String[] arguments=splitedArgString[2].split(",");
+        switch(methodName){
+            case "setId":
+                myPlayer.setId(Integer.parseInt(arguments[0]));
+                break;
+            case"newPlayerConnected":
+                for (String ids:arguments) {
+                    scoreMap.put(Integer.parseInt(ids),0);
+                    numberOfTilesMap.put(Integer.parseInt(ids),0);// either 0 or 7 depends if we create the hand before the game started
+                    break;
+                }
+            case"tryPlaceWord":
+            {
+                if(arguments[0].equals("1"))
+                    refillPlayerHand();
+                else // let him put another word? or pass the turn automaticaly-take a tile from the bag and pass the turn
+                    takeTileFromBag();
+                passTheTurn();
+                break;
+            }
+            case"challenge":
+            {
+                if(arguments[0].equals("1")) // need to update the player who challenged score, and decrease the player that put the word score
+                break;
+            }
+            case "takeTileFromBag": { // the host adds me a tile, or i get char and score and add them as a new Tile to my hand
+                myPlayer.addTile(new Tile(arguments[0],Integer.parseInt(arguments[1]))); //כושילדודה של זה
+                break;
+            }
+
+
+            case "refillPlayerHand": {
+
+                break;
+            }
+
+        }
     }
 }
