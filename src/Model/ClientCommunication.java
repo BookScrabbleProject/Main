@@ -6,6 +6,12 @@ import java.net.Socket;
 import java.util.Observable;
 import java.util.Scanner;
 
+/**
+ * This class is responsible for the communication between the client and the server
+ * It sends messages to the server and notifies the observers when a message is received
+ * The protocol is: id:method:input1,input2,...
+ * The id is the id of the client, -1 means that the client is not connected yet
+ */
 public class ClientCommunication extends Observable {
     Socket socket;
 
