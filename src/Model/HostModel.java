@@ -1,10 +1,8 @@
 package Model;
 
-import Model.gameClasses.Board;
-import Model.gameClasses.Player;
-import Model.gameClasses.Tile;
-import Model.gameClasses.Word;
+import Model.gameClasses.*;
 
+import java.net.Socket;
 import java.util.*;
 import java.util.function.Function;
 
@@ -19,55 +17,71 @@ public class HostModel extends PlayerModel implements Observer {
     int requestedId;
     int nextId;
     String password;
-//    HashMap<String, Function<T, R> func >functionMap; // func to replace the if-else in update
+    int wordScore;
 
     /**
      * method that return the host model itself
-     *
      * @return hostmodel
      */
-
     public static HostModel getHost() {
         if (hostModel == null) {
-            hostModel = new HostModel();
+            hostModel = new HostModel("localhost",3000);
         }
         return hostModel;
     }
 
     /**
      * Default constructor method to the host model
+     * @param gameServerIp - game server ip
+     * @param gameServerPort - game server port
      * create map from id to player
      * start the host server
      * build the board
      * create the bag
      * restart the password
      */
-    private HostModel() {
+    private HostModel(String gameServerIp, int gameServerPort) {
         nextId = 0;
         connectedPlayers = new HashMap<>();
         myPlayer.setId(generateId());
         connectedPlayers.put(myPlayer.getId(), myPlayer);
-        hostServer = new HostServer();
-        hostServer.hostServer.start();
+        hostServer = new HostServer(myport,new GuestModelHandler(),gameServerIp,gameServerPort); // we need to handle the param myport
         board = new Board();
         board.buildBoard();
         prevBoard = board.getTiles();
         bag = Tile.Bag.getBag();
         password = null;
         requestedId = -1;
+        wordScore = 0;
     }
 
+    /**
+     *
+     * @param socket - socket parameter that send to the hostserver
+     */
+   public void addPlayer(Socket socket){
+        Player p = new Player(generateId(),null,0,null);
+        connectedPlayers.put(p.getId(),p);
+        StringBuilder playersIds = new StringBuilder();
+        for (Integer id: connectedPlayers.keySet()) {
+            playersIds.append(id);
+            playersIds.append(",");
+       }
+        playersIds.deleteCharAt(playersIds.length());
+        hostServer.addSocket(p.getId(),socket);
+        hostServer.sendToSpecificPlayer(-1,"setId",Integer.toString(p.getId()));
+        hostServer.sendToAllPlayers(-1,"newPlayerConnected",playersIds.toString());
+        hasChanged();
+        String toNotify = requestedId + ":" + "addPlayer";
+        notifyObservers(toNotify);
+   }
+
+    /**
+     *
+     * @return new id of the player
+     */
     int generateId() {
         return nextId++;
-    }
-    void connect(){
-        // create player + create id + insert into the map + update the id of the player + update the other players that this player connect to the game
-        Player p = new Player(generateId(),null,0,null); // create player + update the next id
-        connectedPlayers.put(p.getId(),p); // insert the player into the map
-        hasChanged();
-        String toNotify = requestedId + ":" + "connect";
-        notifyObservers(toNotify); // notify the other player that there is a new player that connected to the game
-
     }
 
     /**
@@ -82,21 +96,19 @@ public class HostModel extends PlayerModel implements Observer {
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) {
         List<Tile> t = new ArrayList<>();
-        for (char c : word.toCharArray()) {
+        for (char c : word.toCharArray())
             t.add(Tile.Bag.getBag().getTile(c));
-        }
-        Word w = new Word(t, row, col, isVertical); // todo - need to change string word to tile[] - how?
+        Word w = new Word((Tile[]) t.toArray(), row, col, isVertical);
+        hostServer.sendToBookScrabbleServer("Q",word);
         int score = board.tryPlaceWord(w);
-        if (score > 0) {
-
+        if(score > 0) {
+            connectedPlayers.get(myPlayer.getId()).addScore(score);
+            //run removeTiles method
+            refillPlayerHand();
+            hostServer.sendToAllPlayers(myPlayer.getId(),"tryPlaceWord","1");
         }
-        //if the score 0 - can't place the word
-        else {
-
-        }
-
         hasChanged();
-        String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + word + col + row + isVertical;
+        String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + score;
         notifyObservers(toNotify);
     }
 
@@ -108,10 +120,12 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void challenge(String word) {
-        hostServer.sendtoHandler(); // todo need to add this func into yuval
+
+        hostServer.sendToBookScrabbleServer("C",word); // todo need to add this func into yuval
         hasChanged();
         String toNotify = requestedId + ":" + "challenge" + ":" + word;
         notifyObservers(toNotify);
+
     }
 
     /**
@@ -120,7 +134,6 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void takeTileFromBag() {
-        //todo help func in feature
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         Tile t = bag.getRand();
@@ -160,12 +173,11 @@ public class HostModel extends PlayerModel implements Observer {
     public void passTheTurn() {
         currentPlayerIndex++;
         currentPlayerIndex %= 4;
+        prevBoard = board.getTiles();
         hasChanged();
         String toNotify = requestedId + ":" + "passTheTurn";
         notifyObservers(toNotify);
     }
-
-    // todo help function to notify observers and guest players
 
     /**
      * A method that set the prevboard to the new state of the board and notify to the other players that the board has changed
@@ -239,22 +251,33 @@ public class HostModel extends PlayerModel implements Observer {
         String[] inputs = null;
 
         switch (methodName) {
-            case "connect":{
-                connect();
-                break;
-            }
             case "tryPlaceWord": {
                 inputs = newrequest[2].split(",");
                 String word = inputs[0];
                 int col = Integer.parseInt(inputs[1]);
                 int row = Integer.parseInt(inputs[2]);
                 boolean isVertical = Boolean.parseBoolean(inputs[3]);
-                tryPlaceWord(word, col, row, isVertical);
+                if(inputs[4].equals("0"))
+                    hostServer.sendToSpecificPlayer(requestedId,"tryPlaceWord","0");
+                else
+                    tryPlaceWord(word, col, row, isVertical);
                 break;
             }
             case "challenge": {
-                String word = newrequest[2];
-                challenge(word);
+                inputs = newrequest[2].split(",");
+                String word = inputs[0];
+                if(inputs[1].equals("0")) {
+                    // update the board to the prevboard + return to the player that it's his turn to give him back the tiles that he tried to put
+                    // update the other players that the callenge return the answer "0"
+                    // update the players score to the score minus the score of the word
+                }
+                else {
+                    //update the player who did the challenge in the map - minus the score of the word
+                    hostServer.sendToSpecificPlayer(requestedId,"challenge","1");
+                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - ); // need the word score
+                    //update all the players that the challenge return 1
+                    hostServer.sendToAllPlayers(requestedId,"challenge","1");
+                }
                 break;
             }
             case "takeTileFromBag": {
