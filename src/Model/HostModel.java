@@ -56,7 +56,8 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
-     *
+     * method that add player to the game and create player, add the player to the map and create a string builder of ids
+     * Sends the information to the hostServer and notify with the format : requestedId + ":" + method + ":" + inputs
      * @param socket - socket parameter that send to the hostserver
      */
    public void addPlayer(Socket socket){
@@ -259,6 +260,11 @@ public class HostModel extends PlayerModel implements Observer {
             playerNumOfTiles.put(idP, myPlayer.getTiles().size());
         return playerNumOfTiles;
     }
+
+
+// todo - finish my turn method - flow of the turn from start to end that call the method that must run every turn
+
+
 
     /**
      * A method that take care of the reading by the format we have created and calls the method we need
