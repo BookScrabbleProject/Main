@@ -63,34 +63,44 @@ public class ClientCommunicationTest {
             Socket socket2 = server.accept();
             socket.getOutputStream().write("test1\n".getBytes());
             socket2.getOutputStream().write("socket2, test1\n".getBytes());
-            Thread.sleep(1000);
+            while(test.lastMessage == null || test2.lastMessage == null) {
+                Thread.sleep(1);
+            }
             if(test.lastMessage == null || !test.lastMessage.equals("test1")) {
                 System.out.println("ERROR: testCheckForMessage failed -100pts");
             }else {
                 System.out.println("testCheckForMessage test1 passed");
             }
+            test.lastMessage = null;
             if(test2.lastMessage == null || !test2.lastMessage.equals("socket2, test1")) {
                 System.out.println("ERROR: testCheckForMessage failed -100pts");
             }else {
                 System.out.println("testCheckForMessage socket2-test1 passed");
             }
+            test2.lastMessage = null;
 
             socket.getOutputStream().write("test2\n".getBytes());
-            Thread.sleep(1000);
+            while(test.lastMessage == null) {
+                Thread.sleep(1);
+            }
             if(test.lastMessage == null || !test.lastMessage.equals("test2")) {
                 System.out.println("ERROR: testCheckForMessage failed -100pts");
             }else {
                 System.out.println("testCheckForMessage test2 passed");
             }
+            test.lastMessage = null;
 
             socket.getOutputStream().write("test3\n".getBytes());
-            Thread.sleep(1000);
+            while(test.lastMessage == null) {
+                Thread.sleep(1);
+            }
             if(test.lastMessage == null || !test.lastMessage.equals("test3")) {
                 System.out.println("ERROR: testCheckForMessage failed -100pts");
             }
             else {
                 System.out.println("testCheckForMessage test3 passed");
             }
+            test.lastMessage = null;
 
             client.close();
             client2.close();
