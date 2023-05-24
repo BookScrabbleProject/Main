@@ -9,22 +9,20 @@ public class GuestModel extends PlayerModel implements Observer {
  // commit to jira
     ClientCommunication clientCommunication;
     int numOfTileInBag;
-    char[][] currentBoard;
+    Character[][] currentBoard;
     HashMap<Integer,Integer> scoreMap;
     HashMap<Integer,Integer> numberOfTilesMap;
 
 
-    GuestModel(String ip,int port){ // build a model for a player that logged in, with the port and ip address of the host of the server
+    GuestModel(String ip,int port,String name){ // build a model for a player that logged in, with the port and ip address of the host server.
+        //super(name); Mekler ya maniyyak
         scoreMap=new HashMap<>();
         numberOfTilesMap=new HashMap<>();
         numOfTileInBag=0;
-        currentBoard=new char[15][15];
+        currentBoard=new Character[15][15];
         for(int i=0;i<15;i++)
         {
-            for(int j=0;j<15;j++)
-            {
-             currentBoard[i][j]='_';
-            }
+            Arrays.fill(currentBoard[i], '_');
         }
         clientCommunication=new ClientCommunication(ip,port);
     }
@@ -38,7 +36,8 @@ public class GuestModel extends PlayerModel implements Observer {
         String methodName = new Object() {}
                 .getClass()
                 .getEnclosingMethod()
-                .getName();     clientCommunication.send(this.myPlayer.getId(),methodName,word,String.valueOf(col),String.valueOf(row),vertical);
+                .getName();
+        clientCommunication.send(this.myPlayer.getId(),methodName,word,String.valueOf(col),String.valueOf(row),vertical);
     }
 
 
@@ -70,12 +69,13 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public void setBoardStatus(Tile[][] board) {// need to implement
+    public void setBoardStatus(Character[][] board) {// need to implement
+        currentBoard=board;
     }
 
     @Override
-    public Tile[][] getBoardStatus() { // need to implement
-        return new char[15][15];
+    public Character[][] getBoardStatus() { // need to implement
+        return currentBoard;
     }
 
     @Override
@@ -85,9 +85,14 @@ public class GuestModel extends PlayerModel implements Observer {
     } // returns the number of tiles currently in the bag
 
     @Override
-    public HashMap<Integer, Integer> getPlayersScores() {
+    public HashMap<Integer, Integer> getPlayersScores() { // map from player id to the player's scores
         return scoreMap;
-    } // map from player id to the players scores
+    }
+
+    @Override
+    public HashMap<Integer, Integer> getPlayersNumberOfTiles() { //map from players id to the number of tiles that the player has
+        return numberOfTilesMap;
+    }
 
     public void refillPlayerHand(){
         String methodName = new Object() {}
@@ -98,8 +103,8 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public HashMap<Integer, Integer> getPlayersNumberOfTiles() { //map from players id to the number of tiles that the player has
-        return numberOfTilesMap;
+    public List<Character> getMyHand() {
+        return null;
     }
 
     @Override
