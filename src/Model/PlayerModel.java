@@ -11,7 +11,7 @@ abstract public class PlayerModel extends Observable  implements Model {
     int currentPlayerIndex;
     boolean isGameFinished;
 
-    public List<Tile> getMyTiles() {
+    public List<Character> getMyTiles() {
         return myPlayer.getTiles();
     }
     public int getCurrentPlayerId(){
