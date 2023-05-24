@@ -15,12 +15,12 @@ public interface Model {
 
     public void setBoardStatus(Tile[][] board);
 
-    public Tile[][] getBoardStatus();
+    public Character[][] getBoardStatus();
     public int getNumberOfTilesInBag();
     public int getCurrentPlayerId();
     public HashMap<Integer, Integer> getPlayersScores();
-    public HashMap<Integer, String> getPlayersNumberOfTiles();
-    public List<Tile> getMyTiles();
+    public HashMap<Integer, Integer> getPlayersNumberOfTiles();
+    public List<Character> getMyHand();
 
 
 }
