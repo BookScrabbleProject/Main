@@ -133,7 +133,7 @@ public class HostServer extends Observable {
      * @param type --> "Q" for query or "C" for challenge
      * @param word --> the word to be queried or challenged
      */
-    public void sendToBookScrabbleServer(String type, String word) {
+    public Socket sendToBookScrabbleServer(String type, String word) {
         try {
             Socket bookScrabbleServer = new Socket(bookScrabbleServerIp, bookScrabbleServerPort);
             PrintWriter out = new PrintWriter(bookScrabbleServer.getOutputStream());
@@ -145,9 +145,11 @@ public class HostServer extends Observable {
             msg.append(word);
             out.println(msg.toString());
             out.flush();
+            return bookScrabbleServer;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     /***
@@ -186,9 +188,6 @@ public class HostServer extends Observable {
                 throw new RuntimeException(e);
             }
         }
-    }
-    public Socket getSocketToGameServer(){
-
     }
 
 }

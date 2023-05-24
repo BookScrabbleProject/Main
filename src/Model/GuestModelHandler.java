@@ -2,6 +2,7 @@ package Model;
 
 import Model.gameClasses.ClientHandler;
 import java.io.*;
+import java.net.Socket;
 import java.util.Scanner;
 
 
@@ -18,20 +19,21 @@ public class GuestModelHandler implements ClientHandler {
             String id = splitted[0];
             String methodName = splitted[1];
             String inputs = splitted[2];
-            Scanner fromBookScrabbleServer = new Scanner(HostModel.getHost().hostServer.getSocketToGameServer().getInputStream());
             String answer;
             switch (methodName){
                 case "tryPlaceWord": {
-                    hostServer.sendToBookScrabbleServer("Q", inputs.split(",")[0]);
-                    answer = fromBookScrabbleServer.nextLine();
+                    Socket bookScrabbleServerSocket = hostServer.sendToBookScrabbleServer("Q", inputs.split(",")[0]);
+                    Scanner scanner = new Scanner(bookScrabbleServerSocket.getInputStream());
+                    answer = scanner.next();
                     hostServer.hasChanged();
                     hostServer.notifyObservers(id + ":" + "tryPlaceWord:" + inputs + "," + answer.toString());
                     break;
 
                 }
                 case "challenge": {
-                    hostServer.sendToBookScrabbleServer("C", inputs.split(",")[0]);
-                    answer = fromBookScrabbleServer.nextLine();
+                    Socket bookScrabbleServerSocket = hostServer.sendToBookScrabbleServer("C", inputs.split(",")[0]);
+                    Scanner scanner = new Scanner(bookScrabbleServerSocket.getInputStream());
+                    answer = scanner.next();
                     hostServer.hasChanged();
                     hostServer.notifyObservers(id + ":" + "challenge:" + inputs + "," + answer.toString());
                     break;

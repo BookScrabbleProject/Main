@@ -2,19 +2,26 @@ package Model.gameClasses;
 
 import Model.gameClasses.Tile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
     int id; //unique id
     String name;
     int score;
-    List<Tile> tiles;
+    List<Character> hand;
 
-    public Player(int id, String name, int score, List<Tile> tiles) {
+    public Player(int id, String name, int score, List<Character> hand) {
         this.id = id;
         this.name = name;
         this.score = score;
-        this.tiles = tiles;
+        this.hand = hand;
+    }
+    public Player(String name) {
+        this.id = -1;
+        this.name = name;
+        this.score = 0;
+        hand = new ArrayList<>();
     }
 
     public int getId() {
@@ -29,16 +36,16 @@ public class Player {
         return score;
     }
 
-    public List<Tile> getTiles() {
-        return tiles;
+    public List<Character> getTiles() {
+        return hand;
     }
 
     public void setScore(int score) {
         this.score = score;
     }
 
-    public void setTiles(List<Tile> tiles) {
-        this.tiles = tiles;
+    public void setHand(List<Character> hand) {
+        this.hand = hand;
     }
 
     public void setName(String name) {
@@ -53,7 +60,15 @@ public class Player {
         this.score += score;
     }
 
-    public void addTile(Tile tile) {
-        tiles.add(tile);
+    public void addTiles(String st) {
+        for (int i = 0; i < st.length(); i++) {
+            hand.add(st.charAt(i));
+        }
+    }
+
+    public void removeTiles(String st) {
+        for (int i = 0; i < st.length(); i++) {
+            hand.remove(st.charAt(i));
+        }
     }
 }
