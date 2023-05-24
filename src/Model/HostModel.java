@@ -95,7 +95,7 @@ public class HostModel extends PlayerModel implements Observer {
      * @param isVertical represrmt if the word is vertical or not with boolean paramater
      */
     @Override
-    public void tryPlaceWord(String word, int col, int row, boolean isVertical) {
+    public void tryPlaceWord(String word, int col, int row, boolean isVertical) {//run removeTiles method
         List<Tile> t = new ArrayList<>();
         for (char c : word.toCharArray())
             t.add(Tile.Bag.getBag().getTile(c));
@@ -104,7 +104,11 @@ public class HostModel extends PlayerModel implements Observer {
         int score = board.tryPlaceWord(w);
         if(score > 0) {
             connectedPlayers.get(myPlayer.getId()).addScore(score);
+
+
             //run removeTiles method
+
+
             refillPlayerHand();
             hostServer.sendToAllPlayers(myPlayer.getId(),"tryPlaceWord","1");
         }
@@ -280,7 +284,7 @@ public class HostModel extends PlayerModel implements Observer {
                 else {
                     //update the player who did the challenge in the map - minus the score of the word
                     hostServer.sendToSpecificPlayer(requestedId,"challenge","1");
-                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - ); // need the word score
+                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(myPlayer.getId()).getScore() - ); // need the word score
                     //update all the players that the challenge return 1
                     hostServer.sendToAllPlayers(requestedId,"challenge","1");
                 }
@@ -322,3 +326,4 @@ public class HostModel extends PlayerModel implements Observer {
         }
     }
 }
+
