@@ -15,17 +15,18 @@ import java.util.Observer;
 public class ClientCommunicationTest {
 
     public static void testSend() {
+        int serverSocketPort = 3000;
         ServerSocket server = null;
         ClientCommunication client = null;
         Test test = null;
         try{
-            server = new ServerSocket(1234);
-            client = new ClientCommunication("localhost", 1234);
+            server = new ServerSocket(serverSocketPort);
+            client = new ClientCommunication("localhost", serverSocketPort);
             Socket socket = server.accept();
             Thread.sleep(1000);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String line = in.readLine();
-            if(line == null || !line.equals("-1:connect:")){
+            if(line == null || !line.equals("-1:connect: ")){
                 System.out.println("expected: -1:connect: -> received: " + line);
                 System.out.println("ERROR: testSend failed (1)");
             }else {
@@ -54,11 +55,12 @@ public class ClientCommunicationTest {
         Test test = null;
         Test test2 = null;
         try {
-            server = new ServerSocket(1235);
-            client = new ClientCommunication("localhost", 1235);
+            int serverSocketPort = 1234;
+            server = new ServerSocket(serverSocketPort);
+            client = new ClientCommunication("localhost", serverSocketPort);
             test = new Test(client);
             Socket socket = server.accept();
-            client2 = new ClientCommunication("localhost", 1235);
+            client2 = new ClientCommunication("localhost", serverSocketPort);
             test2 = new Test(client2);
             Socket socket2 = server.accept();
             socket.getOutputStream().write("test1\n".getBytes());
