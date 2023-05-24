@@ -23,7 +23,7 @@ public class ClientCommunication extends Observable {
     public ClientCommunication(String ip, int port) {
         try {
             socket = new Socket(ip, port);
-            send(-1, "connect");
+            send(-1, "connect", " ");
             new Thread(this::checkForMessage).start();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -34,10 +34,10 @@ public class ClientCommunication extends Observable {
      * Sends a message to the server, protocol: id:method:input1,input2,...
      * @param id         the id of the client
      * @param methodName the method name to call
-     * @param inputs     the inputs to the method
+     * @param args     the inputs to the method
      */
-    public void send(int id, String methodName, String... inputs) {
-        String message = id + ":" + methodName + ":" + String.join(",", inputs);
+    public void send(int id, String methodName, String... args) {
+        String message = id + ":" + methodName + ":" + String.join(",", args);
         try {
             PrintWriter out = new PrintWriter(socket.getOutputStream());
             out.println(message);
