@@ -128,14 +128,9 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.sendToBookScrabbleServer("Q",word);
         int score = board.tryPlaceWord(w);
         if(score > 0) {
-            connectedPlayers.get(myPlayer.getId()).addScore(score);
-
-
-            //run removeTiles method
-
-
+            connectedPlayers.get(requestedId).addScore(score);
             refillPlayerHand();
-            hostServer.sendToAllPlayers(myPlayer.getId(),"tryPlaceWord","1");
+            hostServer.sendToAllPlayers(requestedId,"tryPlaceWord","1");
         }
         hasChanged();
         String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + score;
@@ -286,65 +281,64 @@ public class HostModel extends PlayerModel implements Observer {
         String[] inputs = null;
 
         switch (methodName) {
-            case "tryPlaceWord": {
+            case "tryPlaceWord" -> {
                 inputs = newrequest[2].split(",");
                 String word = inputs[0];
                 int col = Integer.parseInt(inputs[1]);
                 int row = Integer.parseInt(inputs[2]);
                 boolean isVertical = Boolean.parseBoolean(inputs[3]);
-                if(inputs[4].equals("0"))
-                    hostServer.sendToSpecificPlayer(requestedId,"tryPlaceWord","0");
+                if (inputs[4].equals("0"))
+                    hostServer.sendToSpecificPlayer(requestedId, "tryPlaceWord", "0");
                 else
                     tryPlaceWord(word, col, row, isVertical);
                 break;
             }
-            case "challenge": {
+            case "challenge" -> {
                 inputs = newrequest[2].split(",");
                 String word = inputs[0];
-                if(inputs[1].equals("0")) {
+                if (inputs[1].equals("0")) {
                     // update the board to the prevboard + return to the player that it's his turn to give him back the tiles that he tried to put
                     // update the other players that the callenge return the answer "0"
                     // update the players score to the score minus the score of the word
-                }
-                else {
+                } else {
                     //update the player who did the challenge in the map - minus the score of the word
-                    hostServer.sendToSpecificPlayer(requestedId,"challenge","1");
-                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(myPlayer.getId()).getScore() - ); // need the word score
+                    hostServer.sendToSpecificPlayer(requestedId, "challenge", "1");
+                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(myPlayer.getId()).getScore() -); // need the word score
                     //update all the players that the challenge return 1
-                    hostServer.sendToAllPlayers(requestedId,"challenge","1");
+                    hostServer.sendToAllPlayers(requestedId, "challenge", "1");
                 }
                 break;
             }
-            case "takeTileFromBag": {
+            case "takeTileFromBag" -> {
                 takeTileFromBag();
                 break;
             }
-            case "passTheTurn": {
+            case "passTheTurn" -> {
                 passTheTurn();
                 break;
             }
-            case "setBoardStatus": {
+            case "setBoardStatus" -> {
                 Tile[][] board = newrequest[2];
                 setBoardStatus(board);
                 break;
             }
-            case "getBoardStatus": {
+            case "getBoardStatus" -> {
                 getBoardStatus();
                 break;
             }
-            case "getNumberOfTilesInBag": {
+            case "getNumberOfTilesInBag" -> {
                 getNumberOfTilesInBag();
                 break;
             }
-            case "getPlayersScores": {
+            case "getPlayersScores" -> {
                 getPlayersScores();
                 break;
             }
-            case "getPlayersNumberOfTiles": {
+            case "getPlayersNumberOfTiles" -> {
                 getPlayersNumberOfTiles();
                 break;
             }
-            case "refillPlayerHand": {
+            case "refillPlayerHand" -> {
                 refillPlayerHand();
                 break;
             }
