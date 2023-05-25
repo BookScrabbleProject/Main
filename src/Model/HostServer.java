@@ -45,18 +45,26 @@ public class HostServer extends Observable {
      */
     private void runServer() {
         ServerSocket server = null;
+
         try {
             server = new ServerSocket(myPort);
             new Thread(this::checkForMessages).start();
+            server.setSoTimeout(1000);
             while (!stop) {
                 try {
                     Socket aClient = server.accept();
                     HostModel.getHost().addPlayer(aClient);
 
-                    try {
-                        clientHandler.handleClient(aClient.getInputStream(), aClient.getOutputStream());
-                    } catch (IOException e) {
-                    }
+                    new Thread(()->{
+                        try {
+                            clientHandler.handleClient(aClient.getInputStream(), aClient.getOutputStream());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+
+
+
                 } catch (SocketTimeoutException e) {
 
                 }//blocking call
@@ -65,7 +73,6 @@ public class HostServer extends Observable {
             server.close();
         } catch (IOException e) {
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
 
     }
