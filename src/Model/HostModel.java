@@ -351,7 +351,7 @@ public class HostModel extends PlayerModel implements Observer {
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 if (inputs[1].equals("0")) {
-                    board.setTiles(prevBoard); // Mekler on the road
+                    board.setTiles(prevBoard); // Mekler on the road -> make me this func king
                     connectedPlayers.get(currentPlayerIndex).setScore(connectedPlayers.get(currentPlayerIndex).getScore() - lastWordScore);
                     connectedPlayers.get(currentPlayerIndex).addTiles(wordFromPlayers);
                     hostServer.sendToAllPlayers(requestedId, "challenge", "0");
