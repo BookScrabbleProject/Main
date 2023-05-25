@@ -142,11 +142,11 @@ public class HostServerTest {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
             printWriter.flush();
             Thread.sleep(1000);
-            printWriter.println("-1:connect: ");
-            Thread.sleep(500);
-//            printWriter.println("5:tryPlaceWord:word,1,1,1");
+//            printWriter.println("-1:connect: ");
+//            Thread.sleep(500);
+            printWriter.println("5:tryPlaceWord:word,1,1,1");
 //            printWriter.println("5:challenge:word");
-            printWriter.println("1:TEST:TEST");
+//            printWriter.println("1:TEST:TEST");
             printWriter.flush();
             Thread.sleep(500);
 //            printWriter.flush();
@@ -159,7 +159,7 @@ public class HostServerTest {
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        MyServer server = new MyServer(1234, new BookScrabbleHandler());
+        MyServer server = new MyServer(3001, new BookScrabbleHandler());
         HostModel hostModel = HostModel.getHost();
         HostServerObserver hostServerObserver = new HostServerObserver(hostModel.hostServer);
         int hostServerPort = 3000;
