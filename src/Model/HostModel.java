@@ -4,7 +4,6 @@ import Model.gameClasses.*;
 
 import java.net.Socket;
 import java.util.*;
-import java.util.function.Function;
 
 
 public class HostModel extends PlayerModel implements Observer {
@@ -17,7 +16,8 @@ public class HostModel extends PlayerModel implements Observer {
     int requestedId;
     int nextId;
     String password;
-    int wordScore;
+    int lastWordScore;
+    String wordFromPlayers;
 
     /**
      * method that return the host model itself
@@ -45,14 +45,15 @@ public class HostModel extends PlayerModel implements Observer {
         connectedPlayers = new HashMap<>();
         myPlayer.setId(generateId());
         connectedPlayers.put(myPlayer.getId(), myPlayer);
-        hostServer = new HostServer(myport,new GuestModelHandler(),gameServerIp,gameServerPort); // we need to handle the param myport
+        hostServer = new HostServer(3000,new GuestModelHandler(),gameServerIp,gameServerPort); // we need to handle the param myport
         board = new Board();
         board.buildBoard();
         prevBoard = board.getTiles();
         bag = Tile.Bag.getBag();
         password = null;
         requestedId = -1;
-        wordScore = 0;
+        lastWordScore = 0;
+        wordFromPlayers = null;
     }
 
     /**
@@ -63,22 +64,77 @@ public class HostModel extends PlayerModel implements Observer {
    public void addPlayer(Socket socket){
         Player p = new Player(generateId(),null,0,null);
         connectedPlayers.put(p.getId(),p);
-        StringBuilder playersIds = new StringBuilder();
-        for (Integer id: connectedPlayers.keySet()) {
-            playersIds.append(id);
-            playersIds.append(",");
-       }
-        playersIds.deleteCharAt(playersIds.length());
+        StringBuilder playersIdsAndNames = new StringBuilder();
+        playersIdsAndNames.append(p.getId()).append("-").append(p.getName());
+        for (Integer id: connectedPlayers.keySet())
+            if (id != p.getId())
+            {
+                playersIdsAndNames.append(id).append("-");
+                playersIdsAndNames.append(connectedPlayers.get(id).getName());
+                playersIdsAndNames.append(",");
+            }
+        playersIdsAndNames.deleteCharAt(playersIdsAndNames.length()-1);
         hostServer.addSocket(p.getId(),socket);
         hostServer.sendToSpecificPlayer(-1,"setId",Integer.toString(p.getId()));
-        hostServer.sendToAllPlayers(-1,"newPlayerConnected",playersIds.toString());
+        hostServer.sendToAllPlayers(-1,"newPlayerConnected",playersIdsAndNames.toString());
         hasChanged();
         String toNotify = requestedId + ":" + "addPlayer";
         notifyObservers(toNotify);
    }
 
     /**
+     * method that change the string to be without '_'
+     * @param word string of the word we tried to put on board
+     * @return new word without '_'
+     */
+   private String wordNoSpace(String word){
+       StringBuilder stringBuilder = new StringBuilder();
+       for (Character c: word.toCharArray())
+           if(c != '_')
+               stringBuilder.append(c);
+       return stringBuilder.toString();
+   }
+
+    /**
+     * method that change between board to string object
+     * @param b represent the board
+     * @return the board in a string
+     */
+   private String boardToString(Board b){
+       StringBuilder stringBoard = new StringBuilder();
+       Tile[][] theTiles = board.getTiles();
+       for (Tile[] theTile : theTiles)
+           for (Tile tile : theTile)
+               stringBoard.append(tile.letter);
+       return stringBoard.toString();
+   }
+
+    /**
      *
+     * @param board represent the board in string
+     * @return the board in a matrix of Characters
+     */
+   private Character[][] boardToCharMatrix(String board){
+       Character[][] boardCharMatrix = new Character[15][15];
+       for (int i = 0; i < 15; i++)
+           for (int j = 0; j < 15; j++)
+               boardCharMatrix[i][j] = board.charAt(15*i + j);
+       return boardCharMatrix;
+   }
+
+    /**
+     * method that convert list of characters into string
+     * @param hand list of characters
+     * @return string that represents player hand
+     */
+
+   private String handToString(List<Character> hand){
+       StringBuilder stringBuilder = new StringBuilder();
+       for (Character character: hand)
+           stringBuilder.append(character);
+       return stringBuilder.toString();
+   }
+    /**
      * @return new id of the player
      */
     int generateId() {
@@ -102,10 +158,13 @@ public class HostModel extends PlayerModel implements Observer {
         Word w = new Word((Tile[]) t.toArray(), row, col, isVertical);
         hostServer.sendToBookScrabbleServer("Q",word);
         int score = board.tryPlaceWord(w);
+        lastWordScore = score;
+        wordFromPlayers = wordNoSpace(word);
         if(score > 0) {
-            connectedPlayers.get(requestedId).addScore(score);
+            connectedPlayers.get(requestedId).addScore(lastWordScore);
             refillPlayerHand();
-            hostServer.sendToAllPlayers(requestedId,"tryPlaceWord","1");
+            hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
+            hostServer.sendToAllPlayers(0,"boardUpdated",boardToString(board));
         }
         hasChanged();
         String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + score;
@@ -114,18 +173,16 @@ public class HostModel extends PlayerModel implements Observer {
 
     /**
      * A method which check if the word is valid or not
-     * send the information to the handler with the meyhod sendtohandler()
+     * send the information to the handler with the method sendtohandler()
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      * @param word a given word to check if it valid or not
      */
     @Override
     public void challenge(String word) {
-
-        hostServer.sendToBookScrabbleServer("C",word); // todo need to add this func into yuval
+        hostServer.sendToBookScrabbleServer("C",word);
         hasChanged();
         String toNotify = requestedId + ":" + "challenge" + ":" + word;
         notifyObservers(toNotify);
-
     }
 
     /**
@@ -137,10 +194,9 @@ public class HostModel extends PlayerModel implements Observer {
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         Tile t = bag.getRand();
-        connectedPlayers.get(requestedId).addTile(t);
+        connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
         hasChanged();
-        String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + ":" + t.getScore(); // see other player hand or not? - send to the direct player or to all players
-        notifyObservers(toNotify);
+        String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + "," + t.getScore();
         requestedId = -1;
     }
 
@@ -153,12 +209,9 @@ public class HostModel extends PlayerModel implements Observer {
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         if(numOfTiles<7)
-        {
-            for (int i = numOfTiles; i <= 7; i++) {
-                Tile tile = bag.getRand();
-                connectedPlayers.get(requestedId).addTile(tile);
-            }
-        }
+            for (int i = numOfTiles; i <= 7; i++)
+                connectedPlayers.get(requestedId).addTiles(String.valueOf(bag.getRand().letter));
+
         hasChanged();
         String toNotify = requestedId + ":" + "refillPlayerHand";
         notifyObservers(toNotify);
@@ -181,15 +234,16 @@ public class HostModel extends PlayerModel implements Observer {
 
     /**
      * A method that set the prevboard to the new state of the board and notify to the other players that the board has changed
-     *
      * @param board a Tile matrix that represent the board which we want to set
      *              notify to the binding objects by a format - requestedId + ":" +method + ":" + inputs
      */
     @Override
-    public void setBoardStatus(Tile[][] board) {
-        prevBoard = board;
+    public void setBoardStatus(Character[][] board) {
+
+        prevBoard = board; // how to create from char to tiles?
+
         hasChanged();
-        String toNotify = requestedId + ":" + "setBoardStatus" + ":" + board;
+        String toNotify = requestedId + ":" + "setBoardStatus" + ":" + Arrays.deepToString(board);
         notifyObservers(toNotify);
     }
 
@@ -198,8 +252,8 @@ public class HostModel extends PlayerModel implements Observer {
      * @return the board status in a Tile matrix
      */
     @Override
-    public Tile[][] getBoardStatus() {
-        return board.getTiles();
+    public Character[][] getBoardStatus() {
+        return boardToCharMatrix(boardToString(board));
     }
 
     /**
@@ -235,11 +289,6 @@ public class HostModel extends PlayerModel implements Observer {
         return playerNumOfTiles;
     }
 
-
-// todo - finish my turn method - flow of the turn from start to end that call the method that must run every turn
-
-
-
     /**
      * A method that take care of the reading by the format we have created and calls the method we need
      * format: requestedId+":"+method+":"+inputs
@@ -250,36 +299,42 @@ public class HostModel extends PlayerModel implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         String request = (String) arg;
-        String[] newrequest = request.split(":");
-        requestedId = Integer.parseInt(newrequest[0]);
-        String methodName = newrequest[1];
+        String[] newRequest = request.split(":");
+        requestedId = Integer.parseInt(newRequest[0]);
+        String methodName = newRequest[1];
         String[] inputs = null;
 
         switch (methodName) {
             case "tryPlaceWord" -> {
-                inputs = newrequest[2].split(",");
+                inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 int col = Integer.parseInt(inputs[1]);
                 int row = Integer.parseInt(inputs[2]);
                 boolean isVertical = Boolean.parseBoolean(inputs[3]);
                 if (inputs[4].equals("0"))
                     hostServer.sendToSpecificPlayer(requestedId, "tryPlaceWord", "0");
-                else
+                else {
                     tryPlaceWord(word, col, row, isVertical);
-                break;
+                    for (Character c : wordFromPlayers.toCharArray())
+                        connectedPlayers.get(requestedId).getTiles().remove(c);
+                    hostServer.sendToAllPlayers(requestedId, "numOfCardsUpdate", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
+                    hostServer.sendToSpecificPlayer(requestedId, "handUpdated", handToString(connectedPlayers.get(requestedId).getTiles()));
+                    break;
+                }
             }
             case "challenge" -> {
-                inputs = newrequest[2].split(",");
+                inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 if (inputs[1].equals("0")) {
-                    // update the board to the prevboard + return to the player that it's his turn to give him back the tiles that he tried to put
-                    // update the other players that the callenge return the answer "0"
-                    // update the players score to the score minus the score of the word
+                    board.setTiles(prevBoard); // Mekler on the road
+                    connectedPlayers.get(currentPlayerIndex).setScore(connectedPlayers.get(currentPlayerIndex).getScore() - lastWordScore);
+                    connectedPlayers.get(currentPlayerIndex).addTiles(wordFromPlayers);
+                    hostServer.sendToAllPlayers(requestedId, "challenge", "0");
+                    hostServer.sendToAllPlayers(0, "boardUpdated",boardToString(board));
+                    hostServer.sendToAllPlayers(0, "scoreChanged", String.valueOf(currentPlayerIndex) + "," + String.valueOf(connectedPlayers.get(currentPlayerIndex).getScore()));
                 } else {
-                    //update the player who did the challenge in the map - minus the score of the word
                     hostServer.sendToSpecificPlayer(requestedId, "challenge", "1");
-                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(myPlayer.getId()).getScore() -); // need the word score
-                    //update all the players that the challenge return 1
+                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
                     hostServer.sendToAllPlayers(requestedId, "challenge", "1");
                 }
                 break;
@@ -293,7 +348,7 @@ public class HostModel extends PlayerModel implements Observer {
                 break;
             }
             case "setBoardStatus" -> {
-                Tile[][] board = newrequest[2];
+                Character[][] board = boardToCharMatrix(newRequest[2]);
                 setBoardStatus(board);
                 break;
             }
