@@ -5,6 +5,9 @@ import Model.gameClasses.Tile;
 
 import java.util.*;
 
+/**
+ * Guest model class
+ */
 public class GuestModel extends PlayerModel implements Observer {
     // start to write the guest model-Benda
     // commit to jira
@@ -15,8 +18,13 @@ public class GuestModel extends PlayerModel implements Observer {
     HashMap<Integer, Integer> numberOfTilesMap;
     HashMap<Integer, String> playersNameMap;
 
-
-    GuestModel(String ip, int port, String name) { // build a model for a player that logged in, with the port and ip address of the host server.
+    /**
+     * build a model for the guest and connect to the host server using clientCommunication
+     * @param ip= ip of the host server
+     * @param port= port of the host server
+     * @param name= name of the player
+     */
+    GuestModel(String ip, int port, String name) {
         myPlayer=new Player(name);
         scoreMap = new HashMap<>();
         numberOfTilesMap = new HashMap<>();
@@ -29,8 +37,15 @@ public class GuestModel extends PlayerModel implements Observer {
         clientCommunication = new ClientCommunication(ip, port);
     }
 
+    /**
+     * will ask from the server to put a word on the board
+     * @param word- string of the word that the user is trying to put on the board
+     * @param col- index of the starting column of the word
+     * @param row- index of the starting row of the word
+     * @param isVertical- a boolean indicating if the word is vertical(true) or horizontal(false)
+     */
     @Override
-    public void tryPlaceWord(String word, int col, int row, boolean isVertical) { //sends to the host the request of the player to try and place a new word on the board
+    public void tryPlaceWord(String word, int col, int row, boolean isVertical) {
         String vertical = "0";
         if (isVertical)
             vertical = "1";
@@ -43,9 +58,12 @@ public class GuestModel extends PlayerModel implements Observer {
         clientCommunication.send(this.myPlayer.getId(), methodName, word, String.valueOf(col), String.valueOf(row), vertical);
     }
 
-
+    /**
+     * will ask from the server to challenge the word
+     * @param word- the word that will be sent to the server
+     */
     @Override
-    public void challenge(String word) { // sends to the host the request of the player to challenge the word
+    public void challenge(String word) {
         String methodName = new Object() {
         }
                 .getClass()
@@ -54,8 +72,11 @@ public class GuestModel extends PlayerModel implements Observer {
         clientCommunication.send(this.myPlayer.getId(), methodName, word);
     }
 
+    /**
+     * takeTileFromBag function that will ask from the server to take a tile from the bag
+     */
     @Override
-    public void takeTileFromBag() { // takes a tile from the bag and updates the tiles number in the bag
+    public void takeTileFromBag() {
         String methodName = new Object() {
         }
                 .getClass()
@@ -64,33 +85,58 @@ public class GuestModel extends PlayerModel implements Observer {
         clientCommunication.send(this.myPlayer.getId(), methodName);
     }
 
+    /**
+     * will update the board status
+     * @param board- represent the updated state of the board
+     */
     @Override
     public void setBoardStatus(Character[][] board) {// need to implement
         currentBoard = board;
     }
 
+    /**
+     *
+     * @return - the most updated state of the board
+     */
     @Override
     public Character[][] getBoardStatus() { // need to implement
         return currentBoard;
     }
 
+    /**
+     *
+     * @return - the current number of tiles in the bag
+     */
     @Override
     public int getNumberOfTilesInBag() {
         return numOfTileInBag;
 
     } // returns the number of tiles currently in the bag
 
+    /**
+     *
+     * @return - a map from a player's id to the player's score
+     */
     @Override
     public HashMap<Integer, Integer> getPlayersScores() { // map from player id to the player's scores
         return scoreMap;
     }
 
+    /**
+     *
+     * @return - a map from a player's id to the player's score
+     */
     @Override
     public HashMap<Integer, Integer> getPlayersNumberOfTiles() { //map from players id to the number of tiles that the player has in his hand
         return numberOfTilesMap;
     }
 
-    public Character[][] stringToBoard(String s) {
+    /**
+     *
+     * @param s - a string that represents the current state of the board
+     * @return - a matrix of characters that represent the "s" string
+     */
+    public Character[][] stringToCharacterMatrix(String s) {
         Character[][] updatedBoard = new Character[15][15];
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
@@ -100,11 +146,22 @@ public class GuestModel extends PlayerModel implements Observer {
         return updatedBoard;
     }
 
+    /**
+     *
+     * @return - the hand of the player
+     */
     @Override
     public List<Character> getMyHand() {
         return myPlayer.getTiles();
     }
 
+    /**
+     * receive updates from the observable object
+     * @Details cases: tryPlaceWord, challenge, startGame, boardUpdated, scoreUpdated, numOfTilesUpdated, setHand, newPlayerTurn, setId, playersListUpdated
+     * @param o     the observable object
+     * @param arg   an argument passed to the {@code notifyObservers}
+     *                 method.
+     */
     @Override
     public void update(Observable o, Object arg) { // are the notifyObservers messages ok?
         String argString = (String) arg;
@@ -118,7 +175,7 @@ public class GuestModel extends PlayerModel implements Observer {
                 notifyObservers(arg);
             }
             case "boardUpdated" -> {
-                currentBoard = stringToBoard(arguments[0]);
+                currentBoard = stringToCharacterMatrix(arguments[0]);
                 setChanged();
                 notifyObservers("boardUpdated");
             }
@@ -141,7 +198,8 @@ public class GuestModel extends PlayerModel implements Observer {
                 notifyObservers("setHand");
             }
             case "newPlayerTurn" -> {
-                setCurrentPlayerIndex(Integer.parseInt(arguments[0]); setChanged();
+                setCurrentPlayerIndex(Integer.parseInt(arguments[0]);
+                setChanged();
                 notifyObservers("newPlayerTurn");
             } case "setId" -> {
                 myPlayer.setId(Integer.parseInt(arguments[0]));
