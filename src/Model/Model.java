@@ -11,8 +11,6 @@ public interface Model {
     public void takeTileFromBag();
     public void passTheTurn();
 
-    public void setBoardStatus(Character[][] board);
-
     public Character[][] getBoardStatus();
     public int getNumberOfTilesInBag();
     public int getCurrentPlayerId();
