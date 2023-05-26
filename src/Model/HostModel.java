@@ -21,7 +21,7 @@ public class HostModel extends PlayerModel implements Observer {
 
     /**
      * method that return the host model itself
-     * @return hostmodel
+     * @return hostModel
      */
     public static HostModel getHost() {
         if (hostModel == null) {
