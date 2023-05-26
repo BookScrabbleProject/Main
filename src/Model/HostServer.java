@@ -66,9 +66,7 @@ public class HostServer extends Observable {
                 }//blocking call
             }
             close();
-        } catch (IOException e) {
-        } catch (InterruptedException e) {
-        }
+        } catch (IOException e) {}
 
     }
 
