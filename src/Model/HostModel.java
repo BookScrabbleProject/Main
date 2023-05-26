@@ -75,8 +75,8 @@ public class HostModel extends PlayerModel implements Observer {
             }
         playersIdsAndNames.deleteCharAt(playersIdsAndNames.length()-1);
         hostServer.addSocket(p.getId(),socket);
-        hostServer.sendToSpecificPlayer(-1,"setId",Integer.toString(p.getId()));
-        hostServer.sendToAllPlayers(-1,"newPlayerConnected",playersIdsAndNames.toString());
+        hostServer.sendToSpecificPlayer(p.getId(),"setId",Integer.toString(p.getId()));
+        hostServer.sendToAllPlayers(-1,"playersListUpdated",playersIdsAndNames.toString());
         hasChanged();
         String toNotify = requestedId + ":" + "addPlayer";
         notifyObservers(toNotify);
@@ -164,7 +164,9 @@ public class HostModel extends PlayerModel implements Observer {
             connectedPlayers.get(requestedId).addScore(lastWordScore);
             refillPlayerHand();
             hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
-            hostServer.sendToAllPlayers(0,"boardUpdated",boardToString(board));
+            hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
+            hostServer.sendToAllPlayers(-1,"boardUpdated",boardToString(board));
+
         }
         hasChanged();
         String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + score;
@@ -219,14 +221,15 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
-     * A method which increase the turns in the game and
+     * A method which increase the turns in the game
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      */
     @Override
     public void passTheTurn() {
         currentPlayerIndex++;
-        currentPlayerIndex %= 4;
+        currentPlayerIndex %= connectedPlayers.size();
         prevBoard = board.getTiles();
+        hostServer.sendToAllPlayers(-1,"newPlayerTurn", String.valueOf(currentPlayerIndex));
         hasChanged();
         String toNotify = requestedId + ":" + "passTheTurn";
         notifyObservers(toNotify);
@@ -238,9 +241,9 @@ public class HostModel extends PlayerModel implements Observer {
      *              notify to the binding objects by a format - requestedId + ":" +method + ":" + inputs
      */
     @Override
-    public void setBoardStatus(Character[][] board) {
+    public void setBoardStatus(Character[][] board) { // need to delete this method from the model and create it in the class itself
 
-        prevBoard = board; // how to create from char to tiles?
+        prevBoard = board;
 
         hasChanged();
         String toNotify = requestedId + ":" + "setBoardStatus" + ":" + Arrays.deepToString(board);
@@ -311,14 +314,17 @@ public class HostModel extends PlayerModel implements Observer {
                 int col = Integer.parseInt(inputs[1]);
                 int row = Integer.parseInt(inputs[2]);
                 boolean isVertical = Boolean.parseBoolean(inputs[3]);
-                if (inputs[4].equals("0"))
+                if (inputs[4].equals("0")) {
                     hostServer.sendToSpecificPlayer(requestedId, "tryPlaceWord", "0");
+                }
                 else {
                     tryPlaceWord(word, col, row, isVertical);
                     for (Character c : wordFromPlayers.toCharArray())
                         connectedPlayers.get(requestedId).getTiles().remove(c);
-                    hostServer.sendToAllPlayers(requestedId, "numOfCardsUpdate", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
+                    hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
                     hostServer.sendToSpecificPlayer(requestedId, "handUpdated", handToString(connectedPlayers.get(requestedId).getTiles()));
+                    hostServer.sendToAllPlayers(requestedId, "numOfCardsUpdate", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
+                    hostServer.sendToAllPlayers(requestedId,"tryPlaceWord","1");
                     break;
                 }
             }
@@ -329,47 +335,30 @@ public class HostModel extends PlayerModel implements Observer {
                     board.setTiles(prevBoard);
                     connectedPlayers.get(currentPlayerIndex).setScore(connectedPlayers.get(currentPlayerIndex).getScore() - lastWordScore);
                     connectedPlayers.get(currentPlayerIndex).addTiles(wordFromPlayers);
-                    hostServer.sendToAllPlayers(requestedId, "challenge", "0");
                     hostServer.sendToAllPlayers(0, "boardUpdated",boardToString(board));
+                    hostServer.sendToSpecificPlayer(currentPlayerIndex,"setHand",handToString(connectedPlayers.get(currentPlayerIndex).getTiles()));
+                    hostServer.sendToAllPlayers(currentPlayerIndex,"numOfCardsUpdate",connectedPlayers.get(currentPlayerIndex).getTiles().toString());
                     hostServer.sendToAllPlayers(0, "scoreChanged", String.valueOf(currentPlayerIndex) + "," + String.valueOf(connectedPlayers.get(currentPlayerIndex).getScore()));
+                    hostServer.sendToAllPlayers(requestedId, "challenge", "0");
                 } else {
-                    hostServer.sendToSpecificPlayer(requestedId, "challenge", "1");
+                    requestedId = currentPlayerIndex;
+                    refillPlayerHand();
                     connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
+                    hostServer.sendToSpecificPlayer(currentPlayerIndex,"setHand",handToString(connectedPlayers.get(currentPlayerIndex).getTiles()));
+                    hostServer.sendToAllPlayers(currentPlayerIndex,"numOfCardsUpdate",connectedPlayers.get(currentPlayerIndex).getTiles().toString());
+                    passTheTurn();
                     hostServer.sendToAllPlayers(requestedId, "challenge", "1");
+                    requestedId = -1;
                 }
                 break;
             }
             case "takeTileFromBag" -> {
+                requestedId = currentPlayerIndex;
                 takeTileFromBag();
-                break;
-            }
-            case "passTheTurn" -> {
+                hostServer.sendToSpecificPlayer(currentPlayerIndex,"setHand",handToString(connectedPlayers.get(currentPlayerIndex).getTiles()));                    hostServer.sendToAllPlayers(currentPlayerIndex,"numOfCardsUpdate",connectedPlayers.get(currentPlayerIndex).getTiles().toString());
+                hostServer.sendToAllPlayers(currentPlayerIndex,"numOfCardsUpdate",connectedPlayers.get(currentPlayerIndex).getTiles().toString());
                 passTheTurn();
-                break;
-            }
-            case "setBoardStatus" -> {
-                Character[][] board = boardToCharMatrix(newRequest[2]);
-                setBoardStatus(board);
-                break;
-            }
-            case "getBoardStatus" -> {
-                getBoardStatus();
-                break;
-            }
-            case "getNumberOfTilesInBag" -> {
-                getNumberOfTilesInBag();
-                break;
-            }
-            case "getPlayersScores" -> {
-                getPlayersScores();
-                break;
-            }
-            case "getPlayersNumberOfTiles" -> {
-                getPlayersNumberOfTiles();
-                break;
-            }
-            case "refillPlayerHand" -> {
-                refillPlayerHand();
+                requestedId = -1;
                 break;
             }
         }
