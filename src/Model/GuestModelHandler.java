@@ -18,7 +18,9 @@ public class GuestModelHandler implements ClientHandler {
             String[] splitted = line.split(":");
             String id = splitted[0];
             String methodName = splitted[1];
-            String inputs = splitted[2];
+            String inputs = "";
+            if(splitted.length > 2)
+                inputs = splitted[2];
             String answer;
             switch (methodName){
                 case "tryPlaceWord": {
