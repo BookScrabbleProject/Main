@@ -21,6 +21,7 @@ public class HostServer extends Observable {
     private final int bookScrabbleServerPort;
     private final String bookScrabbleServerIp;
     private final List<String> bookNames;
+    ServerSocket server = null;
 
     /***
      * HostServer constructor --> create a new HostServer
@@ -44,7 +45,6 @@ public class HostServer extends Observable {
      * runServer function --> to run the server and handle clients
      */
     private void runServer() {
-        ServerSocket server = null;
 
         try {
             server = new ServerSocket(myPort);
@@ -62,15 +62,10 @@ public class HostServer extends Observable {
                             e.printStackTrace();
                         }
                     }).start();
-
-
-
                 } catch (SocketTimeoutException e) {
-
                 }//blocking call
-                Thread.sleep(250);
             }
-            server.close();
+            close();
         } catch (IOException e) {
         } catch (InterruptedException e) {
         }
@@ -91,7 +86,7 @@ public class HostServer extends Observable {
     /***
      * close --> close the server and all the sockets
      */
-    void close() {
+    public void close() {
         stop();
         clientHandler.close();
         for (Socket socket : clientsSockets.values()) {
@@ -100,6 +95,11 @@ public class HostServer extends Observable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            server.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -195,6 +195,10 @@ public class HostServer extends Observable {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public void setChanged(){
+        setChanged();
     }
 
 }
