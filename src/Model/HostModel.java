@@ -31,6 +31,12 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
+     * @return the host server
+     */
+    public HostServer getHostServer() {
+        return hostServer;
+    }
+    /**
      * Default constructor method to the host model
      * @param gameServerIp - game server ip
      * @param gameServerPort - game server port
@@ -65,7 +71,7 @@ public class HostModel extends PlayerModel implements Observer {
         Player p = new Player(generateId(),null,0,null);
         connectedPlayers.put(p.getId(),p);
         StringBuilder playersIdsAndNames = new StringBuilder();
-        playersIdsAndNames.append(p.getId()).append("-").append(p.getName());
+        playersIdsAndNames.append(p.getId()).append("-").append(p.getName()).append(",");
         for (Integer id: connectedPlayers.keySet())
             if (id != p.getId())
             {
@@ -77,7 +83,7 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.addSocket(p.getId(),socket);
         hostServer.sendToSpecificPlayer(p.getId(),"setId",Integer.toString(p.getId()));
         hostServer.sendToAllPlayers(-1,"playersListUpdated",playersIdsAndNames.toString());
-        hasChanged();
+        setChanged();
         String toNotify = requestedId + ":" + "addPlayer";
         notifyObservers(toNotify);
    }
@@ -97,13 +103,12 @@ public class HostModel extends PlayerModel implements Observer {
 
     /**
      * method that change between board to string object
-     * @param b represent the board
+     * @param tilesBoard represent the board
      * @return the board in a string
      */
-   private String boardToString(Board b){
+   private String boardToString(Tile[][] tilesBoard){
        StringBuilder stringBoard = new StringBuilder();
-       Tile[][] theTiles = board.getTiles();
-       for (Tile[] theTile : theTiles)
+       for (Tile[] theTile : tilesBoard)
            for (Tile tile : theTile)
                stringBoard.append(tile.letter);
        return stringBoard.toString();
@@ -165,10 +170,10 @@ public class HostModel extends PlayerModel implements Observer {
             refillPlayerHand();
             hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
             hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
-            hostServer.sendToAllPlayers(-1,"boardUpdated",boardToString(board));
+            hostServer.sendToAllPlayers(-1,"boardUpdated",boardToString(board.getTiles()));
 
         }
-        hasChanged();
+        setChanged();
         String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + score;
         notifyObservers(toNotify);
     }
@@ -182,7 +187,7 @@ public class HostModel extends PlayerModel implements Observer {
     @Override
     public void challenge(String word) {
         hostServer.sendToBookScrabbleServer("C",word);
-        hasChanged();
+        setChanged();
         String toNotify = requestedId + ":" + "challenge" + ":" + word;
         notifyObservers(toNotify);
     }
@@ -197,7 +202,7 @@ public class HostModel extends PlayerModel implements Observer {
             requestedId = myPlayer.getId();
         Tile t = bag.getRand();
         connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
-        hasChanged();
+        setChanged();
         String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + "," + t.getScore();
         requestedId = -1;
     }
@@ -214,7 +219,7 @@ public class HostModel extends PlayerModel implements Observer {
             for (int i = numOfTiles; i <= 7; i++)
                 connectedPlayers.get(requestedId).addTiles(String.valueOf(bag.getRand().letter));
 
-        hasChanged();
+        setChanged();
         String toNotify = requestedId + ":" + "refillPlayerHand";
         notifyObservers(toNotify);
         requestedId = -1;
@@ -230,7 +235,7 @@ public class HostModel extends PlayerModel implements Observer {
         currentPlayerIndex %= connectedPlayers.size();
         prevBoard = board.getTiles();
         hostServer.sendToAllPlayers(-1,"newPlayerTurn", String.valueOf(currentPlayerIndex));
-        hasChanged();
+        setChanged();
         String toNotify = requestedId + ":" + "passTheTurn";
         notifyObservers(toNotify);
     }
@@ -241,12 +246,9 @@ public class HostModel extends PlayerModel implements Observer {
      *              notify to the binding objects by a format - requestedId + ":" +method + ":" + inputs
      */
     @Override
-    public void setBoardStatus(Character[][] board) { // need to delete this method from the model and create it in the class itself
-
-        prevBoard = board;
-
-        hasChanged();
-        String toNotify = requestedId + ":" + "setBoardStatus" + ":" + Arrays.deepToString(board);
+    public void setBoardStatus(Character[][] board) {
+        setChanged();
+        String toNotify = requestedId + ":" + "setBoardStatus" + ":" + boardToString(prevBoard);
         notifyObservers(toNotify);
     }
 
@@ -256,7 +258,7 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public Character[][] getBoardStatus() {
-        return boardToCharMatrix(boardToString(board));
+        return boardToCharMatrix(boardToString(board.getTiles()));
     }
 
     /**
@@ -335,10 +337,10 @@ public class HostModel extends PlayerModel implements Observer {
                     board.setTiles(prevBoard);
                     connectedPlayers.get(currentPlayerIndex).setScore(connectedPlayers.get(currentPlayerIndex).getScore() - lastWordScore);
                     connectedPlayers.get(currentPlayerIndex).addTiles(wordFromPlayers);
-                    hostServer.sendToAllPlayers(0, "boardUpdated",boardToString(board));
+                    hostServer.sendToAllPlayers(0, "boardUpdated",boardToString(board.getTiles()));
                     hostServer.sendToSpecificPlayer(currentPlayerIndex,"setHand",handToString(connectedPlayers.get(currentPlayerIndex).getTiles()));
                     hostServer.sendToAllPlayers(currentPlayerIndex,"numOfCardsUpdate",connectedPlayers.get(currentPlayerIndex).getTiles().toString());
-                    hostServer.sendToAllPlayers(0, "scoreChanged", String.valueOf(currentPlayerIndex) + "," + String.valueOf(connectedPlayers.get(currentPlayerIndex).getScore()));
+                    hostServer.sendToAllPlayers(0, "scoreChanged", currentPlayerIndex + "," + connectedPlayers.get(currentPlayerIndex).getScore());
                     hostServer.sendToAllPlayers(requestedId, "challenge", "0");
                 } else {
                     requestedId = currentPlayerIndex;
