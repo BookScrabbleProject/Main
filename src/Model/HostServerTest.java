@@ -149,15 +149,40 @@ public class HostServerTest {
             Thread.sleep(1000);
             printWriter.println("-1:connect: ");
             printWriter.flush();
-            Thread.sleep(10);
+            Thread.sleep(1000);
+            if(HostServerObserver.lastMessage.equals("-1:connect: ")){
+                System.out.println("testCheckForMessage passed (1)");
+            }else {
+                System.out.println("testCheckForMessage failed (1)");
+            }
+
+//            Thread.sleep(10);
             printWriter.println("0:connect: ");
             printWriter.flush();
-            Thread.sleep(10);
+            Thread.sleep(1000);
+            if(HostServerObserver.lastMessage.equals("0:connect: ")){
+                System.out.println("testCheckForMessage passed (2)");
+            }else {
+                System.out.println("testCheckForMessage failed (2)");
+            }
+
             printWriter.println("4:tryPlaceWord:farm,1,1,1");
             printWriter.flush();
-            Thread.sleep(10);
+            Thread.sleep(1000);
+            if(HostServerObserver.lastMessage.equals("4:tryPlaceWord:farm,1,1,1,0")){
+                System.out.println("testCheckForMessage passed (3)");
+            }else {
+                System.out.println("testCheckForMessage failed (3)");
+            }
+
             printWriter.println("4:challenge:farm");
             printWriter.flush();
+            Thread.sleep(1000);
+            if(HostServerObserver.lastMessage.equals("4:challenge:farm,0")){
+                System.out.println("testCheckForMessage passed (4)");
+            }else {
+                System.out.println("testCheckForMessage failed (4)");
+            }
 //            printWriter.println("5:tryPlaceWord:word,1,1,1");
 //            printWriter.println("5:challenge:word");
 //            printWriter.println("1:TEST:TEST");
@@ -197,7 +222,7 @@ public class HostServerTest {
 //        testCheckForMessage(server, hostModel,hostServerPort);
         System.out.println("<<< Finished testing checkForMessage in the server >>>");
 
-        Thread.sleep(1000);
+        Thread.sleep(10000);
 //        server.stop();
 //        hostModel.hostServer.stop();
 //        System.out.println("servers stopped");
@@ -205,7 +230,7 @@ public class HostServerTest {
     }
 
     public static class HostServerObserver implements Observer {
-        public String lastMessage = null;
+        public static String lastMessage = null;
         public HostServerObserver(HostServer hostServer) {
             hostServer.addObserver(this);
         }
