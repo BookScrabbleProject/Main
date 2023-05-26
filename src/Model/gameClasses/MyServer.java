@@ -28,6 +28,7 @@ public class MyServer {
             while (!stop) {
                 try {
                     Socket aClient = server.accept();
+
                     try{
                         ch.handleClient(aClient.getInputStream(), aClient.getOutputStream());
                         aClient.getInputStream().close();

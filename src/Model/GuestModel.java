@@ -10,6 +10,7 @@ public class GuestModel extends PlayerModel implements Observer {
     Tile[][] boardStatus;
     int numberOfTilesInBag;
 
+
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) {
 
