@@ -23,17 +23,21 @@ public class HostServerTest {
 //            HostModel hostModel = HostModel.getHost();
             Thread.sleep(10);
             Socket socket = new Socket("localhost", hostServerPort);
-            socket.getOutputStream().write("-1:connect: ".getBytes());
+            PrintWriter pw1 = new PrintWriter(socket.getOutputStream());
+            pw1.println("-1:connect: ");
+            pw1.flush();
             Thread.sleep(10);
             Socket socket2 = new Socket("localhost", hostServerPort);
-            socket2.getOutputStream().write("-1:connect: ".getBytes());
+            PrintWriter pw2 = new PrintWriter(socket2.getOutputStream());
+            pw2.println("-1:connect: ");
+            pw2.flush();
             Thread.sleep(10);
             hostModel.hostServer.sendToAllPlayers(1, "test", "test");
 
             Scanner scanner = new Scanner(socket.getInputStream());
             Scanner scanner2 = new Scanner(socket2.getInputStream());
-            String line = scanner.nextLine();
-            String line2 = scanner2.nextLine();
+            String line = scanner.next();
+            String line2 = scanner2.next();
             if (!line.equals("1:test:test") || !line2.equals("1:test:test")) {
                 System.out.println("testSendToAllPlayers failed (1)");
             } else {
@@ -41,10 +45,11 @@ public class HostServerTest {
             }
 
             hostModel.hostServer.sendToAllPlayers(1, "test2", "test");
-            line = scanner.nextLine();
-            line2 = scanner2.nextLine();
+            line = scanner.next();
+            line2 = scanner2.next();
             if (!line.equals("1:test2:test") || !line2.equals("1:test2:test")) {
                 System.out.println("testSendToAllPlayers failed (2)");
+                System.out.println("line: " + line + " line2: " + line2);
             } else {
                 System.out.println("testSendToAllPlayers passed (2)");
             }
@@ -140,15 +145,24 @@ public class HostServerTest {
             Thread.sleep(1000);
             Socket socket = new Socket("localhost", hostServerPort);
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
-            printWriter.flush();
+
             Thread.sleep(1000);
-//            printWriter.println("-1:connect: ");
-//            Thread.sleep(500);
-            printWriter.println("5:tryPlaceWord:word,1,1,1");
+            printWriter.println("-1:connect: ");
+            printWriter.flush();
+            Thread.sleep(10);
+            printWriter.println("0:connect: ");
+            printWriter.flush();
+            Thread.sleep(10);
+            printWriter.println("4:tryPlaceWord:farm,1,1,1");
+            printWriter.flush();
+            Thread.sleep(10);
+            printWriter.println("4:challenge:farm");
+            printWriter.flush();
+//            printWriter.println("5:tryPlaceWord:word,1,1,1");
 //            printWriter.println("5:challenge:word");
 //            printWriter.println("1:TEST:TEST");
-            printWriter.flush();
-            Thread.sleep(500);
+//            printWriter.flush();
+//            Thread.sleep(500);
 //            printWriter.flush();
 
 
@@ -159,23 +173,28 @@ public class HostServerTest {
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        MyServer server = new MyServer(3001, new BookScrabbleHandler());
+        MyServer server = new MyServer(6000, new BookScrabbleHandler());
+        server.start();
+        Thread.sleep(1000);
         HostModel hostModel = HostModel.getHost();
         HostServerObserver hostServerObserver = new HostServerObserver(hostModel.hostServer);
-        int hostServerPort = 3000;
+        int hostServerPort = 8080;
 
         System.out.println(">>> testing sendToAllPlayers... <<<");
-        testSendToAllPlayers(server, hostModel,hostServerPort);
+        new Thread(()->{testSendToAllPlayers(server, hostModel,hostServerPort);}).start();
+//        testSendToAllPlayers(server, hostModel,hostServerPort);
         System.out.println("<<< Finished testing sendToAllPlayers >>>");
 
         Thread.sleep(1000);
 
         System.out.println("\n>>> testing sendToSpecificPlayer... <<<");
-        testSendToSpecificPlayer(server, hostModel,hostServerPort);
+        new Thread(()-> {testSendToSpecificPlayer(server, hostModel,hostServerPort);}).start();
+//        testSendToSpecificPlayer(server, hostModel,hostServerPort);
         System.out.println("<<< Finished testing sendToSpecificPlayer >>>");
-
+        Thread.sleep(5000);
         System.out.println("\n>>> testing checkForMessage in the server... <<<");
-        testCheckForMessage(server, hostModel,hostServerPort);
+        new Thread(()-> {testCheckForMessage(server, hostModel,hostServerPort);}).start();
+//        testCheckForMessage(server, hostModel,hostServerPort);
         System.out.println("<<< Finished testing checkForMessage in the server >>>");
 
         Thread.sleep(1000);
@@ -186,13 +205,14 @@ public class HostServerTest {
     }
 
     public static class HostServerObserver implements Observer {
-
+        public String lastMessage = null;
         public HostServerObserver(HostServer hostServer) {
             hostServer.addObserver(this);
         }
         @Override
         public void update(Observable o, Object arg) {
-            System.out.println("HostServerObserver: " + arg);
+//            System.out.println("HostServerObserver: " + arg);
+            lastMessage = (String) arg;
         }
     }
 }
