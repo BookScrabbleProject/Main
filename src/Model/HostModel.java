@@ -179,7 +179,7 @@ public class HostModel extends PlayerModel implements Observer {
      * @param word       a string that represent the word that the player want to place on the board
      * @param col        represent the starting col of the word in the board
      * @param row        represent the starting row of the word in the board
-     * @param isVertical represrmt if the word is vertical or not with boolean paramater
+     * @param isVertical represent if the word is vertical or not with boolean parameter
      */
 
 
@@ -189,7 +189,10 @@ public class HostModel extends PlayerModel implements Observer {
         List<Tile> t = new ArrayList<>();
         for (char c : word.toCharArray())
             t.add(Tile.Bag.getBag().getTile(c));
-        Word w = new Word((Tile[]) t.toArray(), row, col, isVertical);
+        Tile[] tilesArray = new Tile[t.size()];
+        for (int i = 0; i < t.size(); i++)
+            tilesArray[i] = t.get(i);
+        Word w = new Word(tilesArray, row, col, isVertical);
         hostServer.sendToBookScrabbleServer("Q",word);
         int score = board.tryPlaceWord(w);
         lastWordScore = score;
@@ -209,7 +212,7 @@ public class HostModel extends PlayerModel implements Observer {
 
     /**
      * A method which check if the word is valid or not
-     * send the information to the handler with the method sendtohandler()
+     * send the information to the handler with the method sendToHandler()
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      * @param word a given word to check if it valid or not
      */
@@ -269,7 +272,7 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
-     * A method that set the prevboard to the new state of the board and notify to the other players that the board has changed
+     * A method that set the prev-board to the new state of the board and notify to the other players that the board has changed
      *              notify to the binding objects by a format - requestedId + ":" +method + ":" + inputs
      */
     public void setBoardStatus() {
@@ -339,7 +342,6 @@ public class HostModel extends PlayerModel implements Observer {
         requestedId = Integer.parseInt(newRequest[0]);
         String methodName = newRequest[1];
         String[] inputs = null;
-
         switch (methodName) {
             case "tryPlaceWord" -> {
                 inputs = newRequest[2].split(",");
