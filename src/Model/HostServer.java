@@ -21,7 +21,7 @@ public class HostServer extends Observable {
     ServerSocket server = null;
 
     /***
-     * HostServer constructor --> create a new HostServer
+     * HostServer constructor --> create a new HostServer.
      * @param myPort --> the port of the HostServer
      * @param gameServerIp --> the ip of the game server
      * @param gameServerPort --> the port of the game server
