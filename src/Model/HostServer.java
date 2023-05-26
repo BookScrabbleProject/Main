@@ -8,10 +8,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 public class HostServer extends Observable {
     HashMap<Integer, Socket> clientsSockets;
@@ -196,7 +193,7 @@ public class HostServer extends Observable {
     }
 
     public void setChanged(){
-        setChanged();
+        super.setChanged();
     }
 
 }
