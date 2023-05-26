@@ -44,6 +44,7 @@ public class GuestModel extends PlayerModel implements Observer {
      * @param row- index of the starting row of the word
      * @param isVertical- a boolean indicating if the word is vertical(true) or horizontal(false)
      */
+
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) {
         String vertical = "0";
@@ -89,7 +90,7 @@ public class GuestModel extends PlayerModel implements Observer {
      * will update the board status
      * @param board- represent the updated state of the board
      */
-    @Override
+
     public void setBoardStatus(Character[][] board) {// need to implement
         currentBoard = board;
     }
@@ -175,7 +176,7 @@ public class GuestModel extends PlayerModel implements Observer {
                 notifyObservers(arg);
             }
             case "boardUpdated" -> {
-                currentBoard = stringToCharacterMatrix(arguments[0]);
+                setBoardStatus(stringToCharacterMatrix(arguments[0]));
                 setChanged();
                 notifyObservers("boardUpdated");
             }
@@ -198,7 +199,7 @@ public class GuestModel extends PlayerModel implements Observer {
                 notifyObservers("setHand");
             }
             case "newPlayerTurn" -> {
-                setCurrentPlayerIndex(Integer.parseInt(arguments[0]);
+                setCurrentPlayerId(Integer.parseInt(arguments[0]));
                 setChanged();
                 notifyObservers("newPlayerTurn");
             } case "setId" -> {
