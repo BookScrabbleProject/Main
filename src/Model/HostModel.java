@@ -65,7 +65,7 @@ public class HostModel extends PlayerModel implements Observer {
     /**
      * method that add player to the game and create player, add the player to the map and create a string builder of ids
      * Sends the information to the hostServer and notify with the format : requestedId + ":" + method + ":" + inputs
-     * @param socket - socket parameter that send to the hostserver
+     * @param socket - socket parameter that send to the hostServer
      */
    public void addPlayer(Socket socket){
         Player p = new Player(generateId(),null,0,null);
