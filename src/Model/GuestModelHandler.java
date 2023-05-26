@@ -25,8 +25,8 @@ public class GuestModelHandler implements ClientHandler {
                     Socket bookScrabbleServerSocket = hostServer.sendToBookScrabbleServer("Q", inputs.split(",")[0]);
                     Scanner scanner = new Scanner(bookScrabbleServerSocket.getInputStream());
                     answer = scanner.next();
-                    hostServer.hasChanged();
-                    hostServer.notifyObservers(id + ":" + "tryPlaceWord:" + inputs + "," + answer.toString());
+                    hostServer.setChanged();
+                    hostServer.notifyObservers(line+','+(Boolean.getBoolean(answer) ? "1" : "0"));
                     break;
 
                 }
@@ -34,13 +34,13 @@ public class GuestModelHandler implements ClientHandler {
                     Socket bookScrabbleServerSocket = hostServer.sendToBookScrabbleServer("C", inputs.split(",")[0]);
                     Scanner scanner = new Scanner(bookScrabbleServerSocket.getInputStream());
                     answer = scanner.next();
-                    hostServer.hasChanged();
-                    hostServer.notifyObservers(id + ":" + "challenge:" + inputs + "," + answer.toString());
+                    hostServer.setChanged();
+                    hostServer.notifyObservers(line+','+(Boolean.getBoolean(answer) ? "1" : "0");
                     break;
 
                 }
                 default:
-                    hostServer.hasChanged();
+                    hostServer.setChanged();
                     hostServer.notifyObservers(line);
 
 
