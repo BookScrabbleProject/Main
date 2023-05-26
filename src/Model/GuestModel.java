@@ -1,76 +1,72 @@
 package Model;
 
+import Model.gameClasses.Player;
 import Model.gameClasses.Tile;
 
 import java.util.*;
 
 public class GuestModel extends PlayerModel implements Observer {
-   // start to write the guest model-Benda
- // commit to jira
+    // start to write the guest model-Benda
+    // commit to jira
     ClientCommunication clientCommunication;
     int numOfTileInBag;
     Character[][] currentBoard;
-    HashMap<Integer,Integer> scoreMap;
-    HashMap<Integer,Integer> numberOfTilesMap;
+    HashMap<Integer, Integer> scoreMap;
+    HashMap<Integer, Integer> numberOfTilesMap;
+    HashMap<Integer, String> playersNameMap;
 
 
-    GuestModel(String ip,int port,String name){ // build a model for a player that logged in, with the port and ip address of the host server.
-        //super(name); Mekler ya maniyyak
-        scoreMap=new HashMap<>();
-        numberOfTilesMap=new HashMap<>();
-        numOfTileInBag=0;
-        currentBoard=new Character[15][15];
-        for(int i=0;i<15;i++)
-        {
+    GuestModel(String ip, int port, String name) { // build a model for a player that logged in, with the port and ip address of the host server.
+        myPlayer=new Player(name);
+        scoreMap = new HashMap<>();
+        numberOfTilesMap = new HashMap<>();
+        playersNameMap = new HashMap<>();
+        numOfTileInBag = 0;
+        currentBoard = new Character[15][15];
+        for (int i = 0; i < 15; i++) {
             Arrays.fill(currentBoard[i], '_');
         }
-        clientCommunication=new ClientCommunication(ip,port);
+        clientCommunication = new ClientCommunication(ip, port);
     }
 
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) { //sends to the host the request of the player to try and place a new word on the board
-    String vertical="0";
-        if(isVertical)
-            vertical="1";
+        String vertical = "0";
+        if (isVertical)
+            vertical = "1";
 
-        String methodName = new Object() {}
+        String methodName = new Object() {
+        }
                 .getClass()
                 .getEnclosingMethod()
                 .getName();
-        clientCommunication.send(this.myPlayer.getId(),methodName,word,String.valueOf(col),String.valueOf(row),vertical);
+        clientCommunication.send(this.myPlayer.getId(), methodName, word, String.valueOf(col), String.valueOf(row), vertical);
     }
 
 
- @Override
+    @Override
     public void challenge(String word) { // sends to the host the request of the player to challenge the word
-     String methodName = new Object() {}
-             .getClass()
-             .getEnclosingMethod()
-             .getName();
-     clientCommunication.send(this.myPlayer.getId(),methodName,word);
+        String methodName = new Object() {
+        }
+                .getClass()
+                .getEnclosingMethod()
+                .getName();
+        clientCommunication.send(this.myPlayer.getId(), methodName, word);
     }
 
     @Override
     public void takeTileFromBag() { // takes a tile from the bag and updates the tiles number in the bag
-        String methodName = new Object() {}
+        String methodName = new Object() {
+        }
                 .getClass()
                 .getEnclosingMethod()
                 .getName();
-    clientCommunication.send(this.myPlayer.getId(),methodName);
-    }
-
-    @Override
-    public void passTheTurn() { //switch the turn to the next player
-        String methodName = new Object() {}
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(),methodName);
+        clientCommunication.send(this.myPlayer.getId(), methodName);
     }
 
     @Override
     public void setBoardStatus(Character[][] board) {// need to implement
-        currentBoard=board;
+        currentBoard = board;
     }
 
     @Override
@@ -90,65 +86,80 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     @Override
-    public HashMap<Integer, Integer> getPlayersNumberOfTiles() { //map from players id to the number of tiles that the player has
+    public HashMap<Integer, Integer> getPlayersNumberOfTiles() { //map from players id to the number of tiles that the player has in his hand
         return numberOfTilesMap;
     }
 
-    public void refillPlayerHand(){
-        String methodName = new Object() {}
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(),methodName);
+    public Character[][] stringToBoard(String s) {
+        Character[][] updatedBoard = new Character[15][15];
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                updatedBoard[i][j] = s.charAt((15 * i) + j);
+            }
+        }
+        return updatedBoard;
     }
 
     @Override
     public List<Character> getMyHand() {
-        return null;
+        return myPlayer.getTiles();
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        String argString=(String)arg;
-        String[] splitedArgString = argString.split(",");
-        int id=Integer.parseInt(splitedArgString[0]);
-        String methodName=splitedArgString[1];
-        String[] arguments=splitedArgString[2].split(",");
-        switch(methodName){
-            case "setId":
+    public void update(Observable o, Object arg) { // are the notifyObservers messages ok?
+        String argString = (String) arg;
+        String[] splitedArgString = argString.split(":");
+        int id = Integer.parseInt(splitedArgString[0]);
+        String methodName = splitedArgString[1];
+        String[] arguments = splitedArgString[2].split(",");
+        switch (methodName) {
+            case "tryPlaceWord", "challenge", "startGame" -> {// notify with id,success/fail,list of the words-args
+                setChanged();
+                notifyObservers(arg);
+            }
+            case "boardUpdated" -> {
+                currentBoard = stringToBoard(arguments[0]);
+                setChanged();
+                notifyObservers("boardUpdated");
+            }
+            case "scoreUpdated" -> {
+                scoreMap.put(id, Integer.parseInt(arguments[0]));
+                setChanged();
+                notifyObservers("scoreUpdated");
+            }
+            case "numOfTilesUpdated" -> {
+                numberOfTilesMap.put(id, Integer.parseInt(arguments[0]));
+                setChanged();
+                notifyObservers("numOfTilesUpdated");
+            }
+            case "setHand" -> { //
+                List<Character> newHand = new ArrayList<>();
+                for (int i = 0; i < arguments[0].length(); i++)
+                    newHand.add((Character) arguments[0].charAt(i));
+                this.myPlayer.setHand(newHand);
+                setChanged();
+                notifyObservers("setHand");
+            }
+            case "newPlayerTurn" -> {
+                setCurrentPlayerIndex(Integer.parseInt(arguments[0]); setChanged();
+                notifyObservers("newPlayerTurn");
+            } case "setId" -> {
                 myPlayer.setId(Integer.parseInt(arguments[0]));
-                break;
-            case"newPlayerConnected":
-                for (String ids:arguments) {
-                    scoreMap.put(Integer.parseInt(ids),0);
-                    numberOfTilesMap.put(Integer.parseInt(ids),0);// either 0 or 7 depends if we create the hand before the game started.
-                    break;
+                setChanged();
+                notifyObservers("setId");
+            }
+            case "playersListUpdated" -> {
+                String[] newPlayer = arguments[0].split("-");
+                for (String player : arguments) {
+                    int playerId = Integer.parseInt(player.split("-")[0]);
+                    String playerName = player.split("-")[1];
+                    scoreMap.put(playerId, 0);
+                    numberOfTilesMap.put(playerId, 0);// either 0 or 7 depends if we create the hand before the game started.
+                    playersNameMap.put(playerId, playerName);
                 }
-            case"tryPlaceWord":
-            {
-                if(arguments[0].equals("1"))
-                    refillPlayerHand();
-                else // let him put another word? or pass the turn automaticaly-take a tile from the bag and pass the turn
-                    takeTileFromBag();
-                passTheTurn();
-                break;
+                setChanged();
+                notifyObservers("playersListUpdated:" + newPlayer[1]);
             }
-            case"challenge":
-            {
-                if(arguments[0].equals("1")) // need to update the player who challenged score, and decrease the player that put the word score
-                break;
-            }
-            case "takeTileFromBag": { // the host adds me a tile, or i get char and score and add them as a new Tile to my hand
-                myPlayer.addTile(new Tile(arguments[0],Integer.parseInt(arguments[1]))); //כושילדודה של זה
-                break;
-            }
-
-
-            case "refillPlayerHand": {
-
-                break;
-            }
-
         }
     }
 }
