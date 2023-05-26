@@ -12,9 +12,9 @@ public class GuestModelHandler implements ClientHandler {
         HostServer hostServer = HostModel.getHost().hostServer;
         String[] args = null;
         try{
-            BufferedReader readFromGuest = new BufferedReader(new InputStreamReader(inFromclient));
+            Scanner lineScanner =  new Scanner(new BufferedReader(new InputStreamReader(inFromclient)));
             PrintWriter sendToGuest = new PrintWriter(outToClient);
-            line = readFromGuest.readLine();
+            line = lineScanner.next();
             String[] splitted = line.split(":");
             String id = splitted[0];
             String methodName = splitted[1];
