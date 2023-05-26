@@ -8,16 +8,16 @@ import java.util.Observable;
 
 abstract public class PlayerModel extends Observable  implements Model {
     Player myPlayer;
-    int currentPlayerIndex;
+    int currentPlayerId;
     boolean isGameFinished;
 
     public List<Character> getMyTiles() {
         return myPlayer.getTiles();
     }
     public void setCurrentPlayerId(int currentPlayerId) {
-        this.currentPlayerIndex = currentPlayerId;
+        this.currentPlayerId = currentPlayerId;
     }
     public int getCurrentPlayerId(){
-        return currentPlayerIndex;
+        return currentPlayerId;
     }
 }
