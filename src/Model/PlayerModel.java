@@ -14,6 +14,9 @@ abstract public class PlayerModel extends Observable  implements Model {
     public List<Character> getMyTiles() {
         return myPlayer.getTiles();
     }
+    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+        this.currentPlayerIndex = currentPlayerIndex;
+    }
     public int getCurrentPlayerId(){
         return currentPlayerIndex;
     }
