@@ -8,10 +8,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 public class HostServer extends Observable {
     HashMap<Integer, Socket> clientsSockets;
@@ -21,9 +18,10 @@ public class HostServer extends Observable {
     private final int bookScrabbleServerPort;
     private final String bookScrabbleServerIp;
     private final List<String> bookNames;
+    ServerSocket server = null;
 
     /***
-     * HostServer constructor --> create a new HostServer
+     * HostServer constructor --> create a new HostServer.
      * @param myPort --> the port of the HostServer
      * @param gameServerIp --> the ip of the game server
      * @param gameServerPort --> the port of the game server
@@ -44,29 +42,28 @@ public class HostServer extends Observable {
      * runServer function --> to run the server and handle clients
      */
     private void runServer() {
-        ServerSocket server = null;
+
         try {
             server = new ServerSocket(myPort);
             new Thread(this::checkForMessages).start();
+            server.setSoTimeout(1000);
             while (!stop) {
                 try {
                     Socket aClient = server.accept();
                     HostModel.getHost().addPlayer(aClient);
 
-                    try {
-                        clientHandler.handleClient(aClient.getInputStream(), aClient.getOutputStream());
-                    } catch (IOException e) {
-                    }
+                    new Thread(()->{
+                        try {
+                            clientHandler.handleClient(aClient.getInputStream(), aClient.getOutputStream());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
                 } catch (SocketTimeoutException e) {
-
                 }//blocking call
-                Thread.sleep(250);
             }
-            server.close();
-        } catch (IOException e) {
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+            close();
+        } catch (IOException e) {}
 
     }
 
@@ -84,7 +81,7 @@ public class HostServer extends Observable {
     /***
      * close --> close the server and all the sockets
      */
-    void close() {
+    public void close() {
         stop();
         clientHandler.close();
         for (Socket socket : clientsSockets.values()) {
@@ -93,6 +90,11 @@ public class HostServer extends Observable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            server.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -133,7 +135,7 @@ public class HostServer extends Observable {
      * @param type --> "Q" for query or "C" for challenge
      * @param word --> the word to be queried or challenged
      */
-    public void sendToBookScrabbleServer(String type, String word) {
+    public Socket sendToBookScrabbleServer(String type, String word) {
         try {
             Socket bookScrabbleServer = new Socket(bookScrabbleServerIp, bookScrabbleServerPort);
             PrintWriter out = new PrintWriter(bookScrabbleServer.getOutputStream());
@@ -145,9 +147,11 @@ public class HostServer extends Observable {
             msg.append(word);
             out.println(msg.toString());
             out.flush();
+            return bookScrabbleServer;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     /***
@@ -187,8 +191,9 @@ public class HostServer extends Observable {
             }
         }
     }
-    public Socket getSocketToGameServer(){
 
+    public void setChanged(){
+        super.setChanged();
     }
 
 }
