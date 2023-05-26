@@ -24,7 +24,7 @@ public class GuestModel extends PlayerModel implements Observer {
      * @param port= port of the host server
      * @param name= name of the player
      */
-    GuestModel(String ip, int port, String name) {
+    public GuestModel(String ip, int port, String name) {
         myPlayer=new Player(name);
         scoreMap = new HashMap<>();
         numberOfTilesMap = new HashMap<>();
