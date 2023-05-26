@@ -258,7 +258,6 @@ public class HostModel extends PlayerModel implements Observer {
      * A method which increase the turns in the game
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      */
-    @Override
     public void passTheTurn() {
         currentPlayerId++;
         currentPlayerId %= connectedPlayers.size();
@@ -319,6 +318,11 @@ public class HostModel extends PlayerModel implements Observer {
         for (Integer idP : connectedPlayers.keySet())
             playerNumOfTiles.put(idP, myPlayer.getTiles().size());
         return playerNumOfTiles;
+    }
+
+    @Override
+    public List<Character> getMyHand() {
+        return super.getMyTiles();
     }
 
     /**
