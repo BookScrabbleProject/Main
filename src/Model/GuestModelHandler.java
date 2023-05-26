@@ -35,7 +35,7 @@ public class GuestModelHandler implements ClientHandler {
                     Scanner scanner = new Scanner(bookScrabbleServerSocket.getInputStream());
                     answer = scanner.next();
                     hostServer.setChanged();
-                    hostServer.notifyObservers(line+','+(Boolean.getBoolean(answer) ? "1" : "0");
+                    hostServer.notifyObservers(line+','+(Boolean.getBoolean(answer) ? "1" : "0"));
                     break;
 
                 }
