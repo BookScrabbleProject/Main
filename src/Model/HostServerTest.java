@@ -142,11 +142,8 @@ public class HostServerTest {
     public static void testCheckForMessage(MyServer server, HostModel hostModel, int hostServerPort) {
         try {
 //            hostModel.removeAllPlayers();
-            Thread.sleep(1000);
             Socket socket = new Socket("localhost", hostServerPort);
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
-
-            Thread.sleep(1000);
             printWriter.println("-1:connect: ");
             printWriter.flush();
             Thread.sleep(1000);
@@ -207,20 +204,16 @@ public class HostServerTest {
 
         System.out.println(">>> testing sendToAllPlayers... <<<");
         new Thread(()->{testSendToAllPlayers(server, hostModel,hostServerPort);}).start();
-//        testSendToAllPlayers(server, hostModel,hostServerPort);
-        System.out.println("<<< Finished testing sendToAllPlayers >>>");
 
         Thread.sleep(1000);
 
         System.out.println("\n>>> testing sendToSpecificPlayer... <<<");
         new Thread(()-> {testSendToSpecificPlayer(server, hostModel,hostServerPort);}).start();
-//        testSendToSpecificPlayer(server, hostModel,hostServerPort);
-        System.out.println("<<< Finished testing sendToSpecificPlayer >>>");
-        Thread.sleep(5000);
+
+        Thread.sleep(2000);
+
         System.out.println("\n>>> testing checkForMessage in the server... <<<");
         new Thread(()-> {testCheckForMessage(server, hostModel,hostServerPort);}).start();
-//        testCheckForMessage(server, hostModel,hostServerPort);
-        System.out.println("<<< Finished testing checkForMessage in the server >>>");
 
         Thread.sleep(10000);
 //        server.stop();
