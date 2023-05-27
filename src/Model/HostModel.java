@@ -63,8 +63,12 @@ public class HostModel extends PlayerModel implements Observer {
      * @param gameServerIp this parameter is the ip of the server
      * @param gameServerPort this parameter is the port of the server
      * @param myPort this is my own port to the connection between the hostModel and the server
+     * add host server to the observer
      */
-    public void connectToBookScrabbleServer(int myPort,String gameServerIp,Integer gameServerPort){hostServer = new HostServer(myPort,new GuestModelHandler(),gameServerIp,gameServerPort);}
+    public void connectToBookScrabbleServer(int myPort,String gameServerIp,Integer gameServerPort){
+        hostServer = new HostServer(myPort,new GuestModelHandler(),gameServerIp,gameServerPort);
+        hostServer.addObserver(this);
+    }
 
     /**
      * method that add player to the game and create player, add the player to the map and create a string builder of ids
