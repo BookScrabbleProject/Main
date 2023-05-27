@@ -333,7 +333,7 @@ public class HostModel extends PlayerModel implements Observer {
                         connectedPlayers.get(requestedId).getTiles().remove(c);
                     hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
                     hostServer.sendToSpecificPlayer(requestedId, "handUpdated", handToString(connectedPlayers.get(requestedId).getTiles()));
-                    hostServer.sendToAllPlayers(requestedId, "numOfCardsUpdate", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
+                    hostServer.sendToAllPlayers(requestedId, "numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
                     hostServer.sendToAllPlayers(requestedId,"tryPlaceWord","1");
                     break;
                 }
@@ -347,7 +347,7 @@ public class HostModel extends PlayerModel implements Observer {
                     connectedPlayers.get(currentPlayerId).addTiles(wordFromPlayers);
                     hostServer.sendToAllPlayers(0, "boardUpdated",boardToString(board.getTiles()));
                     hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                    hostServer.sendToAllPlayers(currentPlayerId,"numOfCardsUpdate",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
                     hostServer.sendToAllPlayers(0, "scoreChanged", currentPlayerId + "," + connectedPlayers.get(currentPlayerId).getScore());
                     hostServer.sendToAllPlayers(requestedId, "challenge", "0");
                 } else {
@@ -355,7 +355,7 @@ public class HostModel extends PlayerModel implements Observer {
                     refillPlayerHand();
                     connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
                     hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                    hostServer.sendToAllPlayers(currentPlayerId,"numOfCardsUpdate",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
                     passTheTurn();
                     hostServer.sendToAllPlayers(requestedId, "challenge", "1");
                     requestedId = -1;
@@ -366,8 +366,8 @@ public class HostModel extends PlayerModel implements Observer {
                 requestedId = currentPlayerId;
                 takeTileFromBag();
                 hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                hostServer.sendToAllPlayers(currentPlayerId,"numOfCardsUpdate",connectedPlayers.get(currentPlayerId).getTiles().toString());
-                hostServer.sendToAllPlayers(currentPlayerId,"numOfCardsUpdate",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
                 passTheTurn();
                 requestedId = -1;
                 break;
