@@ -1,7 +1,6 @@
 package Model;
 
 import Model.gameClasses.Player;
-import Model.gameClasses.Tile;
 
 import java.util.*;
 
@@ -9,8 +8,7 @@ import java.util.*;
  * Guest model class
  */
 public class GuestModel extends PlayerModel implements Observer {
-    // start to write the guest model-Benda
-    // commit to jira
+
     ClientCommunication clientCommunication;
     int numOfTileInBag;
     Character[][] currentBoard;
@@ -114,7 +112,7 @@ public class GuestModel extends PlayerModel implements Observer {
     public int getNumberOfTilesInBag() {
         return numOfTileInBag;
 
-    } // returns the number of tiles currently in the bag
+    }
 
     /**
      *
@@ -174,14 +172,14 @@ public class GuestModel extends PlayerModel implements Observer {
      *                 method.
      */
     @Override
-    public void update(Observable o, Object arg) { // are the notifyObservers messages ok?
+    public void update(Observable o, Object arg) {
         String argString = (String) arg;
         String[] splitedArgString = argString.split(":");
         int id = Integer.parseInt(splitedArgString[0]);
         String methodName = splitedArgString[1];
         String[] arguments = splitedArgString[2].split(",");
         switch (methodName) {
-            case "tryPlaceWord", "challenge", "startGame" -> {// notify with id,success/fail,list of the words-args
+            case "tryPlaceWord", "challenge", "startGame" -> {
                 setChanged();
                 notifyObservers(arg);
             }
@@ -223,7 +221,7 @@ public class GuestModel extends PlayerModel implements Observer {
                     int playerId = Integer.parseInt(player.split("-")[0]);
                     String playerName = player.split("-")[1];
                     scoreMap.put(playerId, 0);
-                    numberOfTilesMap.put(playerId, 0);// either 0 or 7 depends if we create the hand before the game started.
+                    numberOfTilesMap.put(playerId, 0);
                     playersNameMap.put(playerId, playerName);
                 }
                 setChanged();
