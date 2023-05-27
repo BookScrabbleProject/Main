@@ -16,6 +16,7 @@ public class GuestModel extends PlayerModel implements Observer {
     Character[][] currentBoard;
     HashMap<Integer, Integer> scoreMap;
     HashMap<Integer, Integer> numberOfTilesMap;
+
     HashMap<Integer, String> playersNameMap;
 
     /**
@@ -35,6 +36,7 @@ public class GuestModel extends PlayerModel implements Observer {
             Arrays.fill(currentBoard[i], '_');
         }
         clientCommunication = new ClientCommunication(ip, port);
+        clientCommunication.addObserver(this);
     }
 
     /**
@@ -121,6 +123,14 @@ public class GuestModel extends PlayerModel implements Observer {
     @Override
     public HashMap<Integer, Integer> getPlayersScores() { // map from player id to the player's scores
         return scoreMap;
+    }
+
+    public ClientCommunication getClientCommunication() {
+        return clientCommunication;
+    }
+
+    public HashMap<Integer, String> getPlayersNameMap() {
+        return playersNameMap;
     }
 
     /**
