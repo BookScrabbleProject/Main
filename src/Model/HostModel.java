@@ -58,7 +58,9 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
     }
-
+    public void setPlayerName(String name){
+        myPlayer.setName(name);
+    }
     /**
      * method that connect and start the connection with the server and open its own server.
      * @param gameServerIp this parameter is the ip of the server
@@ -66,7 +68,7 @@ public class HostModel extends PlayerModel implements Observer {
      * @param myPort this is my own port to the connection between the hostModel and the server
      * add host server to the observer
      */
-    public void connectToBookScrabbleServer(int myPort,String gameServerIp,Integer gameServerPort){
+    public void connectToBookScrabbleServer(int myPort,String gameServerIp,int gameServerPort){
         hostServer = new HostServer(myPort,new GuestModelHandler(),gameServerIp,gameServerPort);
         hostServer.addObserver(this);
     }
@@ -76,7 +78,7 @@ public class HostModel extends PlayerModel implements Observer {
      * Sends the information to the hostServer and notify with the format : requestedId + ":" + method + ":" + inputs
      * @param socket - socket parameter that send to the hostServer
      */
-   public void addPlayer(Socket socket){ // may I get name? now all the names are null except the host name - default
+   public void addPlayer(Socket socket){
         Player p = new Player(generateId(),null,0,null);
         connectedPlayers.put(p.getId(),p);
         StringBuilder playersIdsAndNames = new StringBuilder();
@@ -216,7 +218,11 @@ public class HostModel extends PlayerModel implements Observer {
         connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
         setChanged();
         String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + "," + t.getScore();
-        requestedId = -1;
+        if(requestedId == myPlayer.getId()) {
+            hostServer.sendToAllPlayers(requestedId, "numOfTilesUpdated", String.valueOf(getMyHand().size()));
+            passTheTurn();
+        }
+//        requestedId = -1;
     }
 
     /**
@@ -323,7 +329,7 @@ public class HostModel extends PlayerModel implements Observer {
         String methodName = newRequest[1];
         String[] inputs = null;
         switch (methodName) {
-            case "tryPlaceWord" :{
+            case "tryPlaceWord" -> {
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 int col = Integer.parseInt(inputs[1]);
@@ -340,11 +346,10 @@ public class HostModel extends PlayerModel implements Observer {
                     hostServer.sendToSpecificPlayer(requestedId, "handUpdated", handToString(connectedPlayers.get(requestedId).getTiles()));
                     hostServer.sendToAllPlayers(requestedId, "numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
                     hostServer.sendToAllPlayers(requestedId,"tryPlaceWord","1");
-
+                    break;
                 }
-                break;
             }
-            case "challenge": {
+            case "challenge" -> {
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 if (inputs[1].equals("0")) {
@@ -368,11 +373,11 @@ public class HostModel extends PlayerModel implements Observer {
                 }
                 break;
             }
-            case "takeTileFromBag" : {
-                requestedId = currentPlayerId;
+            case "takeTileFromBag" -> {
+//                requestedId = currentPlayerId;
                 takeTileFromBag();
-                hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                hostServer.sendToSpecificPlayer(requestedId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
+                hostServer.sendToAllPlayers(requestedId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
                 passTheTurn();
                 requestedId = -1;
                 break;
