@@ -58,6 +58,13 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
     }
+
+    public void loadBooks(String... bookNames){
+        String[] str = new String[bookNames.length];
+        for (String s: bookNames) {
+            hostServer.getBookNames().add(s);
+        }
+    }
     public void setPlayerName(String name){
         myPlayer.setName(name);
     }
