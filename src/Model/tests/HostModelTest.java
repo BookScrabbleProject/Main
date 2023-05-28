@@ -123,7 +123,7 @@ public class HostModelTest {
             Checker.checkResult("0",line1[2],"tryPlaceWordTest-guestToHost");
             hostModel.update(null,"1:tryPlaceWord:HAPPY,6,6,1,1");
             line1=scanner1.next().split(":");
-            Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
+            Checker.checkResult("-1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("boardUpdated",line1[1],"tryPlaceWordTest-guestToHost");
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
@@ -139,7 +139,7 @@ public class HostModelTest {
             Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-guestToHost");
             Scanner scanner2=new Scanner(socket2.getInputStream());
             String[] line2=scanner2.next().split(":");
-            Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
+            Checker.checkResult("-1",line2[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("boardUpdated",line2[1],"tryPlaceWordTest-guestToHost");
             line2=scanner2.next().split(":");
             Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
