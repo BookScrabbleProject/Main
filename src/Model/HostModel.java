@@ -215,6 +215,10 @@ public class HostModel extends PlayerModel implements Observer {
         connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
         setChanged();
         String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + "," + t.getScore();
+        if(requestedId == myPlayer.getId()) {
+            hostServer.sendToAllPlayers(requestedId, "numOfTilesUpdated", String.valueOf(getMyHand().size()));
+            passTheTurn();
+        }
 //        requestedId = -1;
     }
 
