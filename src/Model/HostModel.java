@@ -214,7 +214,8 @@ public class HostModel extends PlayerModel implements Observer {
             connectedPlayers.get(requestedId).addScore(lastWordScore);
             hostServer.sendToAllPlayers(requestedId,"boardUpdated",boardToString(board.getTiles()));
             hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
-            hostServer.sendToSpecificPlayer(requestedId,"setHand",handToString(connectedPlayers.get(requestedId).getTiles()));
+            if(requestedId != myPlayer.getId())
+                hostServer.sendToSpecificPlayer(requestedId,"setHand",handToString(connectedPlayers.get(requestedId).getTiles()));
             hostServer.sendToAllPlayers(requestedId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
             hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
         }
@@ -223,6 +224,7 @@ public class HostModel extends PlayerModel implements Observer {
         setChanged();
         String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + score;
         notifyObservers(toNotify);
+        requestedId = -1;
     }
 
     /**
