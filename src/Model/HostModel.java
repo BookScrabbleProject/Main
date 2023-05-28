@@ -168,6 +168,8 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) {//run removeTiles method
+        if (requestedId == -1)
+            requestedId = myPlayer.getId();
         List<Tile> t = new ArrayList<>();
         for (char c : word.toCharArray())
             t.add(Tile.Bag.getBag().getTile(c));
@@ -180,13 +182,18 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = score;
         wordFromPlayers = wordNoSpace(word);
         if(score > 0) {
+            for (Character c : wordFromPlayers.toCharArray()) {
+                connectedPlayers.get(requestedId).getTiles().remove(c);
+            }
             connectedPlayers.get(requestedId).addScore(lastWordScore);
-            refillPlayerHand(requestedId);
-            hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
-            hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
             hostServer.sendToAllPlayers(-1,"boardUpdated",boardToString(board.getTiles()));
-
+            hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
+            hostServer.sendToSpecificPlayer(requestedId,"setHand",handToString(connectedPlayers.get(requestedId).getTiles()));
+            hostServer.sendToAllPlayers(requestedId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
+            hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
         }
+        else
+            hostServer.sendToSpecificPlayer(requestedId,"tryPlaceWord","0");
         setChanged();
         String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + score;
         notifyObservers(toNotify);
@@ -200,6 +207,8 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void challenge(String word) {
+        if (requestedId == -1)
+            requestedId = myPlayer.getId();
         hostServer.sendToBookScrabbleServer("C",word);
         setChanged();
         String toNotify = requestedId + ":" + "challenge" + ":" + word;
@@ -336,14 +345,8 @@ public class HostModel extends PlayerModel implements Observer {
                 }
                 else {
                     tryPlaceWord(word, col, row, isVertical);
-                    for (Character c : wordFromPlayers.toCharArray())
-                        connectedPlayers.get(requestedId).getTiles().remove(c);
-                    hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
-                    hostServer.sendToSpecificPlayer(requestedId, "handUpdated", handToString(connectedPlayers.get(requestedId).getTiles()));
-                    hostServer.sendToAllPlayers(requestedId, "numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
-                    hostServer.sendToAllPlayers(requestedId,"tryPlaceWord","1");
-                    break;
                 }
+                break;
             }
             case "challenge" :{
                 inputs = newRequest[2].split(",");
