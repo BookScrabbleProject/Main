@@ -121,7 +121,7 @@ public class HostModelTest {
             String[] line1=scanner1.next().split(":");
             Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("0",line1[2],"tryPlaceWordTest-guestToHost");
-            hostModel.update(null,"1:tryPlaceWord:HAPPY,6,6,1,1");
+            hostModel.update(null,"1:tryPlaceWord:HAPPY,7,7,1,1");
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("boardUpdated",line1[1],"tryPlaceWordTest-guestToHost");
@@ -244,6 +244,7 @@ public class HostModelTest {
 
         HostModel hostModel = HostModel.getHost();
         MyServer myServer = new MyServer(3000,new BookScrabbleHandler());
+        myServer.start();
         hostModel.connectToBookScrabbleServer(3001,"localhost",3000);
         int hostServerPort =3001;
         try {
