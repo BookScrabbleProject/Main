@@ -46,6 +46,7 @@ public class HostModel extends PlayerModel implements Observer {
     private HostModel() {
         nextId = 0;
         connectedPlayers = new HashMap<>();
+        myPlayer = new Player("default");
         myPlayer.setId(generateId());
         connectedPlayers.put(myPlayer.getId(), myPlayer);
         board = new Board();
@@ -75,7 +76,7 @@ public class HostModel extends PlayerModel implements Observer {
      * Sends the information to the hostServer and notify with the format : requestedId + ":" + method + ":" + inputs
      * @param socket - socket parameter that send to the hostServer
      */
-   public void addPlayer(Socket socket){
+   public void addPlayer(Socket socket){ // may I get name? now all the names are null except the host name - default
         Player p = new Player(generateId(),null,0,null);
         connectedPlayers.put(p.getId(),p);
         StringBuilder playersIdsAndNames = new StringBuilder();
@@ -322,7 +323,7 @@ public class HostModel extends PlayerModel implements Observer {
         String methodName = newRequest[1];
         String[] inputs = null;
         switch (methodName) {
-            case "tryPlaceWord" -> {
+            case "tryPlaceWord" :{
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 int col = Integer.parseInt(inputs[1]);
@@ -339,10 +340,11 @@ public class HostModel extends PlayerModel implements Observer {
                     hostServer.sendToSpecificPlayer(requestedId, "handUpdated", handToString(connectedPlayers.get(requestedId).getTiles()));
                     hostServer.sendToAllPlayers(requestedId, "numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
                     hostServer.sendToAllPlayers(requestedId,"tryPlaceWord","1");
-                    break;
+
                 }
+                break;
             }
-            case "challenge" -> {
+            case "challenge": {
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 if (inputs[1].equals("0")) {
@@ -366,11 +368,10 @@ public class HostModel extends PlayerModel implements Observer {
                 }
                 break;
             }
-            case "takeTileFromBag" -> {
+            case "takeTileFromBag" : {
                 requestedId = currentPlayerId;
                 takeTileFromBag();
                 hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
                 hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
                 passTheTurn();
                 requestedId = -1;
