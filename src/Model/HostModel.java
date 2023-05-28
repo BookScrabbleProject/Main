@@ -79,7 +79,7 @@ public class HostModel extends PlayerModel implements Observer {
      * @param socket - socket parameter that send to the hostServer
      */
    public void addPlayer(Socket socket){
-        Player p = new Player(generateId(),null,0,null);
+        Player p = new Player(generateId(),null,0,new ArrayList<Character>());
         connectedPlayers.put(p.getId(),p);
         StringBuilder playersIdsAndNames = new StringBuilder();
         playersIdsAndNames.append(p.getId()).append("-").append(p.getName()).append(",");
@@ -181,7 +181,7 @@ public class HostModel extends PlayerModel implements Observer {
         wordFromPlayers = wordNoSpace(word);
         if(score > 0) {
             connectedPlayers.get(requestedId).addScore(lastWordScore);
-            refillPlayerHand();
+            refillPlayerHand(requestedId);
             hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
             hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
             hostServer.sendToAllPlayers(-1,"boardUpdated",boardToString(board.getTiles()));
@@ -229,18 +229,14 @@ public class HostModel extends PlayerModel implements Observer {
      * Method that refill player hand tiles after he placed tiles on the board
      * notify all the other players by the format - requestedId + ":" + method + ":" + inputs
      */
-    public void refillPlayerHand() {
-        int numOfTiles = connectedPlayers.get(requestedId).getTiles().size();
-        if (requestedId == -1)
-            requestedId = myPlayer.getId();
+    public void refillPlayerHand(int playerId) {
+        int numOfTiles = connectedPlayers.get(playerId).getTiles().size();
         if(numOfTiles<7)
             for (int i = numOfTiles; i <= 7; i++)
-                connectedPlayers.get(requestedId).addTiles(String.valueOf(bag.getRand().letter));
-
+                connectedPlayers.get(playerId).addTiles(String.valueOf(bag.getRand().letter));
         setChanged();
-        String toNotify = requestedId + ":" + "refillPlayerHand";
+        String toNotify = playerId + ":" + "refillPlayerHand";
         notifyObservers(toNotify);
-        requestedId = -1;
     }
 
     /**
@@ -362,8 +358,7 @@ public class HostModel extends PlayerModel implements Observer {
                     hostServer.sendToAllPlayers(0, "scoreChanged", currentPlayerId + "," + connectedPlayers.get(currentPlayerId).getScore());
                     hostServer.sendToAllPlayers(requestedId, "challenge", "0");
                 } else {
-                    requestedId = currentPlayerId;
-                    refillPlayerHand();
+                    refillPlayerHand(currentPlayerId);
                     connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
                     hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
                     hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
