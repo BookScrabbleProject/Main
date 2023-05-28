@@ -148,8 +148,8 @@ public class HostServer extends Observable {
             out.println(msg.toString());
             out.flush();
             return bookScrabbleServer;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e){
+            return null;
         }
 
     }
