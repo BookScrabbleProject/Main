@@ -125,11 +125,17 @@ public class HostModel extends PlayerModel implements Observer {
      * @param tilesBoard represent the board
      * @return the board in a string
      */
-   private String boardToString(Tile[][] tilesBoard){
+   private String boardToString(Tile[][] tilesBoard) {
        StringBuilder stringBoard = new StringBuilder();
-       for (Tile[] theTile : tilesBoard)
-           for (Tile tile : theTile)
-               stringBoard.append(tile.letter);
+       for (Tile[] theTile : tilesBoard) {
+           for (Tile tile : theTile) {
+               if (tile != null) {
+                   stringBoard.append(tile.letter);
+               } else {
+                   stringBoard.append("_");
+               }
+           }
+       }
        return stringBoard.toString();
    }
 
