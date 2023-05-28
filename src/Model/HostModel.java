@@ -329,7 +329,7 @@ public class HostModel extends PlayerModel implements Observer {
         String methodName = newRequest[1];
         String[] inputs = null;
         switch (methodName) {
-            case "tryPlaceWord" -> {
+            case "tryPlaceWord" : {
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 int col = Integer.parseInt(inputs[1]);
@@ -349,7 +349,7 @@ public class HostModel extends PlayerModel implements Observer {
                     break;
                 }
             }
-            case "challenge" -> {
+            case "challenge" :{
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 if (inputs[1].equals("0")) {
@@ -373,7 +373,7 @@ public class HostModel extends PlayerModel implements Observer {
                 }
                 break;
             }
-            case "takeTileFromBag" -> {
+            case "takeTileFromBag" : {
 //                requestedId = currentPlayerId;
                 takeTileFromBag();
                 hostServer.sendToSpecificPlayer(requestedId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
