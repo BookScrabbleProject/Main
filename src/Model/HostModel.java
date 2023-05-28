@@ -215,7 +215,7 @@ public class HostModel extends PlayerModel implements Observer {
         connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
         setChanged();
         String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + "," + t.getScore();
-        requestedId = -1;
+//        requestedId = -1;
     }
 
     /**
@@ -367,11 +367,10 @@ public class HostModel extends PlayerModel implements Observer {
                 break;
             }
             case "takeTileFromBag" -> {
-                requestedId = currentPlayerId;
+//                requestedId = currentPlayerId;
                 takeTileFromBag();
-                hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
-                hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                hostServer.sendToSpecificPlayer(requestedId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
+                hostServer.sendToAllPlayers(requestedId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
                 passTheTurn();
                 requestedId = -1;
                 break;
