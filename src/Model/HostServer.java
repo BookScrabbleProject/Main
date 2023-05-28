@@ -36,8 +36,8 @@ public class HostServer extends Observable {
         this.bookScrabbleServerIp = gameServerIp;
         this.bookScrabbleServerPort = gameServerPort;
         bookNames = new ArrayList<>();
-        bookNames.add("Frank Herbert - Dune");
-        bookNames.add("mobydick");
+        bookNames.add("Frank Herbert - Dune.txt");
+        bookNames.add("mobydick.txt");
         startServer();
     }
 
