@@ -54,7 +54,7 @@ Our project is built using the following technologies:
 | - Implemented the HostServer logic | Yuval Ofek                                  |
 | - Implemented the ClientCommunication logic | Tal Mekler                          |
 | <span style="background-color: lightgreen"><b>Tests</b></span>  |                                              |
-| - Tested the HostModel             | Ilay Cohen and Omer Ben David               |
+| - Tested the HostModel             | Omer Ben David and Ilay Cohen              |
 | - Tested the HostServer            | Tal Mekler                                  |
 | - Tested the GuestModel            | Yuval Ofek                                  |
 | - Tested the ClientCommunication   | Tal Mekler                                  |
