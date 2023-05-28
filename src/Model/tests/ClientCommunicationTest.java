@@ -7,15 +7,17 @@ import Model.gameClasses.DictionaryManager;
 import Model.gameClasses.MyServer;
 
 import java.io.*;
+import java.net.InterfaceAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 public class ClientCommunicationTest {
 
     public static void testSend() {
-        Checker.testNum = 1;
         int serverSocketPort = 3000;
         ServerSocket server = null;
         ClientCommunication client = null;
@@ -42,7 +44,6 @@ public class ClientCommunicationTest {
     }
 
     public static void testCheckForMessage() {
-        Checker.testNum = 1;
         String functionName = "testCheckForMessage";
         ServerSocket server = null;
         ClientCommunication client = null;
@@ -85,7 +86,7 @@ public class ClientCommunicationTest {
 
             socket.getOutputStream().write("test3\n".getBytes());
             socket2.getOutputStream().write("socket2, test3\n".getBytes());
-            while(test.lastMessage == null) {
+            while(test.lastMessage == null || test2.lastMessage == null) {
                 Thread.sleep(1);
             }
 
@@ -137,15 +138,26 @@ public class ClientCommunicationTest {
     }
 
     public static class Checker {
-        static int testNum = 1;
+//        static int testNum = 1;
+        static  Map<String, Integer> testNums = new HashMap<String, Integer>();
 
         public static void checkResult(String expected, String actual, String functionTested) {
             if(expected.equals(actual)) {
-                System.out.println(functionTested + " passed (" + testNum++ + ")");
+                System.out.println(functionTested + " passed (" + getNumOfTests(functionTested) + ")");
             }else {
-                System.out.println(functionTested + " failed (" + testNum++ + ")");
+                System.out.println(functionTested + " failed (" + getNumOfTests(functionTested) + ")");
                 System.out.println("ERROR: expected: " + expected + " actual: " + actual);
             }
+
+            testNums.put(functionTested, testNums.getOrDefault(functionTested, 1) + 1);
+        }
+
+        public static int getNumOfTests(String key) {
+            return testNums.getOrDefault(key, 1);
+        }
+
+        public static void incrementTestNum(String key) {
+            testNums.put(key, getNumOfTests(key) + 1);
         }
     }
 }
