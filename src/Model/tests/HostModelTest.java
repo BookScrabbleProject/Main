@@ -89,8 +89,10 @@ public class HostModelTest {
             Checker.checkResult("numOfTilesUpdated",line1[1],"takeTileFromBagTest-guestToHost");
             line1=scanner1.next().split(":");
             Checker.checkResult("newPlayerTurn",line1[1],"takeTileFromBagTest-guestToHost");
+            Checker.checkResult("1",line1[2],"takeTileFromBagTest-guestToHost");
             line2=scanner2.next().split(":");
             Checker.checkResult("newPlayerTurn",line2[1],"takeTileFromBagTest-guestToHost");
+            Checker.checkResult("1",line2[2],"takeTileFromBagTest-guestToHost");
             Checker.finishTest("takeTileFromBagTest-guestToHost");
             hostModel.takeTileFromBag();
             line1=scanner1.next().split(":");
@@ -99,9 +101,12 @@ public class HostModelTest {
             Checker.checkResult("numOfTilesUpdated",line2[1],"takeTileFromBagTest-host");
             line1=scanner1.next().split(":");
             Checker.checkResult("newPlayerTurn",line1[1],"takeTileFromBagTest-host");
+            Checker.checkResult("2",line1[2],"takeTileFromBagTest-host");
             line2=scanner2.next().split(":");
             Checker.checkResult("newPlayerTurn",line2[1],"takeTileFromBagTest-host");
+            Checker.checkResult("2",line2[2],"takeTileFromBagTest-host");
             Checker.finishTest("takeTileFromBagTest-host");
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);
