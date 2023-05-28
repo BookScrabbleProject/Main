@@ -36,11 +36,11 @@ public class HostModelTest {
                 b = false;
             }
             line1 = scanner.next();
-            if(line1.equals("-1:playersListUpdated:1-null,0-default"))
+            if(line1.equals("-1:playersListUpdated:1-guest,0-default"))
                 System.out.println("addPlayerTest(2) passed");
             else {
                 System.out.println("addPlayerTest(2) failed");
-                System.out.println("expected output: -1:playersListUpdated:1-null,0-default "+"result: " + line1 );
+                System.out.println("expected output: -1:playersListUpdated:1-guest,0-default "+"result: " + line1 );
                 b = false;
             }
             PrintWriter printWriter2 = new PrintWriter(socket2.getOutputStream());
@@ -56,19 +56,19 @@ public class HostModelTest {
                 b = false;
             }
             line2 = scanner2.next();
-            if(line2.equals("-1:playersListUpdated:2-null,0-default,1-null"))
+            if(line2.equals("-1:playersListUpdated:2-guest,0-default,1-guest"))
                 System.out.println("addPlayerTest(4) passed");
             else {
                 System.out.println("addPlayerTest(4) failed");
-                System.out.println("expected output: -1:playersListUpdated:2-null,0-default,1-null "+"result: " + line2 );
+                System.out.println("expected output: -1:playersListUpdated:2-guest,0-default,1-guest "+"result: " + line2 );
                 b = false;
             }
             line1 = scanner.next();
-            if(line1.equals("-1:playersListUpdated:2-null,0-default,1-null"))
+            if(line1.equals("-1:playersListUpdated:2-guest,0-default,1-guest"))
                 System.out.println("addPlayerTest(5) passed");
             else{
                 System.out.println("addPlayerTest(5) failed");
-                System.out.println("expected output: -1:playersListUpdated:2-null,0-default,1-null "+"result: " + line1);
+                System.out.println("expected output: -1:playersListUpdated:2-guest,0-default,1-guest "+"result: " + line1);
                 b = false;
             }
             if(b= true) System.out.println("Add Player Tests all passed ----> Done \n");
