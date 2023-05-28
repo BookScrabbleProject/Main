@@ -121,7 +121,7 @@ public class HostModelTest {
             String[] line1=scanner1.next().split(":");
             Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("0",line1[2],"tryPlaceWordTest-guestToHost");
-            hostModel.update(null,"1:tryPlaceWord:HAPPY,7,7,1,1");
+            hostModel.update(null,"1:tryPlaceWord:WHALE,7,7,1,1");
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("boardUpdated",line1[1],"tryPlaceWordTest-guestToHost");
@@ -151,7 +151,33 @@ public class HostModelTest {
             Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("tryPlaceWord",line2[1],"tryPlaceWordTest-guestToHost");
             Checker.finishTest("tryPlaceWordTest-guestToHost");
-            hostModel.tryPlaceWord("Happy",3,3,true);
+            hostModel.tryPlaceWord("_HALE",7,7,false);
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("boardUpdated",line1[1],"tryPlaceWordTest-Host");
+            Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("boardUpdated",line2[1],"tryPlaceWordTest-Host");
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("scoreUpdated",line1[1],"tryPlaceWordTest-Host");
+            Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("scoreUpdated",line2[1],"tryPlaceWordTest-Host");
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("numOfTilesUpdated",line1[1],"tryPlaceWordTest-Host");
+            Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("numOfTilesUpdated",line2[1],"tryPlaceWordTest-Host");
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-Host");
+            Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
+            Checker.checkResult("tryPlaceWord",line2[1],"tryPlaceWordTest-Host");
+            Checker.finishTest("tryPlaceWordTest-Host");
+
 
 
 
