@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class HostModelTest {
@@ -79,8 +81,7 @@ public class HostModelTest {
         try {
             Scanner scanner1=new Scanner(socket.getInputStream());
             String[] line1= scanner1.next().split(":");
-            if(!line1[1].equals("setHand"))
-                System.out.println("wrong message for specific player");
+            Checker.checkResult("setHand", line1[1], "takeTileFromBagTest");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -176,6 +177,29 @@ public class HostModelTest {
             takeTileFromBagUpdateTests(hostModel); // test for case take tile from bag in update
 */
         } catch (IOException e) {throw new RuntimeException(e);}
+    }
+
+    public static class Checker {
+        static Map<String, Integer> testNums = new HashMap<String, Integer>();
+
+        public static void checkResult(String expected, String actual, String functionTested) {
+            if(expected.equals(actual)) {
+                System.out.println(functionTested + " passed (" + getNumOfTests(functionTested) + ")");
+            }else {
+                System.out.println(functionTested + " failed (" + getNumOfTests(functionTested) + ")");
+                System.out.println("ERROR: expected: " + expected + " actual: " + actual);
+            }
+
+            testNums.put(functionTested, testNums.getOrDefault(functionTested, 1) + 1);
+        }
+
+        public static int getNumOfTests(String key) {
+            return testNums.getOrDefault(key, 1);
+        }
+
+        public static void incrementTestNum(String key) {
+            testNums.put(key, getNumOfTests(key) + 1);
+        }
     }
 
 
