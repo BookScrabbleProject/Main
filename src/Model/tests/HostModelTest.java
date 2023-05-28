@@ -71,7 +71,7 @@ public class HostModelTest {
             System.out.println("expected output: -1:playersListUpdated:2-null,0-default,1-null "+"result: " + line1);
             b = false;
         }
-        if(b= true) System.out.println("Add Player Tests all passed ----> Done");
+        if(b= true) System.out.println("Add Player Tests all passed ----> Done \n");
         else System.out.println("There is ERROR in one or more tests");
     } catch (IOException | InterruptedException e) {throw new RuntimeException(e);}
 }
@@ -80,8 +80,28 @@ public class HostModelTest {
         hostModel.update(null,"1:takeTileFromBag:1");
         try {
             Scanner scanner1=new Scanner(socket.getInputStream());
+            Scanner scanner2=new Scanner(socket2.getInputStream());
             String[] line1= scanner1.next().split(":");
-            Checker.checkResult("setHand", line1[1], "takeTileFromBagTest");
+            String[] line2=scanner2.next().split(":");
+            Checker.checkResult("setHand", line1[1], "takeTileFromBagTest-guestToHost");
+            Checker.checkResult("numOfTilesUpdated",line2[1],"takeTileFromBagTest-guestToHost");
+            line1=scanner1.next().split(":");
+            Checker.checkResult("numOfTilesUpdated",line1[1],"takeTileFromBagTest-guestToHost");
+            line1=scanner1.next().split(":");
+            Checker.checkResult("newPlayerTurn",line1[1],"takeTileFromBagTest-guestToHost");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("newPlayerTurn",line2[1],"takeTileFromBagTest-guestToHost");
+            Checker.finishTest("takeTileFromBagTest-guestToHost");
+            hostModel.takeTileFromBag();
+            line1=scanner1.next().split(":");
+            Checker.checkResult("numOfTilesUpdated",line1[1],"takeTileFromBagTest-host");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("numOfTilesUpdated",line2[1],"takeTileFromBagTest-host");
+            line1=scanner1.next().split(":");
+            Checker.checkResult("newPlayerTurn",line1[1],"takeTileFromBagTest-host");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("newPlayerTurn",line2[1],"takeTileFromBagTest-host");
+            Checker.finishTest("takeTileFromBagTest-host");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -165,7 +185,7 @@ public class HostModelTest {
             Socket socket = new Socket("localhost",hostServerPort);
             Socket socket2 = new Socket("localhost",hostServerPort);
             addPlayerTest(socket,socket2, hostModel,hostServerPort); // test adding players to the server
-
+            takeTileFromBagTest(socket,socket2,hostModel,hostServerPort);
 
             /* BoardUpdatedTest(socket,socket2); // test if the board updated
             HandUpdateTest(socket,socket2); // refill hand + take tile from bag
@@ -181,6 +201,7 @@ public class HostModelTest {
 
     public static class Checker {
         static Map<String, Integer> testNums = new HashMap<String, Integer>();
+        static Map<String, Boolean> testBooleans = new HashMap<String, Boolean>();
 
         public static void checkResult(String expected, String actual, String functionTested) {
             if(expected.equals(actual)) {
@@ -188,9 +209,19 @@ public class HostModelTest {
             }else {
                 System.out.println(functionTested + " failed (" + getNumOfTests(functionTested) + ")");
                 System.out.println("ERROR: expected: " + expected + " actual: " + actual);
+                testBooleans.put(functionTested,false);
             }
 
             testNums.put(functionTested, testNums.getOrDefault(functionTested, 1) + 1);
+        }
+        public static boolean getBooleanOfTest(String key){
+            return testBooleans.getOrDefault(key,true);
+        }
+        public static void finishTest(String key){
+            if(getBooleanOfTest(key))
+                System.out.println("All tests of "+key+" passed");
+            else
+                System.out.println("One or more of the tests for "+key+" failed");
         }
 
         public static int getNumOfTests(String key) {
