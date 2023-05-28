@@ -31,13 +31,19 @@ public class HostServer extends Observable {
         clientsSockets = new HashMap<>();
         clientHandler = ch;
         stop = false;
+
         this.myPort = myPort;
         this.bookScrabbleServerIp = gameServerIp;
         this.bookScrabbleServerPort = gameServerPort;
         bookNames = new ArrayList<>();
+        bookNames.add("Frank Herbert - Dune");
+        bookNames.add("mobydick");
         startServer();
     }
 
+    public List<String> getBookNames() {
+        return bookNames;
+    }
     /***
      * runServer function --> to run the server and handle clients
      */
