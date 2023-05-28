@@ -43,7 +43,8 @@ Our project is built using the following technologies:
 ## GANTT chart
 ![Gantt chart](./GanttChart.png)
 
-
+## Team Work Division
+![Team Work Division](./ScrabbleBookTasks.png)
 
 ## Getting Started
 To run our Book Scrabble game on your machine, follow these steps:
