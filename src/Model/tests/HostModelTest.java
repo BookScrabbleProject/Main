@@ -151,6 +151,7 @@ public class HostModelTest {
             Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("tryPlaceWord",line2[1],"tryPlaceWordTest-guestToHost");
             Checker.finishTest("tryPlaceWordTest-guestToHost");
+
             hostModel.tryPlaceWord("_HALE",7,7,false);
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
@@ -294,13 +295,16 @@ public class HostModelTest {
     public static class Checker {
         static Map<String, Integer> testNums = new HashMap<String, Integer>();
         static Map<String, Boolean> testBooleans = new HashMap<String, Boolean>();
+        static String green = "\u001B[32m";
+        static String red = "\u001B[31m";
+        static String reset = "\u001B[0m";
+
 
         public static void checkResult(String expected, String actual, String functionTested) {
             if(expected.equals(actual)) {
-                System.out.println(functionTested + " passed (" + getNumOfTests(functionTested) + ")");
+                System.out.println(green +functionTested + " passed (" + getNumOfTests(functionTested) + ")" + reset);
             }else {
-                System.out.println(functionTested + " failed (" + getNumOfTests(functionTested) + ")");
-                System.out.println("ERROR: expected: " + expected + " actual: " + actual);
+                System.out.println(red+functionTested + " failed (" + getNumOfTests(functionTested) + ") expected: " + expected + " actual: " + actual + reset);
                 testBooleans.put(functionTested,false);
             }
 
@@ -311,9 +315,9 @@ public class HostModelTest {
         }
         public static void finishTest(String key){
             if(getBooleanOfTest(key))
-                System.out.println("All tests of "+key+" passed");
+                System.out.println(green+"All tests of "+key+" passed\n" + reset);
             else
-                System.out.println("One or more of the tests for "+key+" failed");
+                System.out.println(red+"One or more of the tests for "+key+" failed\n" + reset);
         }
 
         public static int getNumOfTests(String key) {
