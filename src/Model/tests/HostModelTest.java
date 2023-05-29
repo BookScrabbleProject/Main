@@ -28,51 +28,20 @@ public class HostModelTest {
             Thread.sleep(1000);
             Scanner scanner = new Scanner(socket.getInputStream());
             String line1 = scanner.next();
-            if(line1.equals("1:setId:1"))
-                System.out.println("addPlayerTest(1) passed");
-            else {
-                System.out.println("addPlayerTest(1) failed");
-                System.out.println("expected output: 1:setId:1 "+"reasult: " + line1 );
-                b = false;
-            }
+            Checker.checkResult("1:setId:1",line1,"addPlayerTest");
             line1 = scanner.next();
-            if(line1.equals("-1:playersListUpdated:1-guest,0-default"))
-                System.out.println("addPlayerTest(2) passed");
-            else {
-                System.out.println("addPlayerTest(2) failed");
-                System.out.println("expected output: -1:playersListUpdated:1-guest,0-default "+"result: " + line1 );
-                b = false;
-            }
+            Checker.checkResult("-1:playersListUpdated:1-guest,0-default",line1,"addPlayerTest");
             PrintWriter printWriter2 = new PrintWriter(socket2.getOutputStream());
             printWriter2.println("-1:connect:_");
             Thread.sleep(1000);
             Scanner scanner2 = new Scanner(socket2.getInputStream());
             String line2 = scanner2.next();
-            if(line2.equals("2:setId:2"))
-                System.out.println("addPlayerTest(3) passed");
-            else {
-                System.out.println("addPlayerTest(3) failed");
-                System.out.println("expected output: 2:setId:2 "+"result: " + line2 );
-                b = false;
-            }
+            Checker.checkResult("2:setId:2",line2,"addPlayerTest");
             line2 = scanner2.next();
-            if(line2.equals("-1:playersListUpdated:2-guest,0-default,1-guest"))
-                System.out.println("addPlayerTest(4) passed");
-            else {
-                System.out.println("addPlayerTest(4) failed");
-                System.out.println("expected output: -1:playersListUpdated:2-guest,0-default,1-guest "+"result: " + line2 );
-                b = false;
-            }
+            Checker.checkResult("-1:playersListUpdated:2-guest,0-default,1-guest",line2,"addPlayerTest");
             line1 = scanner.next();
-            if(line1.equals("-1:playersListUpdated:2-guest,0-default,1-guest"))
-                System.out.println("addPlayerTest(5) passed");
-            else{
-                System.out.println("addPlayerTest(5) failed");
-                System.out.println("expected output: -1:playersListUpdated:2-guest,0-default,1-guest "+"result: " + line1);
-                b = false;
-            }
-            if(b= true) System.out.println("Add Player Tests all passed ----> Done \n");
-            else System.out.println("There is ERROR in one or more tests");
+            Checker.checkResult("-1:playersListUpdated:2-guest,0-default,1-guest",line1,"addPlayerTest");
+            Checker.finishTest("addPlayerTest");
         } catch (IOException | InterruptedException e) {throw new RuntimeException(e);}
     }
 
