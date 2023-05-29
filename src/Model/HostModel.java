@@ -2,6 +2,7 @@ package Model;
 
 import Model.gameClasses.*;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
 
@@ -57,6 +58,13 @@ public class HostModel extends PlayerModel implements Observer {
         requestedId = -1;
         lastWordScore = 0;
         wordFromPlayers = null;
+    }
+
+    public void loadBooks(String... bookNames){
+        String[] str = new String[bookNames.length];
+        for (String s: bookNames) {
+            hostServer.getBookNames().add(s);
+        }
     }
     public void setPlayerName(String name){
         myPlayer.setName(name);
@@ -117,11 +125,17 @@ public class HostModel extends PlayerModel implements Observer {
      * @param tilesBoard represent the board
      * @return the board in a string
      */
-   private String boardToString(Tile[][] tilesBoard){
+   private String boardToString(Tile[][] tilesBoard) {
        StringBuilder stringBoard = new StringBuilder();
-       for (Tile[] theTile : tilesBoard)
-           for (Tile tile : theTile)
-               stringBoard.append(tile.letter);
+       for (Tile[] theTile : tilesBoard) {
+           for (Tile tile : theTile) {
+               if (tile != null) {
+                   stringBoard.append(tile.letter);
+               } else {
+                   stringBoard.append("_");
+               }
+           }
+       }
        return stringBoard.toString();
    }
 
@@ -177,7 +191,19 @@ public class HostModel extends PlayerModel implements Observer {
         for (int i = 0; i < t.size(); i++)
             tilesArray[i] = t.get(i);
         Word w = new Word(tilesArray, row, col, isVertical);
-        hostServer.sendToBookScrabbleServer("Q",word);
+        if(requestedId == myPlayer.getId()) {
+            Socket bookScrabbleSocket = hostServer.sendToBookScrabbleServer("Q", word);
+            try {
+                Scanner s = new Scanner(bookScrabbleSocket.getInputStream());
+                String answerFromBookScrabble = s.next();
+                if(!Boolean.getBoolean(answerFromBookScrabble))
+                {
+                    setChanged();
+                    String toNotify = requestedId + ":" + "tryPlaceWord" + ":" + 0;
+                    notifyObservers(toNotify);
+                }
+            } catch (IOException e) {throw new RuntimeException(e);}
+        }
         int score = board.tryPlaceWord(w);
         lastWordScore = score;
         wordFromPlayers = wordNoSpace(word);
@@ -186,7 +212,7 @@ public class HostModel extends PlayerModel implements Observer {
                 connectedPlayers.get(requestedId).getTiles().remove(c);
             }
             connectedPlayers.get(requestedId).addScore(lastWordScore);
-            hostServer.sendToAllPlayers(-1,"boardUpdated",boardToString(board.getTiles()));
+            hostServer.sendToAllPlayers(requestedId,"boardUpdated",boardToString(board.getTiles()));
             hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
             hostServer.sendToSpecificPlayer(requestedId,"setHand",handToString(connectedPlayers.get(requestedId).getTiles()));
             hostServer.sendToAllPlayers(requestedId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
