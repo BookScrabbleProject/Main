@@ -367,7 +367,7 @@ public class HostModel extends PlayerModel implements Observer {
                 String word = inputs[0];
                 int col = Integer.parseInt(inputs[1]);
                 int row = Integer.parseInt(inputs[2]);
-                boolean isVertical = Boolean.parseBoolean(inputs[3]);
+                boolean isVertical = inputs[3].equals("1");
                 if (inputs[4].equals("0")) {
                     hostServer.sendToSpecificPlayer(requestedId, "tryPlaceWord", "0");
                 }
