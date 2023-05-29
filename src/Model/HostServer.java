@@ -31,13 +31,19 @@ public class HostServer extends Observable {
         clientsSockets = new HashMap<>();
         clientHandler = ch;
         stop = false;
+
         this.myPort = myPort;
         this.bookScrabbleServerIp = gameServerIp;
         this.bookScrabbleServerPort = gameServerPort;
         bookNames = new ArrayList<>();
+        bookNames.add("Frank Herbert - Dune.txt");
+        bookNames.add("mobydick.txt");
         startServer();
     }
 
+    public List<String> getBookNames() {
+        return bookNames;
+    }
     /***
      * runServer function --> to run the server and handle clients
      */
@@ -148,8 +154,8 @@ public class HostServer extends Observable {
             out.println(msg.toString());
             out.flush();
             return bookScrabbleServer;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e){
+            return null;
         }
 
     }
@@ -171,6 +177,8 @@ public class HostServer extends Observable {
             out.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }catch (RuntimeException e){
+            System.out.println(e.getMessage());
         }
     }
 
@@ -186,9 +194,7 @@ public class HostServer extends Observable {
                 PrintWriter out = new PrintWriter(socket.getOutputStream());
                 out.println(playerID+ ":" + methodName + ":" + output);
                 out.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (IOException e) {}
         }
     }
 

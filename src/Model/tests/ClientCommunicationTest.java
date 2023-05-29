@@ -7,8 +7,11 @@ import Model.gameClasses.DictionaryManager;
 import Model.gameClasses.MyServer;
 
 import java.io.*;
+import java.net.InterfaceAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,20 +29,12 @@ public class ClientCommunicationTest {
             Thread.sleep(1000);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String line = in.readLine();
-            if(line == null || !line.equals("-1:connect: ")){
-                System.out.println("expected: -1:connect: -> received: " + line);
-                System.out.println("ERROR: testSend failed (1)");
-            }else {
-                System.out.println("testSend passed (1)");
-            }
+            Checker.checkResult("-1:connect: ", line, "testSend");
+
             client.send(1, "testMethod", "input1", "input2");
             line = in.readLine();
-            if(line == null || !line.equals("1:testMethod:input1,input2")){
-                System.out.println("expected: 1:testMethod:input1,input2 -> received: " + line);
-                System.out.println("ERROR: testSend failed (2)");
-            }else {
-                System.out.println("testSend passed (2)");
-            }
+            Checker.checkResult("1:testMethod:input1,input2", line, "testSend");
+
             client.close();
 
         }catch (Exception e) {
@@ -49,6 +44,7 @@ public class ClientCommunicationTest {
     }
 
     public static void testCheckForMessage() {
+        String functionName = "testCheckForMessage";
         ServerSocket server = null;
         ClientCommunication client = null;
         ClientCommunication client2 = null;
@@ -59,26 +55,22 @@ public class ClientCommunicationTest {
             server = new ServerSocket(serverSocketPort);
             client = new ClientCommunication("localhost", serverSocketPort);
             test = new Test(client);
+
             Socket socket = server.accept();
             client2 = new ClientCommunication("localhost", serverSocketPort);
             test2 = new Test(client2);
             Socket socket2 = server.accept();
             socket.getOutputStream().write("test1\n".getBytes());
             socket2.getOutputStream().write("socket2, test1\n".getBytes());
+
             while(test.lastMessage == null || test2.lastMessage == null) {
                 Thread.sleep(1);
             }
-            if(test.lastMessage == null || !test.lastMessage.equals("test1")) {
-                System.out.println("ERROR: testCheckForMessage failed -100pts");
-            }else {
-                System.out.println("testCheckForMessage test1 passed");
-            }
+
+            Checker.checkResult("test1", test.lastMessage, functionName);
             test.lastMessage = null;
-            if(test2.lastMessage == null || !test2.lastMessage.equals("socket2, test1")) {
-                System.out.println("ERROR: testCheckForMessage failed -100pts");
-            }else {
-                System.out.println("testCheckForMessage socket2-test1 passed");
-            }
+
+            Checker.checkResult("socket2, test1", test2.lastMessage, functionName);
             test2.lastMessage = null;
 
             socket.getOutputStream().write("test2\n".getBytes());
@@ -86,36 +78,22 @@ public class ClientCommunicationTest {
             while(test.lastMessage == null || test2.lastMessage == null) {
                 Thread.sleep(1);
             }
-            if(test.lastMessage == null || !test.lastMessage.equals("test2")) {
-                System.out.println("ERROR: testCheckForMessage failed -100pts");
-            }else {
-                System.out.println("testCheckForMessage test2 passed");
-            }
+            Checker.checkResult("test2", test.lastMessage, functionName);
             test.lastMessage = null;
-            if(test2.lastMessage == null || !test2.lastMessage.equals("socket2, test2")) {
-                System.out.println("ERROR: testCheckForMessage failed -100pts");
-            }else {
-                System.out.println("testCheckForMessage socket2-test2 passed");
-            }
+
+            Checker.checkResult("socket2, test2", test2.lastMessage, functionName);
             test2.lastMessage = null;
 
             socket.getOutputStream().write("test3\n".getBytes());
             socket2.getOutputStream().write("socket2, test3\n".getBytes());
-            while(test.lastMessage == null) {
+            while(test.lastMessage == null || test2.lastMessage == null) {
                 Thread.sleep(1);
             }
-            if(test.lastMessage == null || !test.lastMessage.equals("test3")) {
-                System.out.println("ERROR: testCheckForMessage failed -100pts");
-            }
-            else {
-                System.out.println("testCheckForMessage test3 passed");
-            }
+
+            Checker.checkResult("test3", test.lastMessage, functionName);
             test.lastMessage = null;
-            if(test2.lastMessage == null || !test2.lastMessage.equals("socket2, test3")) {
-                System.out.println("ERROR: testCheckForMessage failed -100pts");
-            }else {
-                System.out.println("testCheckForMessage socket2-test3 passed");
-            }
+
+            Checker.checkResult("socket2, test3", test2.lastMessage, functionName);
             test2.lastMessage = null;
 
             client.close();
@@ -127,16 +105,23 @@ public class ClientCommunicationTest {
         }
     }
 
+    public static void checkResult(String expected, String actual) {
+        if(expected.equals(actual)) {
+            System.out.println("passed");
+        }else {
+            System.out.println("ERROR: expected: " + expected + " actual: " + actual);
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("- - - - Testing ClientCommunication - - - -");
         System.out.println("> > > checkForMassage < < <");
         testCheckForMessage();
-        System.out.println("CheckForMessage passed!\n");
+
         System.out.println("> > > send < < <");
         testSend();
-        System.out.println("Send passed!");
 
-        System.out.println("All tests passed!");
+        System.out.println("\nAll tests passed!");
     }
 
     public static class Test implements Observer {
@@ -149,6 +134,30 @@ public class ClientCommunicationTest {
 
         public void update(java.util.Observable o, Object arg) {
             lastMessage = (String) arg;
+        }
+    }
+
+    public static class Checker {
+//        static int testNum = 1;
+        static  Map<String, Integer> testNums = new HashMap<String, Integer>();
+
+        public static void checkResult(String expected, String actual, String functionTested) {
+            if(expected.equals(actual)) {
+                System.out.println(functionTested + " passed (" + getNumOfTests(functionTested) + ")");
+            }else {
+                System.out.println(functionTested + " failed (" + getNumOfTests(functionTested) + ")");
+                System.out.println("ERROR: expected: " + expected + " actual: " + actual);
+            }
+
+            testNums.put(functionTested, testNums.getOrDefault(functionTested, 1) + 1);
+        }
+
+        public static int getNumOfTests(String key) {
+            return testNums.getOrDefault(key, 1);
+        }
+
+        public static void incrementTestNum(String key) {
+            testNums.put(key, getNumOfTests(key) + 1);
         }
     }
 }

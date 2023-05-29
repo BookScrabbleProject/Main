@@ -43,6 +43,24 @@ Our project is built using the following technologies:
 ## GANTT chart
 ![Gantt chart](./GanttChart.png)
 
+## Team Work Division
+
+| Task                           | Team Members                                 |
+| ------------------------------ | -------------------------------------------- |
+| <span style="background-color: yellow"><b>Models</b></span>  |                                              |
+| - Implemented the HostModel logic  | Ilay Cohen                                  |
+| - Implemented the GuestModel       | Omer Ben David                              |
+| <span style="background-color: lightblue"><b>Communications</b></span> |                                              |
+| - Implemented the HostServer logic | Yuval Ofek                                  |
+| - Implemented the ClientCommunication logic | Tal Mekler                          |
+| <span style="background-color: lightgreen"><b>Tests</b></span>  |                                              |
+| - Tested the HostModel             | Omer Ben David and Ilay Cohen              |
+| - Tested the HostServer            | Tal Mekler                                  |
+| - Tested the GuestModel            | Yuval Ofek                                  |
+| - Tested the ClientCommunication   | Tal Mekler                                  |
+| <span style="background-color: lightpink"><b>Documentation</b></span> |                                              |
+| - Whole code documentation (using javadoc) | Everyone                      |
+| <span style="background-color: orange">Art Design and build the game flow (Miro)</span> | Tal Mekler                                |
 
 
 ## Getting Started
