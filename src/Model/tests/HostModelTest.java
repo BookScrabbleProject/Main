@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -90,62 +91,103 @@ public class HostModelTest {
             String[] line1=scanner1.next().split(":");
             Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("0",line1[2],"tryPlaceWordTest-guestToHost");
+
+            String boardStatus = Arrays.deepToString(hostModel.getBoardStatus());
             hostModel.update(null,"1:tryPlaceWord:WHALE,7,7,1,1");
+            Checker.checkUnEqual(boardStatus, Arrays.deepToString(hostModel.getBoardStatus()),"tryPlaceWordTest-guestToHost");
+
+            // check if player 1 got the new board status
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("boardUpdated",line1[1],"tryPlaceWordTest-guestToHost");
+            Checker.checkUnEqual(boardStatus, line1[2],"tryPlaceWordTest-guestToHost");
+
+            // Check if player 1 got the information about the score update
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("scoreUpdated",line1[1],"tryPlaceWordTest-guestToHost");
+
+            // Check if player 1 got the information about the new hand
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("setHand",line1[1],"tryPlaceWordTest-guestToHost");
+
+            // Check if player 1 got the information about the number of tiles updated
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("numOfTilesUpdated",line1[1],"tryPlaceWordTest-guestToHost");
+
+            // Check if player 1 got the information about the tryPlaceWord action and the score (12*2=24 points for WHALE)
             line1=scanner1.next().split(":");
             Checker.checkResult("1",line1[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-guestToHost");
+            Checker.checkResult("24",line1[2],"tryPlaceWordTest-guestToHost");
+
             Scanner scanner2=new Scanner(socket2.getInputStream());
+            // Check if player 2 got the new board status
             String[] line2=scanner2.next().split(":");
             Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("boardUpdated",line2[1],"tryPlaceWordTest-guestToHost");
+            Checker.checkUnEqual(boardStatus, line2[2],"tryPlaceWordTest-guestToHost");
+
+            // Check if player 2 got the information about the score update
             line2=scanner2.next().split(":");
             Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("scoreUpdated",line2[1],"tryPlaceWordTest-guestToHost");
+
+            // Check if player 2 got the information about the number of tiles updated
             line2=scanner2.next().split(":");
             Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("numOfTilesUpdated",line2[1],"tryPlaceWordTest-guestToHost");
+
+            // Check if player 2 got the information about the tryPlaceWord action and the score (12*2=24 points for WHALE)
             line2=scanner2.next().split(":");
             Checker.checkResult("1",line2[0],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("tryPlaceWord",line2[1],"tryPlaceWordTest-guestToHost");
+            Checker.checkResult("24",line2[2],"tryPlaceWordTest-guestToHost");
+
             Checker.finishTest("tryPlaceWordTest-guestToHost");
 
+            boardStatus = Arrays.deepToString(hostModel.getBoardStatus());
+
             hostModel.tryPlaceWord("_HALE",7,7,false);
+            Checker.checkUnEqual(boardStatus, Arrays.deepToString(hostModel.getBoardStatus()),"tryPlaceWordTest-Host");
+
+            // Check if the board is updated in the guests players
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
             Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
             Checker.checkResult("boardUpdated",line1[1],"tryPlaceWordTest-Host");
+            Checker.checkUnEqual(boardStatus, line1[2], "tryPlaceWordTest-Host");
             Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
             Checker.checkResult("boardUpdated",line2[1],"tryPlaceWordTest-Host");
+            Checker.checkUnEqual(boardStatus, line2[2], "tryPlaceWordTest-Host");
+
+            // Check if the score is updated in the guests players
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
             Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
             Checker.checkResult("scoreUpdated",line1[1],"tryPlaceWordTest-Host");
             Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
             Checker.checkResult("scoreUpdated",line2[1],"tryPlaceWordTest-Host");
+
+            // Check if the number of tiles is updated in the guests players
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
             Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
             Checker.checkResult("numOfTilesUpdated",line1[1],"tryPlaceWordTest-Host");
             Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
             Checker.checkResult("numOfTilesUpdated",line2[1],"tryPlaceWordTest-Host");
+
+            // Check if the guests players get the information about the tryPlaceWord action and the score of the word (12 points for _HALE)
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
             Checker.checkResult("0",line1[0],"tryPlaceWordTest-Host");
             Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-Host");
+            Checker.checkResult("12",line1[2],"tryPlaceWordTest-Host");
             Checker.checkResult("0",line2[0],"tryPlaceWordTest-Host");
             Checker.checkResult("tryPlaceWord",line2[1],"tryPlaceWordTest-Host");
+            Checker.checkResult("12",line2[2],"tryPlaceWordTest-Host");
             Checker.finishTest("tryPlaceWordTest-Host");
 
 
@@ -271,6 +313,17 @@ public class HostModelTest {
 
         public static void checkResult(String expected, String actual, String functionTested) {
             if(expected.equals(actual)) {
+                System.out.println(green +functionTested + " passed (" + getNumOfTests(functionTested) + ")" + reset);
+            }else {
+                System.out.println(red+functionTested + " failed (" + getNumOfTests(functionTested) + ") expected: " + expected + " actual: " + actual + reset);
+                testBooleans.put(functionTested,false);
+            }
+
+            testNums.put(functionTested, testNums.getOrDefault(functionTested, 1) + 1);
+        }
+
+        public static void checkUnEqual(String expected, String actual, String functionTested) {
+            if(!expected.equals(actual)) {
                 System.out.println(green +functionTested + " passed (" + getNumOfTests(functionTested) + ")" + reset);
             }else {
                 System.out.println(red+functionTested + " failed (" + getNumOfTests(functionTested) + ") expected: " + expected + " actual: " + actual + reset);
