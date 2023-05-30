@@ -47,18 +47,18 @@ Our project is built using the following technologies:
 
 | Task                           | Team Members                                 |
 | ------------------------------ | -------------------------------------------- |
-| <span style="background-color: yellow"><b>Models</b></span>  |                                              |
+| <span style="background-color: yellow"><h4><b>Models</b></h4></span>  |                                              |
 | - Implemented the HostModel logic  | Ilay Cohen                                  |
 | - Implemented the GuestModel       | Omer Ben David                              |
-| <span style="background-color: lightblue"><b>Communications</b></span> |                                              |
+| <span style="background-color: lightblue"><h4><b>Communications</b></h4></span> |                                              |
 | - Implemented the HostServer logic | Yuval Ofek                                  |
 | - Implemented the ClientCommunication logic | Tal Mekler                          |
-| <span style="background-color: lightgreen"><b>Tests</b></span>  |                                              |
+| <span style="background-color: lightgreen"><h4><b>Tests</b></h4></span>  |                                              |
 | - Tested the HostModel             | Omer Ben David and Ilay Cohen              |
 | - Tested the HostServer            | Tal Mekler                                  |
 | - Tested the GuestModel            | Yuval Ofek                                  |
 | - Tested the ClientCommunication   | Tal Mekler                                  |
-| <span style="background-color: lightpink"><b>Documentation</b></span> |                                              |
+| <span style="background-color: lightpink"><h4><b>Documentation</b></h4></span> |                                              |
 | - Whole code documentation (using javadoc) | Everyone                      |
 | <span style="background-color: orange">Art Design and build the game flow (Miro)</span> | Tal Mekler                                |
 
