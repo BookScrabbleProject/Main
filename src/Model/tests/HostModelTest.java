@@ -189,95 +189,19 @@ public class HostModelTest {
             Checker.checkResult("tryPlaceWord",line2[1],"tryPlaceWordTest-Host");
             Checker.checkResult("12",line2[2],"tryPlaceWordTest-Host");
             Checker.finishTest("tryPlaceWordTest-Host");
-
-
-
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void checkChallenge(Socket socket,Socket socket2,HostModel hostModel,int hostServerPort) {
+        // Todo: check if the challenge is working
 
 
-
-
-
-
-
-
-
-
-
-
-
+        Checker.finishTest("challengeTest");
     }
 
 
-
-
-
-
-
-
-
-    /*  // todo - need to upload words before testing ->BoardUpdatedTest
-
-
-     *//**
-     * Method that test if the board was updated
-     * @param socket - represent client
-     * @param socket2 - represent client
-     *//*
-    public static  void BoardUpdatedTest(Socket socket, Socket socket2){
-        *//*try {
-        PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
-        } catch (IOException e) {throw new RuntimeException(e);}*//*
-    }
-
-    *//**
-     * Method that test the hand of the players and number of tiles in other players
-     * @param socket - represent client
-     * @param socket2 - represent client
-     *//*
-    public static void HandUpdateTest(Socket socket, Socket socket2){}
-
-    *//**
-     * Method that test of the turn was passed
-     * @param socket - represent client
-     * @param socket2 - represent client
-     *//*
-    public static  void passTheTurnTest(Socket socket, Socket socket2){}
-
-    *//**
-     * Mehod that test if the update in case tryPlaceWord update all the players and worked
-     * @param hostModel - represent the host model
-     *//*
-    public static void tryPlaceWordUpdateTests(HostModel hostModel) {
-        *//*hostModel.update(null,"1:tryPlaceWord:1");
-        hostModel.update(null,"2:tryPlaceWord:0");
-        hostModel.update(null,"3:tryPlaceWord:1");*//*
-    }
-    *//**
-     * Method that test if the update in case challenge update all the players and worked
-     * @param hostModel - represent the host model
-     *//*
-    public static void challengeUpdateTests(HostModel hostModel) {
-        *//*hostModel.update(null,"1:challenge:0");
-        hostModel.update(null,"2:challenge:0");
-        hostModel.update(null,"3:challenge:1");*//*
-    }
-    *//**
-     * Method that test if the update in case takeTileFromBag update all the players and worked
-     //* @param hostModel - represent the host model
-     *//*
-    public static void takeTileFromBagUpdateTests(HostModel hostModel) {
-        hostModel.
-
-
-                hostModel.update(null,"1:takeTileFromBag");
-        hostModel.update(null,"2:takeTileFromBag");
-        hostModel.update(null,"3:takeTileFromBag");
-    }*/
     public static void main(String[] args) {
 
         HostModel hostModel = HostModel.getHost();
@@ -288,18 +212,14 @@ public class HostModelTest {
         try {
             Socket socket = new Socket("localhost",hostServerPort);
             Socket socket2 = new Socket("localhost",hostServerPort);
+            System.out.println(">>> Starting addPlayerTest <<<");
             addPlayerTest(socket,socket2, hostModel,hostServerPort); // test adding players to the server
+            System.out.println(">>> Starting takeTileFromBagTest <<<");
             takeTileFromBagTest(socket,socket2,hostModel,hostServerPort);
+            System.out.println(">>> Starting tryPlaceWordTest <<<");
             tryPlaceWordTest(socket,socket2,hostModel,hostServerPort);
-            /* BoardUpdatedTest(socket,socket2); // test if the board updated
-            HandUpdateTest(socket,socket2); // refill hand + take tile from bag
-            passTheTurnTest(socket,socket2); // pass the turn test
-            tryPlaceWordUpdateTests(hostModel); // test for case try place word in update
-            challengeUpdateTests(hostModel); // test for case challenge in update
-
-
-            takeTileFromBagUpdateTests(hostModel); // test for case take tile from bag in update
-*/
+            System.out.println(">>> Starting challengeTest <<<");
+            checkChallenge(socket,socket2,hostModel,hostServerPort);
         } catch (IOException e) {throw new RuntimeException(e);}
     }
 
