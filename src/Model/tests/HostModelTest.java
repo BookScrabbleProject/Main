@@ -92,9 +92,10 @@ public class HostModelTest {
             Checker.checkResult("tryPlaceWord",line1[1],"tryPlaceWordTest-guestToHost");
             Checker.checkResult("0",line1[2],"tryPlaceWordTest-guestToHost");
 
-            String boardStatus = Arrays.deepToString(hostModel.getBoardStatus());
+            String boardStatus = matrixToString(hostModel.getBoardStatus());
+
             hostModel.update(null,"1:tryPlaceWord:WHALE,7,7,1,1");
-            Checker.checkUnEqual(boardStatus, Arrays.deepToString(hostModel.getBoardStatus()),"tryPlaceWordTest-guestToHost");
+            Checker.checkUnEqual(boardStatus, matrixToString(hostModel.getBoardStatus()),"tryPlaceWordTest-guestToHost");
 
             // check if player 1 got the new board status
             line1=scanner1.next().split(":");
@@ -148,10 +149,10 @@ public class HostModelTest {
 
             Checker.finishTest("tryPlaceWordTest-guestToHost");
 
-            boardStatus = Arrays.deepToString(hostModel.getBoardStatus());
+            boardStatus = matrixToString(hostModel.getBoardStatus());
 
             hostModel.tryPlaceWord("_HALE",7,7,false);
-            Checker.checkUnEqual(boardStatus, Arrays.deepToString(hostModel.getBoardStatus()),"tryPlaceWordTest-Host");
+            Checker.checkUnEqual(boardStatus, matrixToString(hostModel.getBoardStatus()),"tryPlaceWordTest-Host");
 
             // Check if the board is updated in the guests players
             line1=scanner1.next().split(":");
@@ -209,7 +210,7 @@ public class HostModelTest {
             Checker.checkResult("0",line1[0],"challenge-guestToHost");//1
             Checker.checkResult("boardUpdated",line1[1],"challenge-guestToHost");//2
 
-            String boardStatus = Arrays.deepToString(hostModel.getBoardStatus()).toString();
+            String boardStatus = matrixToString(hostModel.getBoardStatus());
 
 
             Checker.checkResult(boardStatus.toString(),line1[2],"challenge-guestToHost");//3 -
@@ -272,6 +273,10 @@ public class HostModelTest {
             // need to check send to all players received - failed
         } catch (IOException e) {throw new RuntimeException(e);}
         Checker.finishTest("challengeTest");
+    }
+
+    private static String matrixToString(Character[][] matrix) {
+        return Arrays.deepToString(matrix).replace(" ","").replace("[","").replace("]","").replace(",","");
     }
 
 
