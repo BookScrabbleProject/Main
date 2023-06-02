@@ -194,10 +194,83 @@ public class HostModelTest {
         }
     }
 
-    public static void checkChallenge(Socket socket,Socket socket2,HostModel hostModel,int hostServerPort) {
-        // Todo: check if the challenge is working
+    public static void challengeTest(Socket socket,Socket socket2,HostModel hostModel,int hostServerPort) {
+        // id =1 whale try - ok
+        //id =2 whale challenge -0
+        hostModel.update(null,"2:challenge:WHALE,0"); // challenge success
+        try {
+            Scanner scanner1 = new Scanner(socket.getInputStream());
+            String[] line1 = scanner1.next().split(":");
+            Scanner scanner2 = new Scanner(socket2.getInputStream());
+            String[] line2 = scanner2.next().split(":");
+            //success
+
+            // need to check board unchanged
+            Checker.checkResult("0",line1[0],"challenge-guestToHost");//1
+            Checker.checkResult("boardUpdated",line1[1],"challenge-guestToHost");//2
+
+            String boardStatus = Arrays.deepToString(hostModel.getBoardStatus()).toString();
 
 
+            Checker.checkResult(boardStatus.toString(),line1[2],"challenge-guestToHost");//3 -
+            Checker.checkResult("0",line2[0],"challenge-guestToHost");//4
+            Checker.checkResult("boardUpdated",line2[1],"challenge-guestToHost");//5
+            Checker.checkResult(boardStatus,line2[2],"challenge-guestToHost");//6 -
+
+            //Hand - need to check setHand + need to check num of tiles changed
+            line2 = scanner2.next().split(":");
+            Checker.checkResult("2",line2[0],"challenge-guestToHost");//7
+            Checker.checkResult("setHand",line2[1],"challenge-guestToHost");//8
+            String handTiles = hostModel.getConnectedPlayers().get(1).toString();
+            // check setHand tiles changed
+            Checker.checkResult(handTiles,line2[2],"challenge-guestToHost");//9 -
+            //check num of tiles in id =1,2 changed
+            line1 = scanner1.next().split(":");
+            line2 = scanner2.next().split(":");
+            String  numberOfTiles = hostModel.getMyHand().toString();
+            Checker.checkResult("2",line1[0],"challenge-guestToHost");//10
+            Checker.checkResult("numOfTilesUpdated",line1[1],"challenge-guestToHost");//11
+
+            Checker.checkResult(numberOfTiles,line1[2],"challenge-guestToHost");//12
+            Checker.checkResult("2",line2[0],"challenge-guestToHost");//13 -
+            Checker.checkResult("numOfTilesUpdated",line2[1],"challenge-guestToHost");//14
+
+            Checker.checkResult(numberOfTiles,line2[2],"challenge-guestToHost");//15
+
+            // need to check score changed
+            line1 = scanner1.next().split(":");
+            line2 = scanner2.next().split(":");
+            String scoreAfterChange = hostModel.getPlayersScores().get(1).toString();
+
+            Checker.checkResult("0",line1[0],"challenge-guestToHost");//16
+            Checker.checkResult("scoreUpdated",line1[1],"challenge-guestToHost");//17
+            Checker.checkResult(scoreAfterChange,line1[2],"challenge-guestToHost");//18
+            Checker.checkResult("0",line2[0],"challenge-guestToHost");//19
+            Checker.checkResult("scoreUpdated",line2[1],"challenge-guestToHost");//20
+            Checker.checkResult(scoreAfterChange,line2[2],"challenge-guestToHost");//21
+
+            // need to check send to all players received - success
+            line1 = scanner1.next().split(":");
+            line2 = scanner2.next().split(":");
+            Checker.checkResult("2",line1[0],"challenge-guestToHost");//22
+            Checker.checkResult("challenge",line1[1],"challenge-guestToHost");//23
+            Checker.checkResult("0",line1[2],"challenge-guestToHost");//24
+            Checker.checkResult("2",line2[0],"challenge-guestToHost");//25
+            Checker.checkResult("challenge",line2[1],"challenge-guestToHost");//26
+            Checker.checkResult("0",line2[2],"challenge-guestToHost");//27
+            Checker.finishTest("challenge-guestToHost");
+
+
+            hostModel.update(null,"2:challenge:1"); // challenge failed
+            //failed
+            // refill player hand
+            // set score
+            // need to check num of tiles changed
+            //need to check setHand
+            // pass the turn
+            // refill player hand
+            // need to check send to all players received - failed
+        } catch (IOException e) {throw new RuntimeException(e);}
         Checker.finishTest("challengeTest");
     }
 
@@ -219,7 +292,7 @@ public class HostModelTest {
             System.out.println(">>> Starting tryPlaceWordTest <<<");
             tryPlaceWordTest(socket,socket2,hostModel,hostServerPort);
             System.out.println(">>> Starting challengeTest <<<");
-            checkChallenge(socket,socket2,hostModel,hostServerPort);
+            challengeTest(socket,socket2,hostModel,hostServerPort);
         } catch (IOException e) {throw new RuntimeException(e);}
     }
 
