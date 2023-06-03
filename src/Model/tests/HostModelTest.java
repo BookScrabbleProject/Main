@@ -207,63 +207,101 @@ public class HostModelTest {
             //success
 
             // need to check board unchanged
-            Checker.checkResult("0",line1[0],"challenge-guestToHost");//1
-            Checker.checkResult("boardUpdated",line1[1],"challenge-guestToHost");//2
+            Checker.checkResult("0",line1[0],"challenge-guestToHostSuccess");//1
+            Checker.checkResult("boardUpdated",line1[1],"challenge-guestToHostSuccess");//2
 
             String boardStatus = matrixToString(hostModel.getBoardStatus());
 
 
-            Checker.checkResult(boardStatus.toString(),line1[2],"challenge-guestToHost");//3 -
-            Checker.checkResult("0",line2[0],"challenge-guestToHost");//4
-            Checker.checkResult("boardUpdated",line2[1],"challenge-guestToHost");//5
-            Checker.checkResult(boardStatus,line2[2],"challenge-guestToHost");//6 -
+            Checker.checkResult(boardStatus.toString(),line1[2],"challenge-guestToHostSuccess");//3 -
+            Checker.checkResult("0",line2[0],"challenge-guestToHostSuccess");//4
+            Checker.checkResult("boardUpdated",line2[1],"challenge-guestToHostSuccess");//5
+            Checker.checkResult(boardStatus,line2[2],"challenge-guestToHostSuccess");//6 -
 
             //Hand - need to check setHand + need to check num of tiles changed
             line2 = scanner2.next().split(":");
-            Checker.checkResult("2",line2[0],"challenge-guestToHost");//7
-            Checker.checkResult("setHand",line2[1],"challenge-guestToHost");//8
+            Checker.checkResult("2",line2[0],"challenge-guestToHostSuccess");//7
+            Checker.checkResult("setHand",line2[1],"challenge-guestToHostSuccess");//8
             String handTiles = hostModel.getConnectedPlayers().get(1).toString();
             // check setHand tiles changed
-            Checker.checkResult(handTiles,line2[2],"challenge-guestToHost");//9 -
+            Checker.checkResult(handTiles,line2[2],"challenge-guestToHostSuccess");//9 -
             //check num of tiles in id =1,2 changed
             line1 = scanner1.next().split(":");
             line2 = scanner2.next().split(":");
             String  numberOfTiles = hostModel.getMyHand().toString();
-            Checker.checkResult("2",line1[0],"challenge-guestToHost");//10
-            Checker.checkResult("numOfTilesUpdated",line1[1],"challenge-guestToHost");//11
+            Checker.checkResult("2",line1[0],"challenge-guestToHostSuccess");//10
+            Checker.checkResult("numOfTilesUpdated",line1[1],"challenge-guestToHostSuccess");//11
 
-            Checker.checkResult(numberOfTiles,line1[2],"challenge-guestToHost");//12
-            Checker.checkResult("2",line2[0],"challenge-guestToHost");//13 -
-            Checker.checkResult("numOfTilesUpdated",line2[1],"challenge-guestToHost");//14
+            Checker.checkResult(numberOfTiles,line1[2],"challenge-guestToHostSuccess");//12
+            Checker.checkResult("2",line2[0],"challenge-guestToHostSuccess");//13 -
+            Checker.checkResult("numOfTilesUpdated",line2[1],"challenge-guestToHostSuccess");//14
 
-            Checker.checkResult(numberOfTiles,line2[2],"challenge-guestToHost");//15
+            Checker.checkResult(numberOfTiles,line2[2],"challenge-guestToHostSuccess");//15
 
             // need to check score changed
             line1 = scanner1.next().split(":");
             line2 = scanner2.next().split(":");
             String scoreAfterChange = hostModel.getPlayersScores().get(1).toString();
 
-            Checker.checkResult("0",line1[0],"challenge-guestToHost");//16
-            Checker.checkResult("scoreUpdated",line1[1],"challenge-guestToHost");//17
-            Checker.checkResult(scoreAfterChange,line1[2],"challenge-guestToHost");//18
-            Checker.checkResult("0",line2[0],"challenge-guestToHost");//19
-            Checker.checkResult("scoreUpdated",line2[1],"challenge-guestToHost");//20
-            Checker.checkResult(scoreAfterChange,line2[2],"challenge-guestToHost");//21
+            Checker.checkResult("0",line1[0],"challenge-guestToHostSuccess");//16
+            Checker.checkResult("scoreUpdated",line1[1],"challenge-guestToHostSuccess");//17
+            Checker.checkResult(scoreAfterChange,line1[2],"challenge-guestToHostSuccess");//18
+            Checker.checkResult("0",line2[0],"challenge-guestToHostSuccess");//19
+            Checker.checkResult("scoreUpdated",line2[1],"challenge-guestToHostSuccess");//20
+            Checker.checkResult(scoreAfterChange,line2[2],"challenge-guestToHostSuccess");//21
 
             // need to check send to all players received - success
             line1 = scanner1.next().split(":");
             line2 = scanner2.next().split(":");
-            Checker.checkResult("2",line1[0],"challenge-guestToHost");//22
-            Checker.checkResult("challenge",line1[1],"challenge-guestToHost");//23
-            Checker.checkResult("0",line1[2],"challenge-guestToHost");//24
-            Checker.checkResult("2",line2[0],"challenge-guestToHost");//25
-            Checker.checkResult("challenge",line2[1],"challenge-guestToHost");//26
-            Checker.checkResult("0",line2[2],"challenge-guestToHost");//27
-            Checker.finishTest("challenge-guestToHost");
+            Checker.checkResult("2",line1[0],"challenge-guestToHostSuccess");//22
+            Checker.checkResult("challenge",line1[1],"challenge-guestToHostSuccess");//23
+            Checker.checkResult("0",line1[2],"challenge-guestToHostSuccess");//24
+            Checker.checkResult("2",line2[0],"challenge-guestToHostSuccess");//25
+            Checker.checkResult("challenge",line2[1],"challenge-guestToHostSuccess");//26
+            Checker.checkResult("0",line2[2],"challenge-guestToHostSuccess");//27
+            Checker.finishTest("challenge-guestToHostSuccess");
 
 
-            hostModel.update(null,"2:challenge:1"); // challenge failed
-            //failed
+
+            //maybe I made some mistakes its late :D
+            String preTurnBoardStatus = matrixToString(hostModel.getBoardStatus());
+            int playerPreviousScore=hostModel.getPlayersScores().get(2);
+            hostModel.update(null,"2:tryPlaceWord:HAPPY,5,9,0,1");// good word - player number 2 succesfully puts the word -maybe should be hostModel.tryPlaceWord....
+            hostModel.update(null,"1:challenge:1"); // challenge by player 1 failed -word was good
+            line2=scanner2.next().split(":");
+            Checker.checkResult("2",line2[0],"challenge-guestToHostFailed");
+            Checker.checkResult("setHand",line2[1],"challenge-guestToHostFailed");
+            Checker.checkResult(hostModel.getConnectedPlayers().get(2).toString(),line2[2],"challenge-guestToHostFailed"); // maybe wrong implement-idea is- check if the hand you are sent from the server is the hand that the player now has
+            line1=scanner1.next().split(":");
+            Checker.checkResult("2",line1[0],"challenge-guestToHostFailed");
+            Checker.checkResult("numOfTilesUpdated",line1[1],"challenge-guestToHostFailed");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("2",line2[0],"challenge-guestToHostFailed");
+            Checker.checkResult("numOfTilesUpdated",line2[1],"challenge-guestToHostFailed");
+            int playerNumOfTiles=hostModel.getPlayersNumberOfTiles().get(2);
+            Checker.checkResult("7",String.valueOf(playerNumOfTiles),"challenge-guestToHostFailed"); // check if the num of tiles in the players hand is now back to 7(refilled)
+            int playerNewScore=hostModel.getPlayersScores().get(2);
+            if(playerNewScore==playerPreviousScore)
+                System.out.println("The player's score didn't change");
+            line1=scanner1.next().split(":");
+            Checker.checkResult("-1",line1[0],"challenge-guestToHostFailed");
+            Checker.checkResult("newPlayerTurn",line1[1],"challenge-guestToHostFailed");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("-1",line2[0],"challenge-guestToHostFailed");
+            Checker.checkResult("newPlayerTurn",line2[1],"challenge-guestToHostFailed");
+            line1=scanner1.next().split(":");
+            Checker.checkResult("1",line1[0],"challenge-guestToHostFailed");
+            Checker.checkResult("challenge",line1[1],"challenge-guestToHostFailed");
+            Checker.checkResult("1",line1[2],"challenge-guestToHostFailed");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("1",line2[0],"challenge-guestToHostFailed");
+            Checker.checkResult("challenge",line2[1],"challenge-guestToHostFailed");
+            Checker.checkResult("1",line2[2],"challenge-guestToHostFailed");
+            String PostTurnBoardStatus = matrixToString(hostModel.getBoardStatus());
+            if(preTurnBoardStatus.equals(PostTurnBoardStatus))
+                System.out.println("The Board didn't change");
+            Checker.finishTest("challenge-guestToHostFailed");
+
             // refill player hand
             // set score
             // need to check num of tiles changed
