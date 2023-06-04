@@ -7,12 +7,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ViewModel {
-    Model model;
-//    data binding
-    Character[][] board;
+    //    data binding
+    public Character[][] board;
     public List<DataChanges> changesList;
+    Model model;
     int currentPlayerId;
     List<Character> myHand;
+    private String word;
+    private int wordStartRow;
+    private int wordStartCol;
 
     public ViewModel() {
         board = new Character[15][15];
@@ -28,8 +31,11 @@ public class ViewModel {
      * If the word is invalid, notify the view
      */
     public void tryPlaceWord() {
-        if(isChangeValid()) {
+        if (isChangeValid()) {
             model.tryPlaceWord(getWord(), getWordStartRow(), getWordStartCol(), isWordVertical());
+            word = null;
+            wordStartRow = -1;
+            wordStartCol = -1;
             return;
         }
         // Todo: notify the view that the change is invalid
@@ -43,8 +49,8 @@ public class ViewModel {
         int numberOfColRowChanges = 0;
         int colForCheck = sortedChangesList.get(0).getNewCol();
         int rowForCheck = sortedChangesList.get(0).getNewRow();
-        for(DataChanges dc : sortedChangesList) {
-            if(dc.getNewCol() != colForCheck) {
+        for (DataChanges dc : sortedChangesList) {
+            if (dc.getNewCol() != colForCheck) {
                 numberOfColRowChanges++;
                 colForCheck = dc.getNewCol();
             }
@@ -63,11 +69,28 @@ public class ViewModel {
     public String getWord() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         StringBuilder sb = new StringBuilder();
+        if (isWordVertical()) {
+            int startRow = sortedChangesList.get(0).getNewRow();
+            while (startRow > 0 && board[startRow - 1][sortedChangesList.get(0).getNewCol()] != null) {
+                startRow--;
+            }
+            for (int i = startRow; i < sortedChangesList.get(0).getNewRow(); i++) {
+                sb.append('_');
+            }
+        } else {
+            int startCol = sortedChangesList.get(0).getNewCol();
+            while (startCol > 0 && board[sortedChangesList.get(0).getNewRow()][startCol - 1] != null) {
+                startCol--;
+            }
+            for (int i = startCol; i < sortedChangesList.get(0).getNewCol(); i++) {
+                sb.append('_');
+            }
+        }
         int row = changesList.get(0).getNewRow();
         int col = changesList.get(0).getNewCol();
         for (DataChanges dc : sortedChangesList) {
-            if(dc.getNewCol() > col + 1 || dc.getNewRow() > row + 1) {
-                for(int i = 0; i < dc.getNewCol() - col - 1; i++) {
+            if (dc.getNewCol() > col + 1 || dc.getNewRow() > row + 1) {
+                for (int i = 0; i < dc.getNewCol() - col - 1; i++) {
                     sb.append('_');
                 }
             }
@@ -75,7 +98,26 @@ public class ViewModel {
             col = dc.getNewCol();
             row = dc.getNewRow();
         }
-        return sb.toString();
+
+        if (isWordVertical()) {
+            int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != null) {
+                endRow++;
+            }
+            for (int i = endRow; i > sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i--) {
+                sb.append('_');
+            }
+        } else {
+            int endCol = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol();
+            while (endCol < 14 && board[sortedChangesList.get(0).getNewRow()][endCol + 1] != null) {
+                endCol++;
+            }
+            for (int i = endCol; i > sortedChangesList.get(sortedChangesList.size() - 1).getNewCol(); i--) {
+                sb.append('_');
+            }
+        }
+        this.word = sb.toString();
+        return this.word;
     }
 
     /**
@@ -84,11 +126,16 @@ public class ViewModel {
     public int getWordStartRow() {
         int minRow = changesList.get(0).getNewRow();
         for (DataChanges dc : changesList) {
-            if(dc.getNewRow() < minRow) {
-                minRow = dc.getNewRow();
+            if (dc.getNewRow() < minRow) minRow = dc.getNewRow();
+        }
+        if (isWordVertical()) {
+            for (Character c : this.word.toCharArray()) {
+                if (c == '_') minRow--;
+                else break;
             }
         }
-        return minRow;
+        this.wordStartRow = minRow;
+        return this.wordStartRow;
     }
 
     /**
@@ -97,11 +144,16 @@ public class ViewModel {
     public int getWordStartCol() {
         int minCol = changesList.get(0).getNewCol();
         for (DataChanges dc : changesList) {
-            if(dc.getNewCol() < minCol) {
-                minCol = dc.getNewCol();
+            if (dc.getNewCol() < minCol) minCol = dc.getNewCol();
+        }
+        if (!isWordVertical()) {
+            for (Character c : this.word.toCharArray()) {
+                if (c == '_') minCol--;
+                else break;
             }
         }
-        return minCol;
+        this.wordStartCol = minCol;
+        return this.wordStartCol;
     }
 
     /**
@@ -116,7 +168,7 @@ public class ViewModel {
         List<DataChanges> sortedChangesList = new ArrayList<>();
         sortedChangesList.addAll(changesList);
         sortedChangesList.sort((o1, o2) -> {
-            if(o1.getNewRow() == o2.getNewRow()) {
+            if (o1.getNewRow() == o2.getNewRow()) {
                 return o1.getNewCol() - o2.getNewCol();
             }
             return o1.getNewRow() - o2.getNewRow();
