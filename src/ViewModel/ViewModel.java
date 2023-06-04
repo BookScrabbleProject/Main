@@ -9,7 +9,7 @@ public class ViewModel {
     Model model;
 //    data binding
     Character[][] board;
-    List<DataChanges> changesList;
+    public List<DataChanges> changesList;
     int currentPlayerId;
     List<Character> myHand;
 
@@ -37,32 +37,71 @@ public class ViewModel {
     /**
      * @return true if the word is valid, false otherwise (from changesList)
      */
-    private boolean isChangeValid() {
+    public boolean isChangeValid() {
         // TODO: Implement
+        int numberOfColRowChanges = 0;
+        int colForCheck = changesList.get(0).getNewCol();
+        int rowForCheck = changesList.get(0).getNewRow();
+        for(DataChanges dc : changesList) {
+            if(dc.getNewCol() != colForCheck) {
+                numberOfColRowChanges++;
+                colForCheck = dc.getNewCol();
+            }
+            if (dc.getNewRow() != rowForCheck) {
+                numberOfColRowChanges++;
+                rowForCheck = dc.getNewRow();
+            }
+        }
 
-        return false;
+        return numberOfColRowChanges == changesList.size() - 1;
     }
 
     /**
      * @return the word that the player is trying to place
      */
-    private String getWord() {
-        // TODO: Implement
-        return null;
+    public String getWord() {
+        // Todo: sort changesList by row and column
+
+        StringBuilder sb = new StringBuilder();
+        int row = changesList.get(0).getNewRow();
+        int col = changesList.get(0).getNewCol();
+        for (DataChanges dc : changesList) {
+            if(dc.getNewCol() > col + 1 || dc.getNewRow() > row + 1) {
+                for(int i = 0; i < dc.getNewCol() - col - 1; i++) {
+                    sb.append('_');
+                }
+            }
+            sb.append(dc.getLetter());
+            col = dc.getNewCol();
+            row = dc.getNewRow();
+        }
+        return sb.toString();
     }
 
     /**
      * @return the row of the first letter of the word
      */
     private int getWordStartRow() {
-        return changesList.get(0).getNewRow();
+        int minRow = changesList.get(0).getNewRow();
+        for (DataChanges dc : changesList) {
+            if(dc.getNewRow() < minRow) {
+                minRow = dc.getNewRow();
+            }
+        }
+        return minRow;
     }
 
     /**
      * @return the column of the first letter of the word
      */
     private int getWordStartCol() {
-        return changesList.get(0).getNewCol();
+        int minCol = changesList.get(0).getNewCol();
+        for (DataChanges dc : changesList) {
+            if(dc.getNewCol() < minCol) {
+                minCol = dc.getNewCol();
+            }
+        }
+        return minCol;
     }
 
     /**
