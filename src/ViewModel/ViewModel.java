@@ -3,6 +3,7 @@ package ViewModel;
 import Model.Model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ViewModel {
@@ -38,11 +39,11 @@ public class ViewModel {
      * @return true if the word is valid, false otherwise (from changesList)
      */
     public boolean isChangeValid() {
-        // TODO: Implement
+        List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         int numberOfColRowChanges = 0;
-        int colForCheck = changesList.get(0).getNewCol();
-        int rowForCheck = changesList.get(0).getNewRow();
-        for(DataChanges dc : changesList) {
+        int colForCheck = sortedChangesList.get(0).getNewCol();
+        int rowForCheck = sortedChangesList.get(0).getNewRow();
+        for(DataChanges dc : sortedChangesList) {
             if(dc.getNewCol() != colForCheck) {
                 numberOfColRowChanges++;
                 colForCheck = dc.getNewCol();
@@ -53,19 +54,18 @@ public class ViewModel {
             }
         }
 
-        return numberOfColRowChanges == changesList.size() - 1;
+        return numberOfColRowChanges == sortedChangesList.size() - 1;
     }
 
     /**
      * @return the word that the player is trying to place
      */
     public String getWord() {
-        // Todo: sort changesList by row and column
-
+        List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         StringBuilder sb = new StringBuilder();
         int row = changesList.get(0).getNewRow();
         int col = changesList.get(0).getNewCol();
-        for (DataChanges dc : changesList) {
+        for (DataChanges dc : sortedChangesList) {
             if(dc.getNewCol() > col + 1 || dc.getNewRow() > row + 1) {
                 for(int i = 0; i < dc.getNewCol() - col - 1; i++) {
                     sb.append('_');
@@ -81,7 +81,7 @@ public class ViewModel {
     /**
      * @return the row of the first letter of the word
      */
-    private int getWordStartRow() {
+    public int getWordStartRow() {
         int minRow = changesList.get(0).getNewRow();
         for (DataChanges dc : changesList) {
             if(dc.getNewRow() < minRow) {
@@ -94,7 +94,7 @@ public class ViewModel {
     /**
      * @return the column of the first letter of the word
      */
-    private int getWordStartCol() {
+    public int getWordStartCol() {
         int minCol = changesList.get(0).getNewCol();
         for (DataChanges dc : changesList) {
             if(dc.getNewCol() < minCol) {
@@ -107,8 +107,20 @@ public class ViewModel {
     /**
      * @return true if the word is vertical, false if it is horizontal
      */
-    private boolean isWordVertical() {
-        // TODO: Implement
-        return false;
+    public boolean isWordVertical() {
+        List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
+        return sortedChangesList.get(0).getNewCol() == sortedChangesList.get(1).getNewCol();
+    }
+
+    private List<DataChanges> getSortedChangesListByRowCol() {
+        List<DataChanges> sortedChangesList = new ArrayList<>();
+        sortedChangesList.addAll(changesList);
+        sortedChangesList.sort((o1, o2) -> {
+            if(o1.getNewRow() == o2.getNewRow()) {
+                return o1.getNewCol() - o2.getNewCol();
+            }
+            return o1.getNewRow() - o2.getNewRow();
+        });
+        return sortedChangesList;
     }
 }
