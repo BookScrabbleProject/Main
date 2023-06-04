@@ -302,22 +302,65 @@ public class HostModelTest {
                 System.out.println("The Board didn't change");
             Checker.finishTest("challenge-guestToHostFailed");
 
-            // refill player hand
-            // set score
-            // need to check num of tiles changed
-            //need to check setHand
-            // pass the turn
-            // refill player hand
-            // need to check send to all players received - failed
+
+
+            //host tests
+            hostModel.challenge("_HALE");
+            //check board updated
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("0",line1[0],"challenge-Host");
+            Checker.checkResult("boardUpdated",line1[1],"challenge-Host");
+            Checker.checkUnEqual(boardStatus, line1[2], "challenge-Host");
+            Checker.checkResult("0",line2[0],"challenge-Host");
+            Checker.checkResult("boardUpdated",line2[1],"challenge-Host");
+            Checker.checkUnEqual(boardStatus, line2[2], "challenge-Host");
+
+            //check if the hands updated
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("2",line2[0],"challenge-Host");
+            Checker.checkResult("setHand",line2[1],"challenge-Host");
+            String handTilesGuest = hostModel.getConnectedPlayers().get(1).toString();
+            Checker.checkResult(handTilesGuest,line2[2],"challenge-Host");
+            Checker.checkResult("2",line1[0],"challenge-Host");
+            Checker.checkResult("setHand",line1[1],"challenge-Host");
+            Checker.checkResult(handTilesGuest,line1[2],"challenge-Host");
+
+            // Check if the number of tiles is updated in the guests players
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("0",line1[0],"challenge-Host");
+            Checker.checkResult("numOfTilesUpdated",line1[1],"challenge-Host");
+            Checker.checkResult("0",line2[0],"challenge-Host");
+            Checker.checkResult("numOfTilesUpdated",line2[1],"challenge-Host");
+
+            // Check if the score is updated in the guests players
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult("0",line1[0],"challenge-Host");
+            Checker.checkResult("scoreUpdated",line1[1],"challenge-Host");
+            Checker.checkResult("0",line2[0],"challenge-Host");
+            Checker.checkResult("scoreUpdated",line2[1],"challenge-Host");
+
+            // Check if the guests players get the information about the tryPlaceWord action and the score of the word (12 points for _HALE)
+            line1=scanner1.next().split(":");
+            line2=scanner2.next().split(":");
+            Checker.checkResult(String.valueOf(hostModel.getCurrentPlayerId()),line1[0],"challenge-Host");
+            Checker.checkResult("challenge",line1[1],"challenge-Host");
+            Checker.checkResult("0",line1[2],"challenge-Host");
+            Checker.checkResult(hostModel.getCurrentPlayerId(),line2[0],"challenge-Host");
+            Checker.checkResult("challenge",line2[1],"challenge-Host");
+            Checker.checkResult("0",line2[2],"challenge-Host");
+            Checker.finishTest("challenge-Host");
+
         } catch (IOException e) {throw new RuntimeException(e);}
-        Checker.finishTest("challengeTest");
+        Checker.finishTest("challengeTest - Host");
     }
+
 
     private static String matrixToString(Character[][] matrix) {
-        return Arrays.deepToString(matrix).replace(" ","").replace("[","").replace("]","").replace(",","");
-    }
-
-
+        return Arrays.deepToString(matrix).replace(" ","").replace("[","").replace("]","").replace(",","");}
     public static void main(String[] args) {
 
         HostModel hostModel = HostModel.getHost();
