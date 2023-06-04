@@ -261,7 +261,7 @@ public class HostModelTest {
             Checker.checkResult("0",line2[2],"challenge-guestToHostSuccess");//27
             Checker.finishTest("challenge-guestToHostSuccess");
 
-
+            //all works until here
 
             //maybe I made some mistakes its late :D
             String preTurnBoardStatus = matrixToString(hostModel.getBoardStatus());
