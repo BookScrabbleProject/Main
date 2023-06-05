@@ -312,7 +312,7 @@ public class HostModelTest {
 
 
 
-            //host tests
+            //host test
             hostModel.challenge("_HALE");
             //check board updated
             line1=scanner1.next().split(":");
