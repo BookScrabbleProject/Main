@@ -324,7 +324,7 @@ public class HostModelTest {
             Checker.checkResult("boardUpdated",line2[1],"challenge-Host");//5
             Checker.checkUnEqual(boardStatus, line2[2], "challenge-Host");//6
 
-            //check if the hands updated
+            //check if the hands update
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
             Checker.checkResult("2",line2[0],"challenge-Host");//7
