@@ -61,7 +61,10 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
     }
-
+    //delete after check
+    public Map<Integer,Player> getConnectedPlayers(){
+        return connectedPlayers;
+    }
     public void loadBooks(String... bookNames){
         String[] str = new String[bookNames.length];
         for (String s: bookNames) {
@@ -387,14 +390,14 @@ public class HostModel extends PlayerModel implements Observer {
                     connectedPlayers.get(currentPlayerId).addTiles(wordFromPlayers);
                     hostServer.sendToAllPlayers(0, "boardUpdated",boardToString(board.getTiles()));
                     hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
-                    hostServer.sendToAllPlayers(0, "scoreChanged", currentPlayerId + "," + connectedPlayers.get(currentPlayerId).getScore());
+                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size()));
+                    hostServer.sendToAllPlayers(0, "scoreUpdated", String.valueOf(connectedPlayers.get(currentPlayerId).getScore()));
                     hostServer.sendToAllPlayers(requestedId, "challenge", "0");
                 } else {
                     refillPlayerHand(currentPlayerId);
                     connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
                     hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size()));
                     passTheTurn();
                     hostServer.sendToAllPlayers(requestedId, "challenge", "1");
                     requestedId = -1;
