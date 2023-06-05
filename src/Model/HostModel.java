@@ -397,7 +397,7 @@ public class HostModel extends PlayerModel implements Observer {
                     refillPlayerHand(currentPlayerId);
                     connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
                     hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated",connectedPlayers.get(currentPlayerId).getTiles().toString());
+                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size()));
                     passTheTurn();
                     hostServer.sendToAllPlayers(requestedId, "challenge", "1");
                     requestedId = -1;
