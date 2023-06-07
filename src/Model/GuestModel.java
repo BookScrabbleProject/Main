@@ -230,6 +230,9 @@ public class GuestModel extends PlayerModel implements Observer {
                 numOfTileInBag=Integer.parseInt(arguments[0]);
                 setChanged();
                 notifyObservers("tilesInBagUpdated");
+            case "tilesWithScores":
+                setChanged();
+                notifyObservers(splitedArgString[1]+":"+splitedArgString[2]);
         }
     }
 }
