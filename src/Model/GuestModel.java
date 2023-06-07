@@ -193,10 +193,10 @@ public class GuestModel extends PlayerModel implements Observer {
                 setChanged();
                 notifyObservers("scoreUpdated");
 
-            case "TilesUpdated" :
+            case "tilesUpdated" :
                 numberOfTilesMap.put(id, Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers("TilesUpdated");
+                notifyObservers("tilesUpdated");
 
             case "setHand" :
                 List<Character> newHand = new ArrayList<>();
@@ -213,7 +213,7 @@ public class GuestModel extends PlayerModel implements Observer {
              case "setId" :
                 myPlayer.setId(Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers(arg);
+                notifyObservers(splitedArgString[1]+":"+arguments[0]);
 
             case "playersListUpdated" :
                 for (String player : arguments) {
@@ -224,7 +224,7 @@ public class GuestModel extends PlayerModel implements Observer {
                     playersNameMap.put(playerId, playerName);
                     }
                 setChanged();
-                notifyObservers(arg);
+                notifyObservers(splitedArgString[1]+":"+splitedArgString[2]);
 
             case "tilesInBagUpdated" :
                 numOfTileInBag=Integer.parseInt(arguments[0]);
