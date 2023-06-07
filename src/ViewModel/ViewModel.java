@@ -2,11 +2,9 @@ package ViewModel;
 
 import Model.Model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class ViewModel {
+public class ViewModel implements Observer {
     //    data binding
     public Character[][] board;
     public List<DataChanges> changesList;
@@ -174,5 +172,58 @@ public class ViewModel {
             return o1.getNewRow() - o2.getNewRow();
         });
         return sortedChangesList;
+    }
+
+    private Character[][] stringToMatrix(String boardStatusStr) {
+        Character[][] boardStatus = new Character[15][15];
+        for(int i = 0; i < 15; i++) {
+            for(int j = 0; j < 15; j++) {
+                boardStatus[i][j] = boardStatusStr.charAt(i * 15 + j);
+            }
+        }
+        return boardStatus;
+    }
+
+    private void setBoard(Character[][] boardStatus) {
+        this.board = boardStatus;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String messages = (String) arg;
+        Queue<String> messagesQ = new LinkedList<>(Arrays.asList(messages.split("\n")));
+        while (!messagesQ.isEmpty()) {
+            String message = messagesQ.poll();
+            int playerId = Integer.parseInt(message.split(":")[0]);
+            String methodName = message.split(":")[1];
+            String[] args = message.split(":")[2].split(",");
+
+            switch (methodName) {
+                case "boardUpdated":
+                    setBoard(stringToMatrix(args[0]));
+                    break;
+                case "scoreUpdated":
+                    break;
+                case "numOfTilesUpdated":
+                    break;
+                case "setHand":
+                    break;
+                case "newPlayerTurn":
+                    break;
+                case "setId":
+                    break;
+                case "playerListUpdated":
+                    break;
+                case "startGame":
+                    break;
+                case "challenge":
+                    break;
+                case "tryPlaceWord":
+                    break;
+                case "tilesInBagUpdated":
+                    break;
+            }
+
+        }
     }
 }
