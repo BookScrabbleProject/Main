@@ -1,6 +1,7 @@
 package ViewModel;
 
 import Model.Model;
+import Model.gameClasses.Player;
 
 import java.util.*;
 
@@ -11,15 +12,24 @@ public class ViewModel implements Observer {
     Model model;
     int currentPlayerId;
     List<Character> myHand;
+    int myId;
+    int numberOfTilesInBag;
+    Map<Integer, PlayerVVM> players;
+    MyPlayerVVM myPlayer;
     private String word;
     private int wordStartRow;
     private int wordStartCol;
+
 
     public ViewModel() {
         board = new Character[15][15];
         changesList = new ArrayList<>();
         currentPlayerId = 0;
         myHand = new ArrayList<>();
+        numberOfTilesInBag = 0;
+        myId = -1;
+        players = new HashMap<>();
+        myPlayer = new MyPlayerVVM(-1, "", 0, 0);
         // Todo: add more initialization here
     }
 
@@ -174,18 +184,16 @@ public class ViewModel implements Observer {
         return sortedChangesList;
     }
 
-    private Character[][] stringToMatrix(String boardStatusStr) {
-        Character[][] boardStatus = new Character[15][15];
-        for(int i = 0; i < 15; i++) {
-            for(int j = 0; j < 15; j++) {
-                boardStatus[i][j] = boardStatusStr.charAt(i * 15 + j);
-            }
-        }
-        return boardStatus;
-    }
-
     private void setBoard(Character[][] boardStatus) {
         this.board = boardStatus;
+    }
+
+    public void setNumberOfTilesInBag(int numberOfTilesInBag) {
+        this.numberOfTilesInBag = numberOfTilesInBag;
+    }
+
+    public void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
     }
 
     @Override
@@ -194,33 +202,66 @@ public class ViewModel implements Observer {
         Queue<String> messagesQ = new LinkedList<>(Arrays.asList(messages.split("\n")));
         while (!messagesQ.isEmpty()) {
             String message = messagesQ.poll();
-            int playerId = Integer.parseInt(message.split(":")[0]);
-            String methodName = message.split(":")[1];
-            String[] args = message.split(":")[2].split(",");
-
+            String methodName = message.split(":")[0];
+            String[] args = null;
+            try {
+                args = message.split(":")[1].split(",");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             switch (methodName) {
                 case "boardUpdated":
-                    setBoard(stringToMatrix(args[0]));
+                    setBoard(model.getBoardStatus());
                     break;
+
                 case "scoreUpdated":
+                    Map<Integer, Integer> scores = model.getPlayersScores();
+                    for (Integer key : scores.keySet()) {
+                        this.players.get(key).setScore(scores.get(key));
+                    }
                     break;
+
                 case "numOfTilesUpdated":
+                    Map<Integer, Integer> tiles = model.getPlayersNumberOfTiles();
+                    for (Integer key : tiles.keySet()) {
+                        this.players.get(key).setNumberOfTiles(tiles.get(key));
+                    }
                     break;
+
                 case "setHand":
+                    this.myPlayer.setHand(model.getMyHand());
                     break;
+
                 case "newPlayerTurn":
+                    setCurrentPlayerId(model.getCurrentPlayerId());
                     break;
+
                 case "setId":
+                    this.myPlayer.setId(Integer.parseInt(args[0]));
+                    players.put(this.myPlayer.getId(), this.myPlayer);
                     break;
+
                 case "playerListUpdated":
+                    for (String player : args) {
+                        String[] playerInfo = player.split("-");
+                        int id = Integer.parseInt(playerInfo[0]);
+                        String name = playerInfo[1];
+                        if(!this.players.containsKey(id))
+                            this.players.put(id, new PlayerVVM(id, name));
+                    }
                     break;
+
                 case "startGame":
                     break;
+
                 case "challenge":
                     break;
+
                 case "tryPlaceWord":
                     break;
+
                 case "tilesInBagUpdated":
+                    setNumberOfTilesInBag(model.getNumberOfTilesInBag());
                     break;
             }
 
