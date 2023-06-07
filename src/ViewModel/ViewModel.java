@@ -7,6 +7,7 @@ import java.util.*;
 
 public class ViewModel implements Observer {
     //    data binding
+    Map<Character, Integer> tilesScores;
     public Character[][] board;
     public List<DataChanges> changesList;
     Model model;
@@ -21,13 +22,13 @@ public class ViewModel implements Observer {
     private int wordStartCol;
 
 
+
     public ViewModel() {
         board = new Character[15][15];
         changesList = new ArrayList<>();
         currentPlayerId = 0;
         myHand = new ArrayList<>();
         numberOfTilesInBag = 0;
-        myId = -1;
         players = new HashMap<>();
         myPlayer = new MyPlayerVVM(-1, "", 0, 0);
         // Todo: add more initialization here
@@ -221,7 +222,7 @@ public class ViewModel implements Observer {
                     }
                     break;
 
-                case "numOfTilesUpdated":
+                case "tilesUpdated":
                     Map<Integer, Integer> tiles = model.getPlayersNumberOfTiles();
                     for (Integer key : tiles.keySet()) {
                         this.players.get(key).setNumberOfTiles(tiles.get(key));
@@ -251,6 +252,14 @@ public class ViewModel implements Observer {
                     }
                     break;
 
+                case "tilesWithScores":
+                    for (String tile : args) {
+                        String[] tileInfo = tile.split("-");
+                        char letter = Character.toUpperCase(tileInfo[0].charAt(0));
+                        int score = Integer.parseInt(tileInfo[1]);
+                        this.tilesScores.put(letter, score);
+                    }
+                    break;
                 case "startGame":
                     break;
 
