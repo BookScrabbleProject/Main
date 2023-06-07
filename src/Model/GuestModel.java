@@ -179,54 +179,57 @@ public class GuestModel extends PlayerModel implements Observer {
         String methodName = splitedArgString[1];
         String[] arguments = splitedArgString[2].split(",");
         switch (methodName) {
-            case "tryPlaceWord", "challenge", "startGame" -> {
+            case "tryPlaceWord", "challenge", "startGame" :
                 setChanged();
                 notifyObservers(arg);
-            }
-            case "boardUpdated" -> {
+
+            case "boardUpdated" :
                 setBoardStatus(stringToCharacterMatrix(arguments[0]));
                 setChanged();
-                notifyObservers(arg);
-            }
-            case "scoreUpdated" -> {
+                notifyObservers("boardUpdated");
+
+            case "scoreUpdated" :
                 scoreMap.put(id, Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers(arg);
-            }
-            case "numOfTilesUpdated" -> {
+                notifyObservers("scoreUpdated");
+
+            case "TilesUpdated" :
                 numberOfTilesMap.put(id, Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers(arg);
-            }
-            case "setHand" -> { //
+                notifyObservers("TilesUpdated");
+
+            case "setHand" :
                 List<Character> newHand = new ArrayList<>();
                 for (int i = 0; i < arguments[0].length(); i++)
                     newHand.add((Character) arguments[0].charAt(i));
                 this.myPlayer.setHand(newHand);
                 setChanged();
-                notifyObservers(arg);
-            }
-            case "newPlayerTurn" -> {
+                notifyObservers("setHand");
+
+            case "newPlayerTurn" :
                 setCurrentPlayerId(Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers(arg);
-            } case "setId" -> {
+                notifyObservers("newPlayerTurn");
+             case "setId" :
                 myPlayer.setId(Integer.parseInt(arguments[0]));
                 setChanged();
                 notifyObservers(arg);
-            }
-            case "playersListUpdated" -> {
-                String[] newPlayer = arguments[0].split("-");
+
+            case "playersListUpdated" :
                 for (String player : arguments) {
                     int playerId = Integer.parseInt(player.split("-")[0]);
                     String playerName = player.split("-")[1];
                     scoreMap.put(playerId, 0);
                     numberOfTilesMap.put(playerId, 0);
                     playersNameMap.put(playerId, playerName);
-                }
+                    }
                 setChanged();
                 notifyObservers(arg);
-            }
+
+            case "tilesInBagUpdated" :
+                numOfTileInBag=Integer.parseInt(arguments[0]);
+                setChanged();
+                notifyObservers("tilesInBagUpdated");
         }
     }
 }
