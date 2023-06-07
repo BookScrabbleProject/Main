@@ -186,17 +186,17 @@ public class GuestModel extends PlayerModel implements Observer {
             case "boardUpdated" -> {
                 setBoardStatus(stringToCharacterMatrix(arguments[0]));
                 setChanged();
-                notifyObservers("boardUpdated");
+                notifyObservers(arg);
             }
             case "scoreUpdated" -> {
                 scoreMap.put(id, Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers("scoreUpdated");
+                notifyObservers(arg);
             }
             case "numOfTilesUpdated" -> {
                 numberOfTilesMap.put(id, Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers("numOfTilesUpdated");
+                notifyObservers(arg);
             }
             case "setHand" -> { //
                 List<Character> newHand = new ArrayList<>();
@@ -204,16 +204,16 @@ public class GuestModel extends PlayerModel implements Observer {
                     newHand.add((Character) arguments[0].charAt(i));
                 this.myPlayer.setHand(newHand);
                 setChanged();
-                notifyObservers("setHand");
+                notifyObservers(arg);
             }
             case "newPlayerTurn" -> {
                 setCurrentPlayerId(Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers("newPlayerTurn");
+                notifyObservers(arg);
             } case "setId" -> {
                 myPlayer.setId(Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers("setId");
+                notifyObservers(arg);
             }
             case "playersListUpdated" -> {
                 String[] newPlayer = arguments[0].split("-");
@@ -225,7 +225,7 @@ public class GuestModel extends PlayerModel implements Observer {
                     playersNameMap.put(playerId, playerName);
                 }
                 setChanged();
-                notifyObservers("playersListUpdated:" + newPlayer[1]);
+                notifyObservers(arg);
             }
         }
     }
