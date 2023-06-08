@@ -13,7 +13,6 @@ public class ViewModel implements Observer {
     Model model;
     int currentPlayerId;
     List<Character> myHand;
-    int myId;
     int numberOfTilesInBag;
     Map<Integer, PlayerVVM> players;
     MyPlayerVVM myPlayer;
@@ -21,17 +20,21 @@ public class ViewModel implements Observer {
     private int wordStartRow;
     private int wordStartCol;
 
+    //Todo: find way to be observer of the model -> model is not observable -> maybe object adapter to ObservableModel(extends Observable, has data-member of model)
 
 
-    public ViewModel() {
+    public ViewModel(Model model) {
+        model.addObserver(this);
+        this.model = model;
+        tilesScores = new HashMap<>();
         board = new Character[15][15];
         changesList = new ArrayList<>();
-        currentPlayerId = 0;
+        currentPlayerId = -1;
         myHand = new ArrayList<>();
         numberOfTilesInBag = 0;
         players = new HashMap<>();
         myPlayer = new MyPlayerVVM(-1, "", 0, 0);
-        // Todo: add more initialization here
+        // Todo: add more initialization here - if needed
     }
 
     /**
@@ -197,6 +200,12 @@ public class ViewModel implements Observer {
         this.currentPlayerId = currentPlayerId;
     }
 
+    /**
+     * this method start when the observable object (the model [HostModel/GuestModel]) notify to the observer (VM)
+     * @param o     the observable object.
+     * @param arg   an argument passed to the {@code notifyObservers}
+     *                 method.
+     */
     @Override
     public void update(Observable o, Object arg) {
         String messages = (String) arg;
@@ -261,12 +270,15 @@ public class ViewModel implements Observer {
                     }
                     break;
                 case "startGame":
+                    // Todo: implements startGame case
                     break;
 
                 case "challenge":
+                    // Todo: implements challenge case
                     break;
 
                 case "tryPlaceWord":
+                    // Todo: implements tryPlaceWord case
                     break;
 
                 case "tilesInBagUpdated":
