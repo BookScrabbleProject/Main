@@ -5,6 +5,7 @@ import Model.gameClasses.Player;
 
 import java.util.*;
 
+// Todo: Observable????
 public class ViewModel implements Observer {
     //    data binding
     Map<Character, Integer> tilesScores;
@@ -20,9 +21,10 @@ public class ViewModel implements Observer {
     private int wordStartRow;
     private int wordStartCol;
 
-    //Todo: find way to be observer of the model -> model is not observable -> maybe object adapter to ObservableModel(extends Observable, has data-member of model)
-
-
+    /**
+     * Ctor for ViewModel - initialize the data members
+     * @param model - the model that the ViewModel is observing (GuestModel or HostModel)
+     */
     public ViewModel(Model model) {
         model.addObserver(this);
         this.model = model;
@@ -33,7 +35,7 @@ public class ViewModel implements Observer {
         myHand = new ArrayList<>();
         numberOfTilesInBag = 0;
         players = new HashMap<>();
-        myPlayer = new MyPlayerVVM(-1, "", 0, 0);
+        myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
         // Todo: add more initialization here - if needed
     }
 
@@ -188,17 +190,11 @@ public class ViewModel implements Observer {
         return sortedChangesList;
     }
 
-    private void setBoard(Character[][] boardStatus) {
-        this.board = boardStatus;
-    }
+    private void setBoard(Character[][] boardStatus) { this.board = boardStatus; }
 
-    public void setNumberOfTilesInBag(int numberOfTilesInBag) {
-        this.numberOfTilesInBag = numberOfTilesInBag;
-    }
+    public void setNumberOfTilesInBag(int numberOfTilesInBag) { this.numberOfTilesInBag = numberOfTilesInBag; }
 
-    public void setCurrentPlayerId(int currentPlayerId) {
-        this.currentPlayerId = currentPlayerId;
-    }
+    public void setCurrentPlayerId(int currentPlayerId) { this.currentPlayerId = currentPlayerId; }
 
     /**
      * this method start when the observable object (the model [HostModel/GuestModel]) notify to the observer (VM)
