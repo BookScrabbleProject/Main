@@ -298,7 +298,7 @@ public class HostModelTest {
             Checker.checkResult("numOfTilesUpdated",line1[1],"challenge-Host");//14
             Checker.checkResult("0",line2[0],"challenge-Host");//15
             Checker.checkResult("numOfTilesUpdated",line2[1],"challenge-Host");//16
-            // Check if the score is updated in the guests players
+            // Check if the score is updated in the guests player
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
             Checker.checkResult("0",line1[0],"challenge-Host");//17
