@@ -179,9 +179,9 @@ public class GuestModel extends PlayerModel implements Observer {
         String methodName = splitedArgString[1];
         String[] arguments = splitedArgString[2].split(",");
         switch (methodName) {
-            case "tryPlaceWord", "challenge", "startGame" :
+            case "tryPlaceWord", "challenge" :
                 setChanged();
-                notifyObservers(arg);
+                notifyObservers(methodName+":"+splitedArgString[2]);
 
             case "boardUpdated" :
                 setBoardStatus(stringToCharacterMatrix(arguments[0]));
@@ -213,7 +213,7 @@ public class GuestModel extends PlayerModel implements Observer {
              case "setId" :
                 myPlayer.setId(Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers(splitedArgString[1]+":"+arguments[0]);
+                notifyObservers(methodName+":"+arguments[0]);
 
             case "playersListUpdated" :
                 for (String player : arguments) {
@@ -224,7 +224,7 @@ public class GuestModel extends PlayerModel implements Observer {
                     playersNameMap.put(playerId, playerName);
                     }
                 setChanged();
-                notifyObservers(splitedArgString[1]+":"+splitedArgString[2]);
+                notifyObservers(methodName+":"+splitedArgString[2]);
 
             case "tilesInBagUpdated" :
                 numOfTileInBag=Integer.parseInt(arguments[0]);
@@ -232,7 +232,9 @@ public class GuestModel extends PlayerModel implements Observer {
                 notifyObservers("tilesInBagUpdated");
             case "tilesWithScores":
                 setChanged();
-                notifyObservers(splitedArgString[1]+":"+splitedArgString[2]);
+                notifyObservers(methodName+":"+splitedArgString[2]);
+            case "startGame":
+                break;
         }
     }
 }
