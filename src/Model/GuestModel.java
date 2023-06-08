@@ -166,7 +166,7 @@ public class GuestModel extends PlayerModel implements Observer {
 
     /**
      * receive updates from the observable object
-     * @Details cases: tryPlaceWord, challenge, startGame, boardUpdated, scoreUpdated, numOfTilesUpdated, setHand, newPlayerTurn, setId, playersListUpdated
+     * @Details cases: tryPlaceWord, challenge, startGame, boardUpdated, scoreUpdated, tilesUpdated, setHand, newPlayerTurn, setId, playersListUpdated
      * @param o     the observable object
      * @param arg   an argument passed to the {@code notifyObservers}
      *                 method.
@@ -210,6 +210,7 @@ public class GuestModel extends PlayerModel implements Observer {
                 setCurrentPlayerId(Integer.parseInt(arguments[0]));
                 setChanged();
                 notifyObservers("newPlayerTurn");
+
              case "setId" :
                 myPlayer.setId(Integer.parseInt(arguments[0]));
                 setChanged();
@@ -234,6 +235,7 @@ public class GuestModel extends PlayerModel implements Observer {
             case "tilesWithScores":
                 setChanged();
                 notifyObservers(methodName+":"+splitedArgString[2]);
+
             case "startGame":
                 break;
         }
