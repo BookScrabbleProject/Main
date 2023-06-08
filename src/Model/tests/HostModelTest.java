@@ -291,7 +291,7 @@ public class HostModelTest {
             Checker.checkResult("2",line1[0],"challenge-Host");//10
             Checker.checkResult("setHand",line1[1],"challenge-Host");//11
             Checker.checkResult(handTilesGuest,line1[2],"challenge-Host");//12
-            // Check if the number of tiles is updated in the guests players
+            // Check if the number of tiles is updated in the guests playerss
             line1=scanner1.next().split(":");
             line2=scanner2.next().split(":");
             Checker.checkResult("0",line1[0],"challenge-Host");//13
