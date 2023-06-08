@@ -166,7 +166,7 @@ public class GuestModel extends PlayerModel implements Observer {
 
     /**
      * receive updates from the observable object
-     * @Details cases: tryPlaceWord, challenge, startGame, boardUpdated, scoreUpdated, tilesUpdated, setHand, newPlayerTurn, setId, playersListUpdated
+     * @Details cases: tryPlaceWord, challenge, startGame, boardUpdated, scoreUpdated, tilesUpdated, setHand, newPlayerTurn, setId, playersListUpdated,tilesInBagUpdated,tilesWithScores
      * @param o     the observable object
      * @param arg   an argument passed to the {@code notifyObservers}
      *                 method.
