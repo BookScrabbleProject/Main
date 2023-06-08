@@ -100,7 +100,8 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.sendToSpecificPlayer(p.getId(),"setId",Integer.toString(p.getId()));
         toNotify+= p.getId()+":SetId:"+Integer.toString(p.getId())+"\n";
         hostServer.sendToSpecificPlayer(p.getId(),"tilesWithScores",tilesWithScores());
-        toNotify+= p.getId()+":tilesWithScores:"+tilesWithScores()+"\n";
+        toNotify+= p.getId()+":tilesWithScores:" +
+                ""+tilesWithScores()+"\n";
         hostServer.sendToAllPlayers(-1,"playersListUpdated",playersIdsAndNames.toString());
         toNotify+= p.getId()+":playersListUpdated:"+playersIdsAndNames.toString();
         setChanged();
@@ -238,8 +239,11 @@ public class HostModel extends PlayerModel implements Observer {
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         hostServer.sendToBookScrabbleServer("C",word);
+
+
         setChanged();
         String toNotify = requestedId + ":" + "challenge" + ":" + word;
+        hostServer.sendToAllPlayers(requestedId,":challenge:",word);
         notifyObservers(toNotify);
     }
 
@@ -313,7 +317,7 @@ public class HostModel extends PlayerModel implements Observer {
         int i=0;
         for(char c = 'A'; c<='Z';c++,i++)
             tilesScore.append(c+"-"+bag.scores[i]+",");
-        tilesScore.deleteCharAt(tilesScore.length());
+        tilesScore.deleteCharAt(tilesScore.length()-1);
         return String.valueOf(tilesScore);
     }
 
