@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 
-public interface Model {
-    public void tryPlaceWord(String word, int col, int row, boolean isVertical);
-    public void challenge(String word);
-    public void takeTileFromBag();
-    public Character[][] getBoardStatus();
-    public int getNumberOfTilesInBag();
-    public int getCurrentPlayerId();
-    public HashMap<Integer, Integer> getPlayersScores();
-    public HashMap<Integer, Integer> getPlayersNumberOfTiles();
-    public List<Character> getMyHand();
+public abstract class Model extends Observable {
+    public abstract void tryPlaceWord(String word, int col, int row, boolean isVertical);
+    public abstract void challenge(String word);
+    public abstract void takeTileFromBag();
+    public abstract Character[][] getBoardStatus();
+    public abstract int getNumberOfTilesInBag();
+    public abstract int getCurrentPlayerId();
+    public abstract HashMap<Integer, Integer> getPlayersScores();
+    public abstract HashMap<Integer, Integer> getPlayersNumberOfTiles();
+    public abstract List<Character> getMyHand();
 }
