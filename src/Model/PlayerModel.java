@@ -6,7 +6,7 @@ import Model.gameClasses.Tile;
 import java.util.List;
 import java.util.Observable;
 
-abstract public class PlayerModel extends Model {
+abstract public class PlayerModel extends Observable  implements Model {
     Player myPlayer;
     int currentPlayerId;
     boolean isGameFinished;
