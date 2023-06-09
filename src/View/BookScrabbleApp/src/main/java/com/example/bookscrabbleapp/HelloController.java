@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -23,11 +24,12 @@ public class HelloController {
     @FXML
     private GridPane gridPane;
 
-
-
+    boolean isGameStarted = false;
     public void init(){
+
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
         //fill the center square of the gridPane with color black (of grid 15x15)
+
 
 
         gc.strokeRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
@@ -52,26 +54,23 @@ public class HelloController {
         for( int i=0; i<15; i++) {
             for (int j = 0; j < 15; j++) {
                 if(i==7 && j==7) continue;
-                gc.fillText(i + "," + j, i * cellWidth + 5, j * cellHeight + 15);
+                gc.fillText(j + "," + i, i * cellWidth+15, j * cellHeight + 15);
             }
         }
+        if(!isGameStarted) {
+            gameBoard.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+                double mouseX = event.getX();
+                double mouseY = event.getY();
 
+                double squareSize = gameBoard.getWidth() / 15;
 
+                int clickedRow = (int) (mouseY / squareSize);
+                int clickedCol = (int) (mouseX / squareSize);
 
-
-
-
-
-
-
-
-
-
-
-        //15x15 grid
-
-
-
+                System.out.println("Clicked on square: Row " + clickedRow + ", Column " + clickedCol);
+            });
+            isGameStarted = true;
+        }
 
     }
 
