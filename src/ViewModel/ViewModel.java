@@ -198,9 +198,11 @@ public class ViewModel implements Observer {
 
     /**
      * this method start when the observable object (the model [HostModel/GuestModel]) notify to the observer (VM)
+     * @Details     The method update the VM with the changes that happened in the model.
+     *              Types of updates: method_name:args & method_name
      * @param o     the observable object.
      * @param arg   an argument passed to the {@code notifyObservers}
-     *                 method.
+     *                 method. (the message from the model to the VM, type: String)
      */
     @Override
     public void update(Observable o, Object arg) {
@@ -265,6 +267,7 @@ public class ViewModel implements Observer {
                         this.tilesScores.put(letter, score);
                     }
                     break;
+
                 case "startGame":
                     // Todo: implements startGame case
                     break;
