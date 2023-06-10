@@ -6,7 +6,7 @@ import Model.gameClasses.Player;
 import java.util.*;
 
 // Todo: Observable????
-public class ViewModel implements Observer {
+public class ViewModel extends Observable implements Observer {
     //    data binding
     Map<Character, Integer> tilesScores;
     public Character[][] board;
@@ -269,15 +269,10 @@ public class ViewModel implements Observer {
                     break;
 
                 case "startGame":
-                    // Todo: implements startGame case
-                    break;
-
                 case "challenge":
-                    // Todo: implements challenge case
-                    break;
-
                 case "tryPlaceWord":
-                    // Todo: implements tryPlaceWord case
+                    setChanged();
+                    notifyObservers(arg);
                     break;
 
                 case "tilesInBagUpdated":
