@@ -5,7 +5,6 @@ import Model.gameClasses.Player;
 
 import java.util.*;
 
-// Todo: Observable????
 public class ViewModel extends Observable implements Observer {
     //    data binding
     Map<Character, Integer> tilesScores;
@@ -52,7 +51,16 @@ public class ViewModel extends Observable implements Observer {
             wordStartCol = -1;
             return;
         }
-        // Todo: notify the view that the change is invalid
+        setChanged();
+        notifyObservers("tryPlaceWordInvalid"); // Todo: update Yuval about it (the case he has to handle)
+    }
+
+    public void challenge(String word) {
+        model.challenge(word);
+    }
+
+    public void takeTileFromBag() {
+        model.takeTileFromBag();
     }
 
     /**
