@@ -182,6 +182,23 @@ public class HostServer extends Observable {
         }
     }
 
+    public void sendToSpecificPlayer(int playerId, String message) {
+        Socket socket = clientsSockets.get(playerId);
+        if (socket == null) {
+//            throw new RuntimeException("Player with id " + playerId + " is not connected to the server");
+        }
+        try {
+            PrintWriter out = new PrintWriter(socket.getOutputStream());
+            out.println(message);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+//            throw new RuntimeException(e);
+        }catch (RuntimeException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
     /***
      * sendToAllPlayers --> send a message to all players
      * @param playerID --> the id of the player to notify about
@@ -193,6 +210,16 @@ public class HostServer extends Observable {
             try {
                 PrintWriter out = new PrintWriter(socket.getOutputStream());
                 out.println(playerID+ ":" + methodName + ":" + output);
+                out.flush();
+            } catch (IOException e) {}
+        }
+    }
+
+    public void sendToAllPlayers(String message) {
+        for (Socket socket : clientsSockets.values()) {
+            try {
+                PrintWriter out = new PrintWriter(socket.getOutputStream());
+                out.println(message);
                 out.flush();
             } catch (IOException e) {}
         }

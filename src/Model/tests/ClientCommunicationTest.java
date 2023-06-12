@@ -24,7 +24,7 @@ public class ClientCommunicationTest {
         Test test = null;
         try{
             server = new ServerSocket(serverSocketPort);
-            client = new ClientCommunication("localhost", serverSocketPort);
+            client = new ClientCommunication("localhost", serverSocketPort, "testSend");
             Socket socket = server.accept();
             Thread.sleep(1000);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -53,11 +53,11 @@ public class ClientCommunicationTest {
         try {
             int serverSocketPort = 1234;
             server = new ServerSocket(serverSocketPort);
-            client = new ClientCommunication("localhost", serverSocketPort);
+            client = new ClientCommunication("localhost", serverSocketPort, "testCheckForMessage");
             test = new Test(client);
 
             Socket socket = server.accept();
-            client2 = new ClientCommunication("localhost", serverSocketPort);
+            client2 = new ClientCommunication("localhost", serverSocketPort, "testCheckForMessage2");
             test2 = new Test(client2);
             Socket socket2 = server.accept();
             socket.getOutputStream().write("test1\n".getBytes());

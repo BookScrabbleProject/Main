@@ -85,7 +85,6 @@ public class HostModel extends PlayerModel implements Observer {
      */
     public void addPlayer(Socket socket){
         Player p = new Player(generateId(),"guest",0,new ArrayList<Character>());
-        String toNotify = requestedId + ":" + "addPlayer\n";
         connectedPlayers.put(p.getId(),p);
         StringBuilder playersIdsAndNames = new StringBuilder();
         playersIdsAndNames.append(p.getId()).append("-").append(p.getName()).append(",");
@@ -97,15 +96,22 @@ public class HostModel extends PlayerModel implements Observer {
             }
         playersIdsAndNames.deleteCharAt(playersIdsAndNames.length()-1);
         hostServer.addSocket(p.getId(),socket);
-        hostServer.sendToSpecificPlayer(p.getId(),"setId",Integer.toString(p.getId()));
-        toNotify+= p.getId()+":SetId:"+Integer.toString(p.getId())+"\n";
-        hostServer.sendToSpecificPlayer(p.getId(),"tilesWithScores",tilesWithScores());
-        toNotify+= p.getId()+":tilesWithScores:" +
-                ""+tilesWithScores()+"\n";
-        hostServer.sendToAllPlayers(-1,"playersListUpdated",playersIdsAndNames.toString());
-        toNotify+= p.getId()+":playersListUpdated:"+playersIdsAndNames.toString();
+        StringBuilder toNotify = new StringBuilder();
+        StringBuilder toSpecificPlayer = new StringBuilder();
+        toSpecificPlayer.append(p.getId()).append(":setId:").append(p.getId()).append("\n");
+        toNotify.append("setId:").append(p.getId()).append('\n');
+        toSpecificPlayer.append(p.getId()).append(":tilesWithScores:").append(tilesWithScores()).append("\n");
+        toNotify.append("tilesWithScores:").append(tilesWithScores()).append('\n');
+
+        StringBuilder toAllPlayers = new StringBuilder();
+        toAllPlayers.append(-1).append(":playersListUpdated:").append(playersIdsAndNames.toString()).append("\n");
+        toNotify.append("playersListUpdated:").append(playersIdsAndNames.toString()).append('\n');
+
+        hostServer.sendToSpecificPlayer(p.getId(),toSpecificPlayer.toString());
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+
         setChanged();
-        notifyObservers(toNotify);
+        notifyObservers(toNotify.toString());
     }
 
     /**

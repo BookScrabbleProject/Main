@@ -256,7 +256,7 @@ public class ViewModel extends Observable implements Observer {
                     players.put(this.myPlayer.getId(), this.myPlayer);
                     break;
 
-                case "playerListUpdated":
+                case "playersListUpdated":
                     for (String player : args) {
                         String[] playerInfo = player.split("-");
                         int id = Integer.parseInt(playerInfo[0]);
