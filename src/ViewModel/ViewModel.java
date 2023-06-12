@@ -224,9 +224,7 @@ public class ViewModel extends Observable implements Observer {
             try {
                 args = message.split(":")[1].split(",");
             }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+            catch (Exception e) { }
 
             switch (methodName) {
                 case "boardUpdated":
