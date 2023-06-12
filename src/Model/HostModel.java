@@ -84,7 +84,14 @@ public class HostModel extends PlayerModel implements Observer {
      * @param socket - socket parameter that send to the hostServer
      */
     public void addPlayer(Socket socket){
-        Player p = new Player(generateId(),"guest",0,new ArrayList<Character>());
+        Scanner s = null;
+        String name = "guest";
+        try {
+            s = new Scanner(socket.getInputStream());
+            String str = s.next();
+            name = str.split(":")[2];
+        } catch (IOException e) {throw new RuntimeException(e);}
+        Player p = new Player(generateId(),name,0,new ArrayList<Character>());
         connectedPlayers.put(p.getId(),p);
         StringBuilder playersIdsAndNames = new StringBuilder();
         playersIdsAndNames.append(p.getId()).append("-").append(p.getName()).append(",");
@@ -257,13 +264,55 @@ public class HostModel extends PlayerModel implements Observer {
     public void challenge(String word) {
         if (requestedId == -1)
             requestedId = myPlayer.getId();
-        hostServer.sendToBookScrabbleServer("C",word);
-
-
+        Socket bookScrabbleSocket = hostServer.sendToBookScrabbleServer("C",word);
+        try {
+            Scanner s = new Scanner(bookScrabbleSocket.getInputStream());
+            String str = s.next();
+            if(str.equals("false")) challenge0(word);
+            else challenge1(word);
+        } catch (IOException e) {throw new RuntimeException(e);}
+    }
+    private void challenge0(String word){
+        StringBuilder toNotify = new StringBuilder();
+        StringBuilder toSpecificPlayer = new StringBuilder();
+        StringBuilder toAllPlayers = new StringBuilder();
+        board.setTiles(prevBoard);
+        connectedPlayers.get(currentPlayerId).setScore(connectedPlayers.get(currentPlayerId).getScore() - lastWordScore);
+        connectedPlayers.get(currentPlayerId).addTiles(wordFromPlayers);
+        toAllPlayers.append(0).append(":boardUpdated:").append(boardToString(board.getTiles())).append("\n");
+        toNotify.append("boardUpdated\n");
+        toSpecificPlayer.append(currentPlayerId).append(":setHand:").append(handToString(connectedPlayers.get(currentPlayerId).getTiles())).append("\n");
+        toAllPlayers.append(currentPlayerId).append(":numOfTilesUpdated:").append(String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size())).append("\n");
+        toNotify.append("numOfTilesUpdated\n");
+        toAllPlayers.append(0).append(":scoreUpdated:").append(String.valueOf(connectedPlayers.get(currentPlayerId).getScore())).append("\n");
+        toNotify.append("scoreUpdated\n");
+        toAllPlayers.append(requestedId).append(":challenge:").append(word).append("\n");
+        toNotify.append("challenge:0\n");
+        toAllPlayers.append(requestedId).append(":challenge:0\n");
         setChanged();
-        String toNotify = requestedId + ":" + "challenge" + ":" + word;
-        hostServer.sendToAllPlayers(requestedId,":challenge:",word);
-        notifyObservers(toNotify);
+        toNotify.append("challenge:").append(word).append("\n");
+        hostServer.sendToSpecificPlayer(currentPlayerId,toSpecificPlayer.toString());
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+        notifyObservers(toNotify.toString());
+    }
+    private void challenge1(String word){
+        StringBuilder toNotify = new StringBuilder();
+        StringBuilder toSpecificPlayer = new StringBuilder();
+        StringBuilder toAllPlayers = new StringBuilder();
+        refillPlayerHand(currentPlayerId);
+        connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
+        toSpecificPlayer.append(currentPlayerId).append(":setHand:").append(handToString(connectedPlayers.get(currentPlayerId).getTiles())).append("\n");
+        toAllPlayers.append(currentPlayerId).append(":numOfTilesUpdated:").append(String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size())).append("\n");
+        passTheTurn();
+        toAllPlayers.append(requestedId).append(":challenge:").append(word).append("\n");
+        hostServer.sendToAllPlayers(requestedId, "challenge", "1");
+        toAllPlayers.append(requestedId).append(":challenge:").append("1\n");
+        requestedId = -1;
+        setChanged();
+        toNotify.append("challenge:").append(word).append("\n");
+        hostServer.sendToSpecificPlayer(currentPlayerId,toSpecificPlayer.toString());
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+        notifyObservers(toNotify.toString());
     }
 
     /**
@@ -272,15 +321,18 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void takeTileFromBag() {
+        StringBuilder toNotify = new StringBuilder();
+        StringBuilder toAllPlayers = new StringBuilder();
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         Tile t = bag.getRand();
         connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
         setChanged();
-        String toNotify = requestedId + ":" + "takeTileFromBag" + ":" + t.getLetter() + "," + t.getScore()+"\n";
+        toNotify.append(requestedId).append(":takeTileFromBag:").append(t.getLetter()).append(",").append(t.getScore()).append("\n");
         if(requestedId == myPlayer.getId()) {
-            hostServer.sendToAllPlayers(requestedId, "numOfTilesUpdated", String.valueOf(getMyHand().size()));
-            toNotify += requestedId+":numOfTilesUpdated:"+String.valueOf(getMyHand().size());
+            toAllPlayers.append(requestedId).append(":numOfTilesUpdated:").append(String.valueOf(getMyHand().size())).append("\n");
+            hostServer.sendToAllPlayers(toAllPlayers.toString());
+            toNotify.append(requestedId).append(":numOfTilesUpdated:").append(String.valueOf(getMyHand().size())).append("\n");
             passTheTurn();
         }
         notifyObservers(toNotify);
@@ -292,12 +344,13 @@ public class HostModel extends PlayerModel implements Observer {
      * notify all the other players by the format - requestedId + ":" + method + ":" + inputs
      */
     public void refillPlayerHand(int playerId) {
+        StringBuilder toNotify = new StringBuilder();
         int numOfTiles = connectedPlayers.get(playerId).getTiles().size();
         if(numOfTiles<7)
             for (int i = numOfTiles; i <= 7; i++)
                 connectedPlayers.get(playerId).addTiles(String.valueOf(bag.getRand().letter));
         setChanged();
-        String toNotify = playerId + ":" + "refillPlayerHand";
+        toNotify.append(playerId).append(":refillPlayerHand\n");
         notifyObservers(toNotify);
     }
 
@@ -306,14 +359,16 @@ public class HostModel extends PlayerModel implements Observer {
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      */
     public void passTheTurn() {
-        String toNotify= "";
+        StringBuilder toNotify= new StringBuilder();
+        StringBuilder toAllPlayers = new StringBuilder();
         currentPlayerId++;
         currentPlayerId %= connectedPlayers.size();
         prevBoard = board.getTiles();
-        hostServer.sendToAllPlayers(-1,"newPlayerTurn", String.valueOf(currentPlayerId));
-        toNotify += -1 + ":newPlayerTurn:" + String.valueOf(currentPlayerId);
+        toAllPlayers.append(-1).append(":newPlayerTurn:").append(String.valueOf(currentPlayerId)).append("\n");
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+        toNotify.append(-1).append("newPlayerTurn:").append(String.valueOf(currentPlayerId)).append("\n");
         setChanged();
-        toNotify += requestedId + ":passTheTurn";
+        toNotify.append(requestedId).append(":passTheTurn\n");
         notifyObservers(toNotify);
     }
 
@@ -323,7 +378,8 @@ public class HostModel extends PlayerModel implements Observer {
      */
     public void setBoardStatus() {
         setChanged();
-        String toNotify = requestedId + ":" + "setBoardStatus" + ":" + boardToString(prevBoard);
+        StringBuilder toNotify = new StringBuilder();
+        toNotify.append(requestedId).append(":setBoardStatus:").append(boardToString(prevBoard)).append("\n");
         notifyObservers(toNotify);
     }
 
@@ -335,7 +391,7 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder tilesScore = new StringBuilder();
         int i=0;
         for(char c = 'A'; c<='Z';c++,i++)
-            tilesScore.append(c+"-"+bag.scores[i]+",");
+            tilesScore.append(c).append("-").append(bag.scores[i]).append(",");
         tilesScore.deleteCharAt(tilesScore.length()-1);
         return String.valueOf(tilesScore);
     }
@@ -415,24 +471,8 @@ public class HostModel extends PlayerModel implements Observer {
             case "challenge" :{
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
-                if (inputs[1].equals("0")) {
-                    board.setTiles(prevBoard);
-                    connectedPlayers.get(currentPlayerId).setScore(connectedPlayers.get(currentPlayerId).getScore() - lastWordScore);
-                    connectedPlayers.get(currentPlayerId).addTiles(wordFromPlayers);
-                    hostServer.sendToAllPlayers(0, "boardUpdated",boardToString(board.getTiles()));
-                    hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size()));
-                    hostServer.sendToAllPlayers(0, "scoreUpdated", String.valueOf(connectedPlayers.get(currentPlayerId).getScore()));
-                    hostServer.sendToAllPlayers(requestedId, "challenge", "0");
-                } else {
-                    refillPlayerHand(currentPlayerId);
-                    connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
-                    hostServer.sendToSpecificPlayer(currentPlayerId,"setHand",handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                    hostServer.sendToAllPlayers(currentPlayerId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size()));
-                    passTheTurn();
-                    hostServer.sendToAllPlayers(requestedId, "challenge", "1");
-                    requestedId = -1;
-                }
+                if (inputs[1].equals("0")) challenge0(word);
+                else challenge1(word);
                 break;
             }
             case "takeTileFromBag" : {
