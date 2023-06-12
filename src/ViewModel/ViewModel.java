@@ -220,11 +220,14 @@ public class ViewModel extends Observable implements Observer {
             String message = messagesQ.poll();
             String methodName = message.split(":")[0];
             String[] args = null;
+
             try {
                 args = message.split(":")[1].split(",");
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
+
             switch (methodName) {
                 case "boardUpdated":
                     setBoard(model.getBoardStatus());
@@ -232,16 +235,14 @@ public class ViewModel extends Observable implements Observer {
 
                 case "scoreUpdated":
                     Map<Integer, Integer> scores = model.getPlayersScores();
-                    for (Integer key : scores.keySet()) {
+                    for (Integer key : scores.keySet())
                         this.players.get(key).setScore(scores.get(key));
-                    }
                     break;
 
                 case "tilesUpdated":
                     Map<Integer, Integer> tiles = model.getPlayersNumberOfTiles();
-                    for (Integer key : tiles.keySet()) {
+                    for (Integer key : tiles.keySet())
                         this.players.get(key).setNumberOfTiles(tiles.get(key));
-                    }
                     break;
 
                 case "setHand":
