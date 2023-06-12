@@ -205,7 +205,7 @@ public class HostModel extends PlayerModel implements Observer {
                 if(!Boolean.getBoolean(answerFromBookScrabble))
                 {
                     setChanged();
-                    toNotify.append("tryPlaceWord:").append(0);
+                    toNotify.append("tryPlaceWord:").append(0).append('\n');
                     notifyObservers(toNotify.toString());
                 }
             } catch (IOException e) {throw new RuntimeException(e);}
@@ -239,14 +239,14 @@ public class HostModel extends PlayerModel implements Observer {
             toNotify.append("numOfTilesUpdated:").append(String.valueOf(connectedPlayers.get(requestedId).getTiles().size())).append('\n');
 
             toAllPlayers.append(requestedId).append(":tryPlaceWord:").append(String.valueOf(lastWordScore)).append("\n");
-            toNotify.append("tryPlaceWord:").append(String.valueOf(lastWordScore));
+            toNotify.append("tryPlaceWord:").append(String.valueOf(lastWordScore)).append('\n');
         }
         else {
             toSpecificPlayer.append(requestedId).append(":tryPlaceWord:").append("0").append("\n");
-            toNotify.append("tryPlaceWord:0");
+            toNotify.append("tryPlaceWord:0").append('\n');
         }
 
-        hostServer.sendToSpecificPlayer(requestedId,toSpecificPlayer.toString());
+        hostServer.sendToSpecificPlayer(requestedId, toSpecificPlayer.toString());
         hostServer.sendToAllPlayers(toAllPlayers.toString());
 
         setChanged();
