@@ -166,7 +166,7 @@ public class GuestModel extends PlayerModel implements Observer {
 
     /**
      * receive updates from the observable object
-     * @Details cases: tryPlaceWord, challenge, startGame, boardUpdated, scoreUpdated, numOfTilesUpdated, setHand, newPlayerTurn, setId, playersListUpdated
+     * @Details cases: tryPlaceWord, challenge, startGame, boardUpdated, scoreUpdated, tilesUpdated, setHand, newPlayerTurn, setId, playersListUpdated,tilesInBagUpdated,tilesWithScores
      * @param o     the observable object
      * @param arg   an argument passed to the {@code notifyObservers}
      *                 method.
@@ -179,54 +179,65 @@ public class GuestModel extends PlayerModel implements Observer {
         String methodName = splitedArgString[1];
         String[] arguments = splitedArgString[2].split(",");
         switch (methodName) {
-            case "tryPlaceWord", "challenge", "startGame" -> {
+            case "tryPlaceWord", "challenge" :
                 setChanged();
-                notifyObservers(arg);
-            }
-            case "boardUpdated" -> {
+                notifyObservers(methodName+":"+splitedArgString[2]);
+
+            case "boardUpdated" :
                 setBoardStatus(stringToCharacterMatrix(arguments[0]));
                 setChanged();
                 notifyObservers("boardUpdated");
-            }
-            case "scoreUpdated" -> {
+
+            case "scoreUpdated" :
                 scoreMap.put(id, Integer.parseInt(arguments[0]));
                 setChanged();
                 notifyObservers("scoreUpdated");
-            }
-            case "numOfTilesUpdated" -> {
+
+            case "tilesUpdated" :
                 numberOfTilesMap.put(id, Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers("numOfTilesUpdated");
-            }
-            case "setHand" -> { //
+                notifyObservers("tilesUpdated");
+
+            case "setHand" :
                 List<Character> newHand = new ArrayList<>();
                 for (int i = 0; i < arguments[0].length(); i++)
                     newHand.add((Character) arguments[0].charAt(i));
                 this.myPlayer.setHand(newHand);
                 setChanged();
                 notifyObservers("setHand");
-            }
-            case "newPlayerTurn" -> {
+
+            case "newPlayerTurn" :
                 setCurrentPlayerId(Integer.parseInt(arguments[0]));
                 setChanged();
                 notifyObservers("newPlayerTurn");
-            } case "setId" -> {
+
+             case "setId" :
                 myPlayer.setId(Integer.parseInt(arguments[0]));
                 setChanged();
-                notifyObservers("setId");
-            }
-            case "playersListUpdated" -> {
-                String[] newPlayer = arguments[0].split("-");
+                notifyObservers(methodName+":"+arguments[0]);
+
+            case "playersListUpdated" :
                 for (String player : arguments) {
                     int playerId = Integer.parseInt(player.split("-")[0]);
                     String playerName = player.split("-")[1];
                     scoreMap.put(playerId, 0);
                     numberOfTilesMap.put(playerId, 0);
                     playersNameMap.put(playerId, playerName);
-                }
+                    }
                 setChanged();
-                notifyObservers("playersListUpdated:" + newPlayer[1]);
-            }
+                notifyObservers(methodName+":"+splitedArgString[2]);
+
+            case "tilesInBagUpdated" :
+                numOfTileInBag=Integer.parseInt(arguments[0]);
+                setChanged();
+                notifyObservers("tilesInBagUpdated");
+
+            case "tilesWithScores":
+                setChanged();
+                notifyObservers(methodName+":"+splitedArgString[2]);
+
+            case "startGame":
+                break;
         }
     }
 }
