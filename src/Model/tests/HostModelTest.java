@@ -316,6 +316,7 @@ public class HostModelTest {
             Checker.checkResult("challenge",line2[1],"challenge-Host");//25
             Checker.checkResult("0,_HALE",line2[2],"challenge-Host");//26
             Checker.finishTest("challenge-Host");
+
         } catch (IOException e) {throw new RuntimeException(e);}
         Checker.finishTest("challengeTest - Host");
     }
