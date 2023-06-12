@@ -1,0 +1,16 @@
+package General;
+
+public enum MethodsNames {
+    BOARD_UPDATED,
+    SCORE_UPDATED,
+    NUM_OF_TILES_UPDATED,
+    SET_HAND,
+    NEW_PLAYER_TURN,
+    SET_ID,
+    PLAYER_LIST_UPDATED,
+    START_GAME,
+    CHALLENGE,
+    TRY_PLAYERS_WORD,
+    TAKE_TILE_FROM_BAG,
+    CONNECT
+}
