@@ -1,12 +1,8 @@
 package ViewModel.tests;
 import Model.HostModel;
 import Model.GuestModel;
-import Model.Model;
-import Model.*;
 import Model.gameClasses.BookScrabbleHandler;
 import Model.gameClasses.MyServer;
-import ViewModel.DataChanges;
-
 import ViewModel.ViewModel;
 
 public class ViewModelTest {
