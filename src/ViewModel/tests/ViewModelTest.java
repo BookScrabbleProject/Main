@@ -35,6 +35,10 @@ public class ViewModelTest {
         }
 
         server.stop();
+        host.getHostServer().close();
+        guest.getClientCommunication().close();
+        guest2.getClientCommunication().close();
+
         System.out.println("done!");
     }
 }
