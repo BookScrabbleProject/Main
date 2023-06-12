@@ -10,8 +10,6 @@ public class ViewModelTest {
 
     public static void main(String[] args) {
         try {
-
-
             MyServer server = new MyServer(1234, new BookScrabbleHandler());
             server.start();
             HostModel host = HostModel.getHost();
@@ -21,8 +19,6 @@ public class ViewModelTest {
             ViewModel viewModel = new ViewModel(guest);
             guest.connectToHostServer();
 
-            guest.tryPlaceWord("hello", 7, 7, true);
-
             Thread.sleep(2000);
 
             GuestModel guest2 = new GuestModel("localhost", 1235, "guest2");
@@ -30,8 +26,8 @@ public class ViewModelTest {
 
             Thread.sleep(2000);
 
-            guest.tryPlaceWord("hello", 7, 7, true);
-            Thread.sleep(2000);
+            guest.tryPlaceWord("week", 7, 7, true);
+            Thread.sleep(10000);
 
             server.stop();
             host.getHostServer().close();

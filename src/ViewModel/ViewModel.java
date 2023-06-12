@@ -218,6 +218,7 @@ public class ViewModel extends Observable implements Observer {
         Queue<String> messagesQ = new LinkedList<>(Arrays.asList(messages.split("\n")));
         while (!messagesQ.isEmpty()) {
             String message = messagesQ.poll();
+            System.out.println("VM update: " + message);
             String methodName = message.split(":")[0];
             String[] args = null;
 

@@ -182,12 +182,10 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void tryPlaceWord(String word, int col, int row, boolean isVertical) {//run removeTiles method
-        String toNotify="";
+        StringBuilder toNotify = new StringBuilder();
         if (requestedId == -1)
             requestedId = myPlayer.getId();
-        List<Tile> t = new ArrayList<>();
-        for (char c : word.toCharArray())
-            t.add(Tile.Bag.getBag().getTile(c));
+        List<Tile> t = Board.getBoard().getWord(word);
         Tile[] tilesArray = new Tile[t.size()];
         for (int i = 0; i < t.size(); i++)
             tilesArray[i] = t.get(i);
@@ -200,37 +198,52 @@ public class HostModel extends PlayerModel implements Observer {
                 if(!Boolean.getBoolean(answerFromBookScrabble))
                 {
                     setChanged();
-                    toNotify += requestedId + ":" + "tryPlaceWord" + ":" + 0;
-                    notifyObservers(toNotify);
+                    toNotify.append("tryPlaceWord:").append(0);
+                    notifyObservers(toNotify.toString());
                 }
             } catch (IOException e) {throw new RuntimeException(e);}
         }
         int score = board.tryPlaceWord(w);
         lastWordScore = score;
         wordFromPlayers = wordNoSpace(word);
+
+        StringBuilder toSpecificPlayer = new StringBuilder();
+        StringBuilder toAllPlayers = new StringBuilder();
+
+
         if(score > 0) {
             for (Character c : wordFromPlayers.toCharArray())
                 connectedPlayers.get(requestedId).getTiles().remove(c);
+
             connectedPlayers.get(requestedId).addScore(lastWordScore);
-            hostServer.sendToAllPlayers(requestedId,"boardUpdated",boardToString(board.getTiles()));
-            toNotify += requestedId + ":boardUpdated:"+boardToString(board.getTiles())+"\n";
-            hostServer.sendToAllPlayers(requestedId,"scoreUpdated", String.valueOf(connectedPlayers.get(requestedId).getScore()));
-            toNotify += requestedId + ":scoreUpdated:"+String.valueOf(connectedPlayers.get(requestedId).getScore())+"\n";
+            toAllPlayers.append(requestedId).append(":boardUpdated:").append(boardToString(board.getTiles())).append("\n");
+            toNotify.append("boardUpdated:").append(boardToString(board.getTiles())).append('\n');
+
+            toAllPlayers.append(requestedId).append(":scoreUpdated:").append(String.valueOf(connectedPlayers.get(requestedId).getScore())).append("\n");
+            toNotify.append("scoreUpdated:").append(String.valueOf(connectedPlayers.get(requestedId).getScore())).append("\n");
+
             if(requestedId != myPlayer.getId()) {
-                hostServer.sendToSpecificPlayer(requestedId, "setHand", handToString(connectedPlayers.get(requestedId).getTiles()));
-                toNotify += requestedId + ":setHand:"+handToString(connectedPlayers.get(requestedId).getTiles())+"\n";
+                String playerHand = handToString(connectedPlayers.get(requestedId).getTiles());
+                toSpecificPlayer.append(requestedId).append(":setHand:").append(playerHand.equals("") ? "_":playerHand).append("\n");
+                String handToSend = handToString(connectedPlayers.get(requestedId).getTiles());
+                toNotify.append("setHand:").append(handToSend.equals("") ? "_":handToSend).append("\n");
             }
-            hostServer.sendToAllPlayers(requestedId,"numOfTilesUpdated", String.valueOf(connectedPlayers.get(requestedId).getTiles().size()));
-            toNotify += requestedId+":numOfTilesUpdated:"+String.valueOf(connectedPlayers.get(requestedId).getTiles().size())+"\n";
-            hostServer.sendToAllPlayers(requestedId,"tryPlaceWord",String.valueOf(lastWordScore));
-            toNotify += requestedId+":tryPlaceWord:"+String.valueOf(lastWordScore);
+            toAllPlayers.append(requestedId).append(":numOfTilesUpdated:").append(String.valueOf(connectedPlayers.get(requestedId).getTiles().size())).append("\n");
+            toNotify.append("numOfTilesUpdated:").append(String.valueOf(connectedPlayers.get(requestedId).getTiles().size())).append('\n');
+
+            toAllPlayers.append(requestedId).append(":tryPlaceWord:").append(String.valueOf(lastWordScore)).append("\n");
+            toNotify.append("tryPlaceWord:").append(String.valueOf(lastWordScore));
         }
         else {
-            hostServer.sendToSpecificPlayer(requestedId, "tryPlaceWord", "0");
-            toNotify += requestedId+":tryPlaceWord:0";
+            toSpecificPlayer.append(requestedId).append(":tryPlaceWord:").append("0").append("\n");
+            toNotify.append("tryPlaceWord:0");
         }
+
+        hostServer.sendToSpecificPlayer(requestedId,toSpecificPlayer.toString());
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+
         setChanged();
-        notifyObservers(toNotify);
+        notifyObservers(toNotify.toString());
         requestedId = -1;
     }
 

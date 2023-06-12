@@ -187,11 +187,17 @@ public class GuestModel extends PlayerModel implements Observer {
 
         while (!messagesQ.isEmpty()) {
             argString = messagesQ.poll();
-
             String[] splitedArgString = argString.split(":");
             int id = Integer.parseInt(splitedArgString[0]);
             String methodName = splitedArgString[1];
-            String[] arguments = splitedArgString[2].split(",");
+            String[] arguments = null;
+            try {
+                arguments = splitedArgString[2].split(",");
+            } catch (Exception e) {
+                System.out.println("error");
+            }
+
+
             switch (methodName) {
                 case "tryPlaceWord", "challenge":
                     setChanged();
@@ -219,7 +225,8 @@ public class GuestModel extends PlayerModel implements Observer {
                 case "setHand":
                     List<Character> newHand = new ArrayList<>();
                     for (int i = 0; i < arguments[0].length(); i++)
-                        newHand.add((Character) arguments[0].charAt(i));
+                        if (arguments[0].charAt(i) != '_')
+                            newHand.add((Character) arguments[0].charAt(i));
                     this.myPlayer.setHand(newHand);
                     setChanged();
                     notifyObservers("setHand");

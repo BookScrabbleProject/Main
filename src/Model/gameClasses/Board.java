@@ -1,5 +1,6 @@
 package Model.gameClasses;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
 
@@ -257,6 +258,14 @@ public class Board {
         if(!flag)
             createdWords.add(fullWord(word));
         return createdWords;
+    }
+
+    public List<Tile> getWord(String word) {
+        List<Tile> tiles = new ArrayList<Tile>();
+        for (int i = 0; i < word.length(); i++) {
+            tiles.add(Tile.Bag.getBag().getTileToWord(word.charAt(i)));
+        }
+        return tiles;
     }
 
     /**
