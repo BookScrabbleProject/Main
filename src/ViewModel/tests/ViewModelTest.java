@@ -26,8 +26,8 @@ public class ViewModelTest {
 
             Thread.sleep(2000);
 
-            guest.tryPlaceWord("week", 7, 7, true);
-            Thread.sleep(10000);
+            guest2.tryPlaceWord("week", 7, 7, true);
+            Thread.sleep(2000);
 
             server.stop();
             host.getHostServer().close();
