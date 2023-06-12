@@ -24,6 +24,7 @@ public class MyServer {
         ServerSocket server = null;
         try {
             server = new ServerSocket(port);
+
             server.setSoTimeout(1000);
             while (!stop) {
                 try {
