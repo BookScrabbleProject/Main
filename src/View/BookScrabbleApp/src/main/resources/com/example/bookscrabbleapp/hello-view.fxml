@@ -255,12 +255,12 @@
             <InnerShadow choke="0.45" height="18.07" radius="11.465" width="29.79" />
          </effect>
       </Canvas>
-      <ImageView fitHeight="824.0" fitWidth="824.0" layoutX="492.0" layoutY="42.0" onMouseClicked="#init" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="boardImage" fitHeight="783.0" fitWidth="832.0" pickOnBounds="true" preserveRatio="true" x="494.0" y="43.0">
          <image>
             <Image url="@../../../../../../../../board.jpeg" />
          </image>
       </ImageView>
-      <GridPane fx:id="gridPane" hgap="1.0" layoutX="516.0" layoutY="54.0" prefHeight="651.0" prefWidth="777.0" scaleZ="0.0" style="-fx-border-radius: 50;" translateY="5.0" translateZ="30.0" vgap="1.0">
+      <GridPane fx:id="gridPane" hgap="11.0" layoutX="522.0" layoutY="60.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#init" prefHeight="660.0" prefWidth="779.0" style="-fx-border-radius: 50;" vgap="4.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
