@@ -314,21 +314,21 @@ public class HelloController {
    final int VGAP = 4;
     public void init(MouseEvent e){
 
-        double x = e.getX(); //the y of the mouse click relative to the scene
-        double y = e.getY(); //the x of the mouse click relative to the scene
+        double MOUSE_CLICKED_X = e.getX(); //the y of the mouse click relative to the scene
+        double MOUSE_CLICKED_Y = e.getY(); //the x of the mouse click relative to the scene
 
-        System.out.println("x: " + x + " y: " + y);
-        double sw = (gridPane.getWidth()-HGAP*14) / 15; //the width of each square
-        double sh = (gridPane.getHeight()-VGAP*14) / 15; //the height of each square
-        int cr = (int) Math.floor (y / (sh+VGAP)); //the row of the square clicked
-        int cc = (int) Math.floor (x / (sw+HGAP)); //the column of the square clicked
-        boolean clickedInGap = (x - (cc * (sw + HGAP))) > sw;
+        System.out.println("x: " + MOUSE_CLICKED_X + " y: " + MOUSE_CLICKED_Y);
+        double SQUARE_WIDTH = (gridPane.getWidth()-HGAP*14) / 15; //the width of each square
+        double SQUARE_HEIGHT = (gridPane.getHeight()-VGAP*14) / 15; //the height of each square
+        int cr = (int) Math.floor (MOUSE_CLICKED_Y / (SQUARE_HEIGHT+VGAP)); //the row of the square clicked
+        int cc = (int) Math.floor (MOUSE_CLICKED_X / (SQUARE_WIDTH+HGAP)); //the column of the square clicked
+        boolean clickedInGap = (MOUSE_CLICKED_X - (cc * (SQUARE_WIDTH + HGAP))) > SQUARE_WIDTH;
 //                sp.setStyle("-fx-background-color: #ff0000");
         //((Label)sp.getChildren().get(0)).setTextFill(Color.WHITE);
         System.out.println("row: " + cr + " col: " + cc);
         System.out.println("clicked");
         System.out.println("clicked in gap: " + clickedInGap);
-        System.out.println("square width: " + sw + " square height: " + sh + " grid width: " + gridPane.getWidth() + " grid height: " + gridPane.getHeight() + " "+ (x-cc*(sw+8)));
+        System.out.println("square width: " + SQUARE_WIDTH + " square height: " + SQUARE_HEIGHT + " grid width: " + gridPane.getWidth() + " grid height: " + gridPane.getHeight() + " "+ (MOUSE_CLICKED_X-cc*(SQUARE_WIDTH+8)));
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
