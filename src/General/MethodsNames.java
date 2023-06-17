@@ -1,16 +1,17 @@
 package General;
 
-public enum MethodsNames {
-    BOARD_UPDATED,
-    SCORE_UPDATED,
-    NUM_OF_TILES_UPDATED,
-    SET_HAND,
-    NEW_PLAYER_TURN,
-    SET_ID,
-    PLAYER_LIST_UPDATED,
-    START_GAME,
-    CHALLENGE,
-    TRY_PLAYERS_WORD,
-    TAKE_TILE_FROM_BAG,
-    CONNECT
+public class MethodsNames {
+    public static final String TRY_PLACE_WORD = "tryPlaceWord";
+    public static final String CHALLENGE = "challenge";
+    public static final String START_GAME = "startGame";
+    public static final String BOARD_UPDATED = "boardUpdated";
+    public static final String SCORE_UPDATED = "scoreUpdated";
+    public static final String NUM_OF_TILES_UPDATED = "numOfTilesUpdated";
+    public static final String SET_HAND = "setHand";
+    public static final String NEW_PLAYER_TURN = "newPlayerTurn";
+    public static final String SET_ID = "setId";
+    public static final String PLAYERS_LIST_UPDATED = "playersListUpdated";
+    public static final String CONNECT = "connect";
+    public static final String TILES_WITH_SCORES = "tilesWithScores";
+    public static final String NUMBER_OF_TILES_IN_BAG_UPDATED = "numberOfTilesInBagUpdated";
 }
