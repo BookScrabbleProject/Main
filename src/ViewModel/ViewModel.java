@@ -295,7 +295,6 @@ public class ViewModel extends Observable implements Observer {
                     break;
 
                 case MethodsNames.PLAYERS_LIST_UPDATED:
-                    System.out.println("VM update: " + MethodsNames.PLAYERS_LIST_UPDATED);
                     for (String player : args) {
                         String[] playerInfo = player.split("-");
                         int id = Integer.parseInt(playerInfo[0]);
@@ -305,7 +304,7 @@ public class ViewModel extends Observable implements Observer {
                     }
                     break;
 
-                case "tilesWithScores":
+                case MethodsNames.TILES_WITH_SCORES:
                     for (String tile : args) {
                         String[] tileInfo = tile.split("-");
                         char letter = Character.toUpperCase(tileInfo[0].charAt(0));
@@ -321,7 +320,7 @@ public class ViewModel extends Observable implements Observer {
                     notifyObservers(arg);
                     break;
 
-                case "tilesInBagUpdated":
+                case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:
                     setNumberOfTilesInBag(model.getNumberOfTilesInBag());
                     break;
             }
