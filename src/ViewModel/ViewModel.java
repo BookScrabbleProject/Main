@@ -239,7 +239,7 @@ public class ViewModel extends Observable implements Observer {
                         this.players.get(key).setScore(scores.get(key));
                     break;
 
-                case "tilesUpdated":
+                case MethodsNames.NUM_OF_TILES_UPDATED:
                     Map<Integer, Integer> tiles = model.getPlayersNumberOfTiles();
                     for (Integer key : tiles.keySet())
                         this.players.get(key).setNumberOfTiles(tiles.get(key));
