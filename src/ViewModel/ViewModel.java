@@ -15,7 +15,7 @@ public class ViewModel extends Observable implements Observer {
     Model model;
     public int currentPlayerId;
     public int numberOfTilesInBag;
-    Map<Integer, PlayerVVM> players;
+    public Map<Integer, PlayerVVM> players;
     public MyPlayerVVM myPlayer;
     private String word;
     private int wordStartRow;
