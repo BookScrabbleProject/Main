@@ -253,7 +253,7 @@ public class ViewModel extends Observable implements Observer {
                     setCurrentPlayerId(model.getCurrentPlayerId());
                     break;
 
-                case "setId":
+                case MethodsNames.SET_ID:
                     this.myPlayer.setId(Integer.parseInt(args[0]));
                     players.put(this.myPlayer.getId(), this.myPlayer);
                     break;
