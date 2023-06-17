@@ -4,103 +4,78 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.Shape3D;
-
 public class HelloController {
     @FXML
     private Label welcomeText;
-
     @FXML
     private Label bookScrabbleLabel;
-
     @FXML
     private Canvas gameBoard;
-
     @FXML
     private GridPane gridPane;
-
     @FXML
     private ImageView boardImage;
+    @FXML
+    private Label player1Name;
+    @FXML
+    private Label player2Name;
+    @FXML
+    private Label player3Name;
+    @FXML
+    private Label myPlayerName;
+    @FXML
+    private Label player1Score;
+    @FXML
+    private Label player2Score;
+    @FXML
+    private Label player3Score;
+    @FXML
+    private Label myPlayerScore;
+    @FXML
+    private GridPane tilesGrid;
+    @FXML
+    private Label numOfTilesInBag;
+    @FXML
+    private Label numOfTilesInHand;
+    @FXML
+    private Button finishTurnBtn;
+    @FXML
+    private Button undoBtn;
+    @FXML
+    private Button resetBtn;
+    @FXML
+    private ImageView bagImage;
+    @FXML
+    private ImageView player1Image;
+    @FXML
+    private ImageView player2Image;
+    @FXML
+    private ImageView player3Image;
+    @FXML
+    private ImageView myPlayerImage;
+    @FXML
+    private Circle player1ImageCircle;
+    @FXML
+    private Circle player2ImageCircle;
+    @FXML
+    private Circle player3ImageCircle;
+    @FXML
+    private Circle myPlayerImageCircle;
+
+
     boolean isGameStarted = false;
-
-
-    ////Setting Start square - Star
-
-    //yellow - #FFFF97
-//        gameBoard[7][7].setColor(5);
-//
-//                //Setting Red squares - color 4 - Triple Word Score
-//             red - #FE3032
-//
-
-    //yellow - #FFFF97
-//                //Setting Yellow squares - color 3 - Double Word Score
-//                gameBoard[1][1].setColor(3);
-//                gameBoard[2][2].setColor(3);
-//                gameBoard[3][3].setColor(3);
-//                gameBoard[4][4].setColor(3);
-//                gameBoard[1][13].setColor(3);
-//                gameBoard[2][12].setColor(3);
-//                gameBoard[3][11].setColor(3);
-//                gameBoard[4][10].setColor(3);
-//                gameBoard[13][13].setColor(3);
-//                gameBoard[12][12].setColor(3);
-//                gameBoard[11][11].setColor(3);
-//                gameBoard[10][10].setColor(3);
-//                gameBoard[10][4].setColor(3);
-//                gameBoard[11][3].setColor(3);
-//                gameBoard[12][2].setColor(3);
-//                gameBoard[13][1].setColor(3);
-//
-    // BLUE - #0B8EFA
-//                //Setting Blue squares - color 2 - Triple Letter Score
-//                gameBoard[1][5].setColor(2);
-//                gameBoard[1][9].setColor(2);
-//                gameBoard[5][1].setColor(2);
-//                gameBoard[5][5].setColor(2);
-//                gameBoard[5][9].setColor(2);
-//                gameBoard[5][13].setColor(2);
-//                gameBoard[9][1].setColor(2);
-//                gameBoard[9][5].setColor(2);
-//                gameBoard[9][9].setColor(2);
-//                gameBoard[9][13].setColor(2);
-//                gameBoard[13][5].setColor(2);
-//                gameBoard[13][9].setColor(2);
-//
-    // CYAN = #5DC5FC
-//                //Setting Cyan squares - color 1 - Double Letter Score
-//                gameBoard[0][3].setColor(1);
-//                gameBoard[0][11].setColor(1);
-//                gameBoard[2][6].setColor(1);
-//                gameBoard[2][8].setColor(1);
-//                gameBoard[3][0].setColor(1);
-//                gameBoard[3][7].setColor(1);
-//                gameBoard[3][14].setColor(1);
-//                gameBoard[6][2].setColor(1);
-//                gameBoard[6][6].setColor(1);
-//                gameBoard[6][8].setColor(1);
-//                gameBoard[6][12].setColor(1);
-//                gameBoard[7][3].setColor(1);
-//                gameBoard[7][11].setColor(1);
-//                gameBoard[8][2].setColor(1);
-//                gameBoard[8][6].setColor(1);
-//                gameBoard[8][8].setColor(1);
-//                gameBoard[8][12].setColor(1);
-//                gameBoard[11][0].setColor(1);
-//                gameBoard[11][7].setColor(1);
-//                gameBoard[11][14].setColor(1);
-//                gameBoard[12][6].setColor(1);
-//                gameBoard[12][8].setColor(1);
-//                gameBoard[14][3].setColor(1);
-//                gameBoard[14][11].setColor(1);
 
 
    private void paintTheSquares(){
@@ -325,6 +300,7 @@ public class HelloController {
         boolean clickedInGap = (MOUSE_CLICKED_X - (cc * (SQUARE_WIDTH + HGAP))) > SQUARE_WIDTH;
 //                sp.setStyle("-fx-background-color: #ff0000");
         //((Label)sp.getChildren().get(0)).setTextFill(Color.WHITE);
+        if(clickedInGap) return;
         System.out.println("row: " + cr + " col: " + cc);
         System.out.println("clicked");
         System.out.println("clicked in gap: " + clickedInGap);
@@ -332,7 +308,6 @@ public class HelloController {
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
-        //fill the center square of the gridPane with color black (of grid 15x15)
 
 //        gc.strokeRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
 //        gc.setFill(Paint.valueOf("#43B14F"));
@@ -358,45 +333,25 @@ public class HelloController {
 //            }
 //        }
         if(!isGameStarted) {
-            //add stackpane to the gridpane with label of i and j
-//            for(int i=0;i<15;i++){
-//                for(int j=0;j<15;j++){
-//                    StackPane sp = new StackPane();
-//                    sp.setScaleX(0.78);
-//                    sp.setScaleY(0.92);
-//                    //Label text = new Label(i + "," + j);
-//                    //sp.getChildren().add(text);
-//                    sp.setStyle("-fx-background-color:#43B14F;");
-//                    gridPane.add(sp, j, i);
-//                    System.out.println(i+","+j);
-//                    System.out.println("Added stackpane to gridpane");
-//                }
-//            }
+
+            char myC = 'a';
             //paintTheSquares();
-//            for(int i=0; i<15;i++){
-//                for(int j=0; j<15;j++){
-//                    StackPane sp = new StackPane();
-//                    Label text = new Label(i + "," + j);
-//                    sp.getChildren().add(text);
-//                    gridPane.add(sp, i, j);
-//                    System.out.println(i+","+j);
-//                    System.out.println("Added stackpane to gridpane");
-//                }
-//            }
-//            boardImage.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-//                double mouseX = event.getX();
-//                double mouseY = event.getY();
-//                System.out.println("image eventListener: x: " + mouseX + " y: " + mouseY);
-//
-//                double squareWidth = (gridPane.getWidth()+8*14) / 15;
-//                double squareHeight = (gridPane.getHeight()+4*14) / 15;
-//
-//                int clickedRow = (int) Math.floor (mouseY / squareHeight);
-//                int clickedCol = (int) Math.floor (mouseX / squareWidth);
-////                sp.setStyle("-fx-background-color: #ff0000");
-//                //((Label)sp.getChildren().get(0)).setTextFill(Color.WHITE);
-//                System.out.println("row: " + clickedRow + " col: " + clickedCol);
-//            });
+            for(int i=0; i<15;i++){
+                for(int j=0; j<15;j++){
+
+                    Image tile = new Image(getClass().getResource("/Images/Tiles/"+myC+"Letter.png").toExternalForm());
+                    myC++;
+                    if(myC>'z') myC = 'a';
+                    ImageView iv = new ImageView(tile);
+                    iv.setFitWidth(SQUARE_WIDTH-3);
+                    iv.setFitHeight(SQUARE_HEIGHT-2);
+                    StackPane sp = new StackPane(iv);
+                    sp.setAlignment(Pos.CENTER);
+                    gridPane.add(sp, j, i);
+                    System.out.println(i+","+j);
+                    System.out.println("Added stackpane to gridpane");
+                }
+            }
             isGameStarted = true;
         }
     }
