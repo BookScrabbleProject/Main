@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="444.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.bookscrabbleapp.WelcomePageController">
+<AnchorPane prefHeight="444.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.bookscrabbleapp.WelcomePageController">
    <children>
       <Label fx:id="title" alignment="CENTER" layoutX="233.0" layoutY="30.0" prefHeight="39.0" prefWidth="163.0" style="-fx-underline: true;" text="Welcome">
          <font>
@@ -69,7 +69,7 @@
                   <VBox fx:id="portWarningDiv" prefHeight="33.0" prefWidth="195.0" visible="false">
                      <children>
                         <Label fx:id="portMainWarningLabel" text="Port is unvalid" textFill="RED" />
-                        <Label fx:id="PortSeconderyWarningLabel" text="must be a number between 1,000-99,999" textFill="RED">
+                        <Label fx:id="PortSeconderyWarningLabel" text="must be a number between 0-65,535" textFill="RED">
                            <font>
                               <Font size="10.0" />
                            </font>

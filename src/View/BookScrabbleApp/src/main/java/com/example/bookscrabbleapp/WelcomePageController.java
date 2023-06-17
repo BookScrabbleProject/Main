@@ -130,7 +130,7 @@ public class WelcomePageController {
             portWarningDiv.setVisible(true);
             return false;
         }
-        if (Integer.parseInt(portInput.getText().trim()) < 1000 || Integer.parseInt(portInput.getText().trim()) > 99999) // the number isn't a valid port number
+        if (Integer.parseInt(portInput.getText().trim()) < 0 || Integer.parseInt(portInput.getText().trim()) > 65536) // the number isn't a valid port number
         {
             System.out.println(Integer.parseInt(portInput.getText().trim()));
             portWarningDiv.setVisible(true);
