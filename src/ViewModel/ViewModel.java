@@ -2,6 +2,7 @@ package ViewModel;
 
 import Model.Model;
 import Model.gameClasses.Player;
+import General.MethodsNames;
 
 import java.util.*;
 
@@ -228,11 +229,11 @@ public class ViewModel extends Observable implements Observer {
             catch (Exception e) { }
 
             switch (methodName) {
-                case "boardUpdated":
+                case MethodsNames.BOARD_UPDATED:
                     setBoard(model.getBoardStatus());
                     break;
 
-                case "scoreUpdated":
+                case MethodsNames.SCORE_UPDATED:
                     Map<Integer, Integer> scores = model.getPlayersScores();
                     for (Integer key : scores.keySet())
                         this.players.get(key).setScore(scores.get(key));
@@ -244,11 +245,11 @@ public class ViewModel extends Observable implements Observer {
                         this.players.get(key).setNumberOfTiles(tiles.get(key));
                     break;
 
-                case "setHand":
+                case MethodsNames.SET_HAND:
                     this.myPlayer.setHand(model.getMyHand());
                     break;
 
-                case "newPlayerTurn":
+                case MethodsNames.NEW_PLAYER_TURN:
                     setCurrentPlayerId(model.getCurrentPlayerId());
                     break;
 
@@ -257,7 +258,7 @@ public class ViewModel extends Observable implements Observer {
                     players.put(this.myPlayer.getId(), this.myPlayer);
                     break;
 
-                case "playersListUpdated":
+                case MethodsNames.PLAYERS_LIST_UPDATED:
                     for (String player : args) {
                         String[] playerInfo = player.split("-");
                         int id = Integer.parseInt(playerInfo[0]);
@@ -276,9 +277,9 @@ public class ViewModel extends Observable implements Observer {
                     }
                     break;
 
-                case "startGame":
-                case "challenge":
-                case "tryPlaceWord":
+                case MethodsNames.START_GAME:
+                case MethodsNames.CHALLENGE:
+                case MethodsNames.TRY_PLACE_WORD:
                     setChanged();
                     notifyObservers(arg);
                     break;
