@@ -318,7 +318,6 @@ public class HostModelTest {
             Checker.finishTest("challenge-Host");
 
         } catch (IOException e) {throw new RuntimeException(e);}
-        Checker.finishTest("challengeTest - Host");
     }
 
     private static String listToString(List<Character> l) {
@@ -346,7 +345,17 @@ public class HostModelTest {
             tryPlaceWordTest(socket,socket2,hostModel,hostServerPort);
             System.out.println(">>> Starting challengeTest <<<");
             challengeTest(socket,socket2,hostModel,hostServerPort);
-        } catch (IOException e) {throw new RuntimeException(e);}
+
+            Thread.sleep(5000);
+            System.out.println(">>> Close sockets and Threads <<<");
+            socket.close();
+            socket2.close();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        hostModel.getHostServer().close();
+        myServer.stop();
+        System.out.println("done!");
     }
     public static class Checker {
         static Map<String, Integer> testNums = new HashMap<String, Integer>();

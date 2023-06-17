@@ -84,14 +84,7 @@ public class HostModel extends PlayerModel implements Observer {
      * @param socket - socket parameter that send to the hostServer
      */
     public void addPlayer(Socket socket){
-        Scanner s = null;
-        String name = "guest";
-        try {
-            s = new Scanner(socket.getInputStream());
-            String str = s.next();
-            name = str.split(":")[2];
-        } catch (IOException e) {throw new RuntimeException(e);}
-        Player p = new Player(generateId(),name,0,new ArrayList<Character>());
+        Player p = new Player(generateId(),"guest",0,new ArrayList<Character>());
         connectedPlayers.put(p.getId(),p);
         StringBuilder playersIdsAndNames = new StringBuilder();
         playersIdsAndNames.append(p.getId()).append("-").append(p.getName()).append(",");
