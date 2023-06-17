@@ -4,7 +4,7 @@ import java.util.List;
 
 public class MyPlayerVVM extends PlayerVVM {
 
-    List<Character> hand;
+    public List<Character> hand;
 
     public MyPlayerVVM(int id, String name, int score, int numberOfTiles) {
         super(id, name, score, numberOfTiles);

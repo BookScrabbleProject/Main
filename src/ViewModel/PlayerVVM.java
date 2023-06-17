@@ -1,10 +1,10 @@
 package ViewModel;
 
 public class PlayerVVM {
-    int id;
-    String name;
-    int score;
-    int numberOfTiles;
+    public int id;
+    public String name;
+    public int score;
+    public int numberOfTiles;
 
     public PlayerVVM(int id, String name) {
         this.id = id;
