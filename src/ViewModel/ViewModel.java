@@ -7,37 +7,73 @@ import General.MethodsNames;
 import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
+    public static ViewModel vm = null;
     //    data binding
     Map<Character, Integer> tilesScores;
     public Character[][] board;
     public List<DataChanges> changesList;
     Model model;
-    int currentPlayerId;
-    List<Character> myHand;
-    int numberOfTilesInBag;
+    public int currentPlayerId;
+    public int numberOfTilesInBag;
     Map<Integer, PlayerVVM> players;
-    MyPlayerVVM myPlayer;
+    public MyPlayerVVM myPlayer;
     private String word;
     private int wordStartRow;
     private int wordStartCol;
 
     /**
-     * Ctor for ViewModel - initialize the data members
+     * create a new ViewModel if it doesn't exist, and return it (singleton)
+     * @return the ViewModel
+     */
+    public static ViewModel getViewModel() {
+        if (vm == null) {
+            vm = new ViewModel();
+        }
+        return vm;
+    }
+
+    /**
+     * default Ctor for ViewModel - initialize the data members (for the singleton)
+     */
+    private ViewModel() {
+        model = null;
+        this.tilesScores = new HashMap<>();
+        this.board = new Character[15][15];
+        this.changesList = new ArrayList<>();
+        this.currentPlayerId = -1;
+        this.numberOfTilesInBag = 0;
+        this.players = new HashMap<>();
+        this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
+    }
+
+    /**
+     * set the model only if it is null (to avoid setting it twice)
      * @param model - the model that the ViewModel is observing (GuestModel or HostModel)
      */
-    public ViewModel(Model model) {
-        model.addObserver(this);
-        this.model = model;
-        tilesScores = new HashMap<>();
-        board = new Character[15][15];
-        changesList = new ArrayList<>();
-        currentPlayerId = -1;
-        myHand = new ArrayList<>();
-        numberOfTilesInBag = 0;
-        players = new HashMap<>();
-        myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
-        // Todo: add more initialization here - if needed
+    public void setModel(Model model) {
+        if (this.model == null) {
+            this.model = model;
+            this.model.addObserver(this);
+        }
     }
+
+//    /**
+//     * Ctor for ViewModel - initialize the data members
+//     * @param model - the model that the ViewModel is observing (GuestModel or HostModel)
+//     */
+//    public ViewModel(Model model) {
+//        model.addObserver(this);
+//        this.model = model;
+//        tilesScores = new HashMap<>();
+//        board = new Character[15][15];
+//        changesList = new ArrayList<>();
+//        currentPlayerId = -1;
+//        myHand = new ArrayList<>();
+//        numberOfTilesInBag = 0;
+//        players = new HashMap<>();
+//        myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
+//        // Todo: add more initialization here - if needed
+//    }
 
     /**
      * Run when the player clicks the "Place Word" button.
@@ -255,10 +291,11 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.SET_ID:
                     this.myPlayer.setId(Integer.parseInt(args[0]));
-                    players.put(this.myPlayer.getId(), this.myPlayer);
+                    this.players.put(this.myPlayer.getId(), this.myPlayer);
                     break;
 
                 case MethodsNames.PLAYERS_LIST_UPDATED:
+                    System.out.println("VM update: " + MethodsNames.PLAYERS_LIST_UPDATED);
                     for (String player : args) {
                         String[] playerInfo = player.split("-");
                         int id = Integer.parseInt(playerInfo[0]);

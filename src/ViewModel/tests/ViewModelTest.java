@@ -6,6 +6,8 @@ import Model.gameClasses.BookScrabbleHandler;
 import Model.gameClasses.MyServer;
 import ViewModel.ViewModel;
 
+import javax.swing.text.View;
+
 public class ViewModelTest {
 
     public static void main(String[] args) {
@@ -16,7 +18,8 @@ public class ViewModelTest {
             host.connectToBookScrabbleServer(1235, "localhost", 1234);
             GuestModel guest = new GuestModel("localhost", 1235, "guest");
 
-            ViewModel viewModel = new ViewModel(guest);
+            ViewModel viewModel = ViewModel.getViewModel();
+            viewModel.setModel(guest);
             guest.connectToHostServer();
 
             Thread.sleep(2000);
