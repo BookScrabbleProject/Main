@@ -42,6 +42,11 @@ public class GuestModel extends PlayerModel implements Observer {
 //        clientCommunication.addObserver(this);
     }
 
+    @Override
+    public void startGame() {
+
+    }
+
     public void connectToHostServer() {
         clientCommunication = new ClientCommunication();
         clientCommunication.addObserver(this);

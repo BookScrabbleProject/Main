@@ -17,4 +17,5 @@ public abstract class Model extends Observable{
     public abstract HashMap<Integer, Integer> getPlayersScores();
     public abstract HashMap<Integer, Integer> getPlayersNumberOfTiles();
     public abstract List<Character> getMyHand();
+    public abstract void startGame();
 }

@@ -78,6 +78,32 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.addObserver(this);
     }
 
+    @Override
+    public void startGame() {
+        for (Player p: connectedPlayers.values()) {
+            refillPlayerHand(p.getId());
+            p.setScore(0);
+        }
+        this.currentPlayerId = 0;
+
+        String toAllPlayers = MethodsNames.START_GAME + "\n" +
+                MethodsNames.SET_HAND + "\n" +
+                MethodsNames.NUM_OF_TILES_UPDATED + "\n" +
+                MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + "\n" +
+                MethodsNames.SCORE_UPDATED + "\n" +
+                MethodsNames.CURRENT_PLAYER_UPDATED + "\n";
+        String toNotify = MethodsNames.START_GAME + "\n" +
+                MethodsNames.SET_HAND + "\n" +
+                MethodsNames.NUM_OF_TILES_UPDATED + "\n" +
+                MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + "\n" +
+                MethodsNames.SCORE_UPDATED + "\n" +
+                MethodsNames.CURRENT_PLAYER_UPDATED + "\n";
+
+        hostServer.sendToAllPlayers(toAllPlayers);
+        setChanged();
+        notifyObservers(toNotify);
+    }
+
     /**
      * method that add player to the game and create player, add the player to the map and create a string builder of ids
      * Sends the information to the hostServer and notify with the format : requestedId + ":" + method + ":" + inputs
