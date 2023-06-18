@@ -198,6 +198,7 @@ public class HostServerTest {
         server.start();
 
         HostModel hostModel = HostModel.getHost();
+        hostModel.connectToBookScrabbleServer(6001, "localhost", 6000);
         HostServerObserver hostServerObserver = new HostServerObserver(hostModel.getHostServer());
         int hostServerPort = 6001;
         Thread.sleep(1000);
@@ -215,10 +216,10 @@ public class HostServerTest {
         System.out.println("\n>>> testing checkForMessage in the server... <<<");
         new Thread(()-> {testCheckForMessage(server, hostModel,hostServerPort);}).start();
 
-        Thread.sleep(10000);
-//        server.stop();
-//        hostModel.hostServer.stop();
-//        System.out.println("servers stopped");
+        Thread.sleep(1000);
+        server.stop();
+        hostModel.getHostServer().close();
+        System.out.println("servers stopped");
         System.out.println("\ndone!");
     }
 
