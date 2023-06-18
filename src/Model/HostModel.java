@@ -1,7 +1,7 @@
 package Model;
 
 import Model.gameClasses.*;
-
+import General.MethodsNames ;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
@@ -279,11 +279,9 @@ public class HostModel extends PlayerModel implements Observer {
         toNotify.append("numOfTilesUpdated\n");
         toAllPlayers.append(0).append(":scoreUpdated:").append(String.valueOf(connectedPlayers.get(currentPlayerId).getScore())).append("\n");
         toNotify.append("scoreUpdated\n");
-        toAllPlayers.append(requestedId).append(":challenge:").append(word).append("\n");
-        toNotify.append("challenge:0\n");
-        toAllPlayers.append(requestedId).append(":challenge:0\n");
+        toAllPlayers.append(requestedId).append(":challenge:0,").append(word).append("\n");
+        toNotify.append("challenge:0,").append(word).append('\n');
         setChanged();
-        toNotify.append("challenge:").append(word).append("\n");
         hostServer.sendToSpecificPlayer(currentPlayerId,toSpecificPlayer.toString());
         hostServer.sendToAllPlayers(toAllPlayers.toString());
         notifyObservers(toNotify.toString());
