@@ -103,6 +103,27 @@ public class Tile {
             return this.tiles[indexchar];
         }
 
+        private void addTile(char c) {
+            if(c > 'Z' || c < 'A'){
+                return;
+            }
+            int indexchar = c-'A';
+            if(this.letters[indexchar]==0) {
+                return;
+            }
+            totalTiles++;
+            this.letters[indexchar]++;
+        }
+
+        public Tile getTileToWord(char c) {
+            c = Character.toUpperCase(c);
+            if (c > 'Z' || c < 'A')
+                return null;
+
+            addTile(c);
+            return getTile(c);
+        }
+
         /**
          *
          * @param t return a tile to the bag

@@ -15,15 +15,29 @@ import java.util.Scanner;
 public class ClientCommunication extends Observable {
     Socket socket;
 
+    public ClientCommunication() {
+        socket = new Socket();
+    }
+
     /**
      * Creates a new client communication with the server and starts a new thread to check for messages from the server
      * @param ip   the host to connect to
      * @param port the port to connect to
      */
-    public ClientCommunication(String ip, int port) {
+    public ClientCommunication(String ip, int port, String name) {
         try {
             socket = new Socket(ip, port);
-            send(-1, "connect", " ");
+            send(-1, "connect", name);
+            new Thread(this::checkForMessage).start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void connect(String ip, int port, String name) {
+        try {
+            socket = new Socket(ip, port);
+            send(-1, "connect", name);
             new Thread(this::checkForMessage).start();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -54,8 +68,8 @@ public class ClientCommunication extends Observable {
         while (socket.isConnected() && !socket.isClosed()) {
             try {
                 Scanner in = new Scanner(socket.getInputStream());
-                if (in.hasNext()) {
-                    String message = in.nextLine();
+                while (in.hasNext()) {
+                    String message = in.next();
                     setChanged();
                     notifyObservers(message);
                 }
