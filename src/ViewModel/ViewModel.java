@@ -8,29 +8,18 @@ import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
     public static ViewModel vm = null;
-    //    data binding
-    Map<Character, Integer> tilesScores;
     public Character[][] board;
     public List<DataChanges> changesList;
-    Model model;
     public int currentPlayerId;
     public int numberOfTilesInBag;
     public Map<Integer, PlayerVVM> players;
     public MyPlayerVVM myPlayer;
+    //    data binding
+    Map<Character, Integer> tilesScores;
+    Model model;
     private String word;
     private int wordStartRow;
     private int wordStartCol;
-
-    /**
-     * create a new ViewModel if it doesn't exist, and return it (singleton)
-     * @return the ViewModel
-     */
-    public static ViewModel getViewModel() {
-        if (vm == null) {
-            vm = new ViewModel();
-        }
-        return vm;
-    }
 
     /**
      * default Ctor for ViewModel - initialize the data members (for the singleton)
@@ -47,7 +36,20 @@ public class ViewModel extends Observable implements Observer {
     }
 
     /**
+     * create a new ViewModel if it doesn't exist, and return it (singleton)
+     *
+     * @return the ViewModel
+     */
+    public static ViewModel getViewModel() {
+        if (vm == null) {
+            vm = new ViewModel();
+        }
+        return vm;
+    }
+
+    /**
      * set the model only if it is null (to avoid setting it twice)
+     *
      * @param model - the model that the ViewModel is observing (GuestModel or HostModel)
      */
     public void setModel(Model model) {
@@ -235,19 +237,26 @@ public class ViewModel extends Observable implements Observer {
         return sortedChangesList;
     }
 
-    private void setBoard(Character[][] boardStatus) { this.board = boardStatus; }
+    private void setBoard(Character[][] boardStatus) {
+        this.board = boardStatus;
+    }
 
-    public void setNumberOfTilesInBag(int numberOfTilesInBag) { this.numberOfTilesInBag = numberOfTilesInBag; }
+    public void setNumberOfTilesInBag(int numberOfTilesInBag) {
+        this.numberOfTilesInBag = numberOfTilesInBag;
+    }
 
-    public void setCurrentPlayerId(int currentPlayerId) { this.currentPlayerId = currentPlayerId; }
+    public void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+    }
 
     /**
      * this method start when the observable object (the model [HostModel/GuestModel]) notify to the observer (VM)
-     * @Details     The method update the VM with the changes that happened in the model.
-     *              Types of updates: method_name:args & method_name
-     * @param o     the observable object.
-     * @param arg   an argument passed to the {@code notifyObservers}
-     *                 method. (the message from the model to the VM, type: String)
+     *
+     * @param o   the observable object.
+     * @param arg an argument passed to the {@code notifyObservers}
+     *            method. (the message from the model to the VM, type: String)
+     * @Details The method update the VM with the changes that happened in the model.
+     * Types of updates: method_name:args & method_name
      */
     @Override
     public void update(Observable o, Object arg) {
@@ -261,8 +270,8 @@ public class ViewModel extends Observable implements Observer {
 
             try {
                 args = message.split(":")[1].split(",");
+            } catch (Exception e) {
             }
-            catch (Exception e) { }
 
             switch (methodName) {
                 case MethodsNames.BOARD_UPDATED:
@@ -299,7 +308,7 @@ public class ViewModel extends Observable implements Observer {
                         String[] playerInfo = player.split("-");
                         int id = Integer.parseInt(playerInfo[0]);
                         String name = playerInfo[1];
-                        if(!this.players.containsKey(id))
+                        if (!this.players.containsKey(id))
                             this.players.put(id, new PlayerVVM(id, name));
                     }
                     break;
@@ -322,6 +331,10 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:
                     setNumberOfTilesInBag(model.getNumberOfTilesInBag());
+                    break;
+
+                case MethodsNames.CURRENT_PLAYER_UPDATED:
+                    setCurrentPlayerId(model.getCurrentPlayerId());
                     break;
             }
 
