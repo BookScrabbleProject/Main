@@ -24,7 +24,7 @@ public class ViewModelTest {
 
             Thread.sleep(2000);
 
-            GuestModel guest2 = new GuestModel("localhost", 1235, "guest2");
+            GuestModel guest2 = new GuestModel("localhost", 1235, "test-guest-2");
             guest2.connectToHostServer();
 
             Thread.sleep(2000);

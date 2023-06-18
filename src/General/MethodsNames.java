@@ -14,4 +14,5 @@ public class MethodsNames {
     public static final String CONNECT = "connect";
     public static final String TILES_WITH_SCORES = "tilesWithScores";
     public static final String NUMBER_OF_TILES_IN_BAG_UPDATED = "numberOfTilesInBagUpdated";
+    public static final String TAKE_TILE_FROM_BAG = "takeTileFromBag";
 }
