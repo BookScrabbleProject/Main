@@ -332,10 +332,6 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:
                     setNumberOfTilesInBag(model.getNumberOfTilesInBag());
                     break;
-
-                case MethodsNames.CURRENT_PLAYER_UPDATED:
-                    setCurrentPlayerId(model.getCurrentPlayerId());
-                    break;
             }
 
         }

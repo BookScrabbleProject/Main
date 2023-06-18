@@ -29,13 +29,17 @@ public class ViewModelTest {
 
             Thread.sleep(2000);
 
-            guest2.tryPlaceWord("week", 7, 7, true);
+            host.startGame();
+
             Thread.sleep(2000);
 
-            server.stop();
-            host.getHostServer().close();
+            guest2.tryPlaceWord("week", 7, 7, true);
+            Thread.sleep(5000);
+
             guest.getClientCommunication().close();
             guest2.getClientCommunication().close();
+            host.getHostServer().close();
+            server.stop();
 
             System.out.println("done!");
         } catch (InterruptedException e) {

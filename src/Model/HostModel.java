@@ -80,28 +80,30 @@ public class HostModel extends PlayerModel implements Observer {
 
     @Override
     public void startGame() {
+        StringBuilder toAllPlayers = new StringBuilder();
+        StringBuilder toNotify = new StringBuilder();
+
         for (Player p: connectedPlayers.values()) {
             refillPlayerHand(p.getId());
             p.setScore(0);
+            toAllPlayers.append(p.getId()).append(":"+MethodsNames.NUM_OF_TILES_UPDATED+":").append(7).append("\n");
+            toAllPlayers.append(p.getId()).append(":"+MethodsNames.SCORE_UPDATED+":").append(p.getScore()).append("\n");
+            hostServer.sendToSpecificPlayer(p.getId(), "0:"+MethodsNames.SET_HAND+":"+ handToString(p.getTiles()) +"\n");
         }
         this.currentPlayerId = 0;
 
-        String toAllPlayers = MethodsNames.START_GAME + "\n" +
-                MethodsNames.SET_HAND + "\n" +
-                MethodsNames.NUM_OF_TILES_UPDATED + "\n" +
-                MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + "\n" +
-                MethodsNames.SCORE_UPDATED + "\n" +
-                MethodsNames.CURRENT_PLAYER_UPDATED + "\n";
-        String toNotify = MethodsNames.START_GAME + "\n" +
-                MethodsNames.SET_HAND + "\n" +
-                MethodsNames.NUM_OF_TILES_UPDATED + "\n" +
-                MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + "\n" +
-                MethodsNames.SCORE_UPDATED + "\n" +
-                MethodsNames.CURRENT_PLAYER_UPDATED + "\n";
+        toAllPlayers.append(0).append(":"+MethodsNames.NEW_PLAYER_TURN+":").append(getCurrentPlayerId()).append("\n");
+        toAllPlayers.append(0).append(":"+MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED+":").append(bag.totalTiles).append("\n");
+        toAllPlayers.append(0).append(":"+MethodsNames.START_GAME+":").append("_\n");
+        toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
+        toNotify.append(MethodsNames.SCORE_UPDATED).append("\n");
+        toNotify.append(MethodsNames.NEW_PLAYER_TURN).append("\n");
+        toNotify.append(MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED).append("\n");
+        toNotify.append(MethodsNames.START_GAME).append("\n");
 
-        hostServer.sendToAllPlayers(toAllPlayers);
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
         setChanged();
-        notifyObservers(toNotify);
+        notifyObservers(toNotify.toString());
     }
 
     /**
@@ -376,7 +378,7 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder toNotify = new StringBuilder();
         int numOfTiles = connectedPlayers.get(playerId).getTiles().size();
         if(numOfTiles<7)
-            for (int i = numOfTiles; i <= 7; i++)
+            for (int i = numOfTiles; i < 7; i++)
                 connectedPlayers.get(playerId).addTiles(String.valueOf(bag.getRand().letter));
         setChanged();
         toNotify.append(playerId).append(":refillPlayerHand\n");

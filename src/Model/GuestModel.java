@@ -1,5 +1,6 @@
 package Model;
 
+import General.MethodsNames;
 import Model.gameClasses.Player;
 
 import java.util.*;
@@ -204,52 +205,52 @@ public class GuestModel extends PlayerModel implements Observer {
 
 
             switch (methodName) {
-                case "tryPlaceWord", "challenge":
+                case MethodsNames.TRY_PLACE_WORD, MethodsNames.CHALLENGE:
                     setChanged();
                     notifyObservers(methodName + ":" + splitedArgString[2]);
                     break;
 
-                case "boardUpdated":
+                case MethodsNames.BOARD_UPDATED:
                     setBoardStatus(stringToCharacterMatrix(arguments[0]));
                     setChanged();
-                    notifyObservers("boardUpdated");
+                    notifyObservers(MethodsNames.BOARD_UPDATED);
                     break;
 
-                case "scoreUpdated":
+                case MethodsNames.SCORE_UPDATED:
                     scoreMap.put(id, Integer.parseInt(arguments[0]));
                     setChanged();
-                    notifyObservers("scoreUpdated");
+                    notifyObservers(MethodsNames.SCORE_UPDATED);
                     break;
 
-                case "tilesUpdated":
+                case MethodsNames.NUM_OF_TILES_UPDATED:
                     numberOfTilesMap.put(id, Integer.parseInt(arguments[0]));
                     setChanged();
-                    notifyObservers("tilesUpdated");
+                    notifyObservers(MethodsNames.NUM_OF_TILES_UPDATED);
                     break;
 
-                case "setHand":
+                case MethodsNames.SET_HAND:
                     List<Character> newHand = new ArrayList<>();
                     for (int i = 0; i < arguments[0].length(); i++)
                         if (arguments[0].charAt(i) != '_')
                             newHand.add((Character) arguments[0].charAt(i));
                     this.myPlayer.setHand(newHand);
                     setChanged();
-                    notifyObservers("setHand");
+                    notifyObservers(MethodsNames.SET_HAND);
                     break;
 
-                case "newPlayerTurn":
+                case MethodsNames.NEW_PLAYER_TURN:
                     setCurrentPlayerId(Integer.parseInt(arguments[0]));
                     setChanged();
-                    notifyObservers("newPlayerTurn");
+                    notifyObservers(MethodsNames.NEW_PLAYER_TURN);
                     break;
 
-                case "setId":
+                case MethodsNames.SET_ID:
                     myPlayer.setId(Integer.parseInt(arguments[0]));
                     setChanged();
-                    notifyObservers(methodName + ":" + arguments[0]);
+                    notifyObservers(MethodsNames.SET_ID + ":" + arguments[0]);
                     break;
 
-                case "playersListUpdated":
+                case MethodsNames.PLAYERS_LIST_UPDATED:
                     for (String player : arguments) {
                         int playerId = Integer.parseInt(player.split("-")[0]);
                         String playerName = player.split("-")[1];
@@ -258,23 +259,23 @@ public class GuestModel extends PlayerModel implements Observer {
                         playersNameMap.put(playerId, playerName);
                     }
                     setChanged();
-                    notifyObservers(methodName + ":" + splitedArgString[2]);
+                    notifyObservers(MethodsNames.PLAYERS_LIST_UPDATED + ":" + splitedArgString[2]);
                     break;
 
-                case "tilesInBagUpdated":
+                case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:
                     numOfTileInBag = Integer.parseInt(arguments[0]);
                     setChanged();
-                    notifyObservers("tilesInBagUpdated");
+                    notifyObservers(MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED);
                     break;
 
-                case "tilesWithScores":
+                case MethodsNames.TILES_WITH_SCORES:
                     setChanged();
-                    notifyObservers(methodName + ":" + splitedArgString[2]);
+                    notifyObservers(MethodsNames.TILES_WITH_SCORES + ":" + splitedArgString[2]);
                     break;
 
-                case "startGame":
+                case MethodsNames.START_GAME:
                     setChanged();
-                    notifyObservers("startGame");
+                    notifyObservers(MethodsNames.START_GAME);
                     break;
             }
         }
