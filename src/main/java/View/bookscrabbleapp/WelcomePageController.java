@@ -1,5 +1,10 @@
 package View.bookscrabbleapp;
 
+import Model.GuestModel;
+import Model.HostModel;
+import Model.gameClasses.BookScrabbleHandler;
+import Model.gameClasses.MyServer;
+import ViewModel.ViewModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -99,6 +104,25 @@ public class WelcomePageController {
        if(isError)
            return;
         else {
+            if(isHost) {
+                MyServer server = new MyServer(1235, new BookScrabbleHandler());
+                server.start();
+                System.out.println("Host");
+                ViewModel vm = ViewModel.getViewModel();
+                HostModel hm = HostModel.getHost();
+                hm.setPlayerName(nameInput.getText());
+                vm.setModel(hm);
+                hm.connectToBookScrabbleServer(Integer.parseInt(portInput.getText()), "127.0.0.1", 1235);
+            }
+            else {
+                System.out.println("Client");
+                ViewModel vm = ViewModel.getViewModel();
+                GuestModel gm = new GuestModel(ipInput.getText(), Integer.parseInt(portInput.getText()), nameInput.getText());
+                vm.setModel(gm);
+                gm.connectToHostServer();
+
+
+            }
             //load the inGame.fxml
            try {
                //close my window

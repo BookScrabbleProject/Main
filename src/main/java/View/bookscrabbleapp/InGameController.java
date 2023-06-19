@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -286,6 +288,7 @@ public class InGameController {
     final int HGAP = 11;
     final int VGAP = 4;
     public void init(MouseEvent e){
+
 
         double MOUSE_CLICKED_X = e.getX(); //the y of the mouse click relative to the scene
         double MOUSE_CLICKED_Y = e.getY(); //the x of the mouse click relative to the scene
