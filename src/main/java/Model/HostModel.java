@@ -107,6 +107,11 @@ public class HostModel extends PlayerModel implements Observer {
         notifyObservers(toNotify.toString());
     }
 
+    @Override
+    public void closeConnection() {
+        hostServer.close();
+    }
+
     /**
      * method that add player to the game and create player, add the player to the map and create a string builder of ids
      * Sends the information to the hostServer and notify with the format : requestedId + ":" + method + ":" + inputs

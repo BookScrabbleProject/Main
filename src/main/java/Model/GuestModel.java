@@ -54,6 +54,11 @@ public class GuestModel extends PlayerModel implements Observer {
         clientCommunication.connect(hostServerIp, hostServerPort, myPlayer.getName());
     }
 
+    @Override
+    public void closeConnection() {
+        clientCommunication.close();
+    }
+
     /**
      * will ask from the server to put a word on the board
      *
