@@ -3,6 +3,6 @@ module com.example.bookscrabbleapp {
     requires javafx.fxml;
 
 
-    opens com.example.bookscrabbleapp to javafx.fxml;
-    exports com.example.bookscrabbleapp;
+    opens View.bookscrabbleapp to javafx.fxml;
+    exports View.bookscrabbleapp;
 }

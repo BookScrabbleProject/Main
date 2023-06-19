@@ -6,7 +6,6 @@ import Model.gameClasses.BookScrabbleHandler;
 import Model.gameClasses.MyServer;
 import ViewModel.ViewModel;
 
-import javax.swing.text.View;
 
 public class ViewModelTest {
 

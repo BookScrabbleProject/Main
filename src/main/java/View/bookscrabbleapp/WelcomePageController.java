@@ -1,4 +1,4 @@
-package com.example.bookscrabbleapp;
+package View.bookscrabbleapp;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

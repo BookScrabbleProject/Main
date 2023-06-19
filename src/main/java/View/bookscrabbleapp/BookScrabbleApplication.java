@@ -1,4 +1,4 @@
-package com.example.bookscrabbleapp;
+package View.bookscrabbleapp;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

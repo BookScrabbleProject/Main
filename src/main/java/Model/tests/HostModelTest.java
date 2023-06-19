@@ -4,7 +4,6 @@ import Model.HostModel;
 import Model.gameClasses.BookScrabbleHandler;
 import Model.gameClasses.MyServer;
 
-import javax.print.DocFlavor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
