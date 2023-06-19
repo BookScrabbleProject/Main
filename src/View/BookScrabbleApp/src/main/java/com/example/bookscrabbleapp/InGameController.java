@@ -1,22 +1,20 @@
 package com.example.bookscrabbleapp;
 
 import javafx.fxml.FXML;
+
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
-import javafx.scene.shape.Shape3D;
-public class HelloController {
+
+
+public class InGameController {
     @FXML
     private Label welcomeText;
     @FXML
@@ -73,7 +71,6 @@ public class HelloController {
     private Circle player3ImageCircle;
     @FXML
     private Circle myPlayerImageCircle;
-
 
     boolean isGameStarted = false;
 

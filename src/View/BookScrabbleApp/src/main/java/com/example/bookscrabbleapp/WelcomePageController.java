@@ -2,11 +2,15 @@ package com.example.bookscrabbleapp;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -95,9 +99,22 @@ public class WelcomePageController {
        if(isError)
            return;
         else {
-            Label l = new Label("Melech");
-            userInputDiv.getChildren().add(l);
-        }
+            //load the inGame.fxml
+           try {
+               //close my window
+                Stage stage = (Stage) initBtn.getScene().getWindow();
+                stage.close();
+                Parent root = FXMLLoader.load(getClass().getResource("inGame.fxml"));
+                stage = new Stage();
+                stage.setTitle("BookScrabble!");
+                stage.setScene(new Scene(root, 1400, 1000));
+                stage.show();
+
+           } catch (IOException e) {
+               throw new RuntimeException(e);
+           }
+
+       }
     }
     private boolean validName(String name){
         return !name.equals("");
@@ -113,7 +130,7 @@ public class WelcomePageController {
             portWarningDiv.setVisible(true);
             return false;
         }
-        if (Integer.parseInt(portInput.getText().trim()) < 1000 || Integer.parseInt(portInput.getText().trim()) > 99999) // the number isn't a valid port number
+        if (Integer.parseInt(portInput.getText().trim()) < 0 || Integer.parseInt(portInput.getText().trim()) > 65536) // the number isn't a valid port number
         {
             System.out.println(Integer.parseInt(portInput.getText().trim()));
             portWarningDiv.setVisible(true);
