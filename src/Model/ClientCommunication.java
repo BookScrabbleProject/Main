@@ -1,5 +1,7 @@
 package Model;
 
+import General.MethodsNames;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -27,7 +29,7 @@ public class ClientCommunication extends Observable {
     public ClientCommunication(String ip, int port, String name) {
         try {
             socket = new Socket(ip, port);
-            send(-1, "connect", name);
+            send(-1, MethodsNames.CONNECT, name);
             new Thread(this::checkForMessage).start();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -37,7 +39,7 @@ public class ClientCommunication extends Observable {
     public void connect(String ip, int port, String name) {
         try {
             socket = new Socket(ip, port);
-            send(-1, "connect", name);
+            send(-1, MethodsNames.CONNECT, name);
             new Thread(this::checkForMessage).start();
         } catch (IOException e) {
             throw new RuntimeException(e);
