@@ -25,7 +25,7 @@ public class ViewModelTest {
 
             GuestModel guest2 = new GuestModel("localhost", 1235, "testGuest2");
             guest2.connectToHostServer();
-
+//            TODO: fix this - socket invokes close() method on server
             Thread.sleep(2000);
 
             host.startGame();
