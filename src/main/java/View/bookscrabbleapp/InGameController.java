@@ -1,8 +1,12 @@
 package View.bookscrabbleapp;
 
+import ViewModel.ViewModel;
 import javafx.fxml.FXML;
 
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -14,9 +18,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import General.MethodsNames;
 
 
-public class InGameController {
+import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
+
+
+public class InGameController implements Observer {
     @FXML
     private Label welcomeText;
     @FXML
@@ -289,7 +300,7 @@ public class InGameController {
     final int VGAP = 4;
     public void init(MouseEvent e){
 
-
+        ViewModel.getViewModel().addObserver(this);
         double MOUSE_CLICKED_X = e.getX(); //the y of the mouse click relative to the scene
         double MOUSE_CLICKED_Y = e.getY(); //the x of the mouse click relative to the scene
 
@@ -357,6 +368,32 @@ public class InGameController {
         }
     }
 
+
+    @Override
+    public void update(Observable o, Object arg) {
+        System.out.println("View update "+arg);
+        switch ((String) arg){
+            case MethodsNames.DISCONNECT:
+                try {
+                    //TODO: close my window - and return to welcome page -- not ready yet
+                    Stage stage = (Stage) gridPane.getScene().getWindow();
+                    stage.close();
+                    Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
+                    stage = new Stage();
+                    stage.setTitle("BookScrabble!");
+                    stage.setScene(new Scene(root, 600, 600));
+                    stage.setOnCloseRequest( event -> {
+                        System.out.println("Closing Stage");
+                        System.exit(0);
+                    } );
+                    stage.show();
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+        }
+    }
 }
 
 

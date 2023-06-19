@@ -132,6 +132,11 @@ public class WelcomePageController {
                 stage = new Stage();
                 stage.setTitle("BookScrabble!");
                 stage.setScene(new Scene(root, 1400, 1000));
+                stage.setOnCloseRequest( event -> {
+                    System.out.println("Closing Stage");
+                    ViewModel.getViewModel().getModel().closeConnection();
+                    System.exit(0);
+                } );
                 stage.show();
 
            } catch (IOException e) {
