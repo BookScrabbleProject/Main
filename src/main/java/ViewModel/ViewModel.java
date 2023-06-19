@@ -59,23 +59,9 @@ public class ViewModel extends Observable implements Observer {
         }
     }
 
-//    /**
-//     * Ctor for ViewModel - initialize the data members
-//     * @param model - the model that the ViewModel is observing (GuestModel or HostModel)
-//     */
-//    public ViewModel(Model model) {
-//        model.addObserver(this);
-//        this.model = model;
-//        tilesScores = new HashMap<>();
-//        board = new Character[15][15];
-//        changesList = new ArrayList<>();
-//        currentPlayerId = -1;
-//        myHand = new ArrayList<>();
-//        numberOfTilesInBag = 0;
-//        players = new HashMap<>();
-//        myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
-//        // Todo: add more initialization here - if needed
-//    }
+    public Model getModel() {
+        return model;
+    }
 
     /**
      * Run when the player clicks the "Place Word" button.
