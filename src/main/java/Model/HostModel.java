@@ -47,7 +47,7 @@ public class HostModel extends PlayerModel implements Observer {
     private HostModel() {
         nextId = 0;
         connectedPlayers = new HashMap<>();
-        myPlayer = new Player("default");
+        myPlayer = new Player("HOST");
         myPlayer.setId(generateId());
         connectedPlayers.put(myPlayer.getId(), myPlayer);
         board = new Board();
