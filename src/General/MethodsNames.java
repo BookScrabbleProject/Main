@@ -2,6 +2,7 @@ package General;
 
 public class MethodsNames {
     public static final String TRY_PLACE_WORD = "tryPlaceWord";
+
     public static final String CHALLENGE = "challenge";
     public static final String START_GAME = "startGame";
     public static final String BOARD_UPDATED = "boardUpdated";
