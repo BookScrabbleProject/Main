@@ -35,9 +35,9 @@ public class ViewModelTest {
             guest2.tryPlaceWord("week", 7, 7, true);
             Thread.sleep(5000);
 
-            guest.getClientCommunication().close();
-            guest2.getClientCommunication().close();
-            host.getHostServer().close();
+            viewModel.getModel().closeConnection();
+            guest2.closeConnection();
+            host.closeConnection();
             server.stop();
 
             System.out.println("done!");
