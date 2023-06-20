@@ -301,6 +301,8 @@ public class ViewModel extends Observable implements Observer {
                         if (!this.players.containsKey(id))
                             this.players.put(id, new PlayerVVM(id, name));
                     }
+                    setChanged();
+                    notifyObservers(MethodsNames.PLAYERS_LIST_UPDATED);
                     break;
 
                 case MethodsNames.TILES_WITH_SCORES:
