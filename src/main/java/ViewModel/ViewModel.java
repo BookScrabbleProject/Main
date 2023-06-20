@@ -62,6 +62,9 @@ public class ViewModel extends Observable implements Observer {
             this.model.addObserver(this);
         }
     }
+    public void resetModel() {
+        this.model = null;
+    }
 
     public void close() {
         model.closeConnection();
