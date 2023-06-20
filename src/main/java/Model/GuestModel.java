@@ -39,6 +39,8 @@ public class GuestModel extends PlayerModel implements Observer {
         for (int i = 0; i < 15; i++) {
             Arrays.fill(currentBoard[i], '_');
         }
+        clientCommunication = new ClientCommunication();
+        clientCommunication.addObserver(this);
 //        clientCommunication = new ClientCommunication(ip, port);
 //        clientCommunication.addObserver(this);
     }
@@ -49,8 +51,6 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     public void connectToHostServer() {
-        clientCommunication = new ClientCommunication();
-        clientCommunication.addObserver(this);
         clientCommunication.connect(hostServerIp, hostServerPort, myPlayer.getName());
     }
 
@@ -278,11 +278,11 @@ public class GuestModel extends PlayerModel implements Observer {
                     notifyObservers(MethodsNames.START_GAME);
                     break;
 
-//                case MethodsNames.DISCONNECT:
-//                    closeConnection();
-//                    setChanged();
-//                    notifyObservers(MethodsNames.DISCONNECT);
-//                    break;
+                case MethodsNames.DISCONNECT_FROM_SERVER:
+                    closeConnection();
+                    setChanged();
+                    notifyObservers(MethodsNames.DISCONNECT_FROM_SERVER);
+                    break;
             }
         }
     }

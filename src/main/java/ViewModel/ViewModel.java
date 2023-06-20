@@ -311,7 +311,7 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.START_GAME:
                 case MethodsNames.CHALLENGE:
                 case MethodsNames.TRY_PLACE_WORD:
-                case MethodsNames.DISCONNECT:
+                case MethodsNames.DISCONNECT_FROM_SERVER:
                     setChanged();
                     notifyObservers(arg);
                     break;

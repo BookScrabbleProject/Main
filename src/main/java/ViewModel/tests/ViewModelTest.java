@@ -25,21 +25,21 @@ public class ViewModelTest {
             Thread.sleep(2000);
 
             GuestModel guest2 = new GuestModel("localhost", 1235, "testGuest2");
-            System.out.println(">>> connecting to host (guest2) <<<");
+            System.out.println("\n>>> connecting to host (guest2) <<<");
             guest2.connectToHostServer();
 
 //            TODO: fix this - socket invokes close() method on server
             Thread.sleep(2000);
-            System.out.println(">>> starting game <<<");
+            System.out.println("\n>>> starting game <<<");
             host.startGame();
 
             Thread.sleep(2000);
-            System.out.println(">>> taking tile from bag <<<");
+            System.out.println("\n>>> taking tile from bag <<<");
             viewModel.takeTileFromBag();
 
 //            guest2.tryPlaceWord("week", 7, 7, true);
             Thread.sleep(5000);
-
+            System.out.println("\n>>> closing connections <<<");
             viewModel.getModel().closeConnection();
             guest2.closeConnection();
             host.closeConnection();
@@ -47,7 +47,7 @@ public class ViewModelTest {
 
             System.out.println("done!");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 }
