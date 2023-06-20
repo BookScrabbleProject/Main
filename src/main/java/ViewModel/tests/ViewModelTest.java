@@ -32,7 +32,9 @@ public class ViewModelTest {
 
             Thread.sleep(2000);
 
-            guest2.tryPlaceWord("week", 7, 7, true);
+            viewModel.takeTileFromBag();
+
+//            guest2.tryPlaceWord("week", 7, 7, true);
             Thread.sleep(5000);
 
             viewModel.getModel().closeConnection();

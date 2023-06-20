@@ -102,12 +102,7 @@ public class GuestModel extends PlayerModel implements Observer {
      */
     @Override
     public void takeTileFromBag() {
-        String methodName = new Object() {
-        }
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(), methodName);
+        clientCommunication.send(this.myPlayer.getId(), MethodsNames.TAKE_TILE_FROM_BAG);
     }
 
     /**
@@ -282,11 +277,12 @@ public class GuestModel extends PlayerModel implements Observer {
                     setChanged();
                     notifyObservers(MethodsNames.START_GAME);
                     break;
-                case MethodsNames.DISCONNECT:
-                    closeConnection();
-                    setChanged();
-                    notifyObservers(MethodsNames.DISCONNECT);
-                    break;
+
+//                case MethodsNames.DISCONNECT:
+//                    closeConnection();
+//                    setChanged();
+//                    notifyObservers(MethodsNames.DISCONNECT);
+//                    break;
             }
         }
     }
