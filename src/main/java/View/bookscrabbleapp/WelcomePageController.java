@@ -53,6 +53,8 @@ public class WelcomePageController {
 
 
     public void joinBtnHandler(){
+        if(isHost)
+            return;
         ipInput.setText("");
         portInput.setText("");
         nameInput.setText("");
@@ -66,6 +68,8 @@ public class WelcomePageController {
         joinBtn.setStyle("-fx-background-color:LightBlue");
     }
     public void createBtnHandler(){
+        if(!isHost)
+            return;
         ipInput.setText("");
         portInput.setText("");
         nameInput.setText("");
@@ -117,6 +121,7 @@ public class WelcomePageController {
                 ViewModel vm = ViewModel.getViewModel();
                 HostModel hm = HostModel.getHost();
                 hm.setPlayerName(ld.getPlayerName());
+                vm.resetModel();
                 vm.setModel(hm);
                 hm.connectToBookScrabbleServer(ld.getPort(), ld.getIp(), 1235);
             }
@@ -129,6 +134,7 @@ public class WelcomePageController {
                 ld.setPlayerName(nameInput.getText());
                 ViewModel vm = ViewModel.getViewModel();
                 GuestModel gm = new GuestModel(ld.getIp(), ld.getPort(), ld.getPlayerName());
+                vm.resetModel();
                 vm.setModel(gm);
                 gm.connectToHostServer();
             }
@@ -137,10 +143,10 @@ public class WelcomePageController {
                //close my window
                 Stage stage = (Stage) initBtn.getScene().getWindow();
                 stage.close();
-                Parent root = FXMLLoader.load(getClass().getResource("inGame.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
                 stage = new Stage();
                 stage.setTitle("BookScrabble!");
-                stage.setScene(new Scene(root, 1400, 1000));
+                stage.setScene(new Scene(root, 500, 500));
                 stage.setOnCloseRequest( event -> {
                     System.out.println("Closing Stage");
                     ViewModel.getViewModel().getModel().closeConnection();
