@@ -110,10 +110,7 @@ public class HostModel extends PlayerModel implements Observer {
         toAllPlayers.append(0).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(getCurrentPlayerId()).append("\n");
         toAllPlayers.append(0).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(bag.totalTiles).append("\n");
         toAllPlayers.append(0).append(":" + MethodsNames.START_GAME + ":").append("_\n");
-        toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
-        toNotify.append(MethodsNames.SCORE_UPDATED).append("\n");
         toNotify.append(MethodsNames.NEW_PLAYER_TURN).append("\n");
-        toNotify.append(MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED).append("\n");
         toNotify.append(MethodsNames.START_GAME).append("\n");
 
         hostServer.sendToAllPlayers(toAllPlayers.toString());
