@@ -39,6 +39,8 @@ public class GuestModel extends PlayerModel implements Observer {
         for (int i = 0; i < 15; i++) {
             Arrays.fill(currentBoard[i], '_');
         }
+        clientCommunication = new ClientCommunication();
+        clientCommunication.addObserver(this);
 //        clientCommunication = new ClientCommunication(ip, port);
 //        clientCommunication.addObserver(this);
     }
@@ -49,8 +51,6 @@ public class GuestModel extends PlayerModel implements Observer {
     }
 
     public void connectToHostServer() {
-        clientCommunication = new ClientCommunication();
-        clientCommunication.addObserver(this);
         clientCommunication.connect(hostServerIp, hostServerPort, myPlayer.getName());
     }
 
@@ -102,12 +102,7 @@ public class GuestModel extends PlayerModel implements Observer {
      */
     @Override
     public void takeTileFromBag() {
-        String methodName = new Object() {
-        }
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(), methodName);
+        clientCommunication.send(this.myPlayer.getId(), MethodsNames.TAKE_TILE_FROM_BAG);
     }
 
     /**
@@ -282,10 +277,11 @@ public class GuestModel extends PlayerModel implements Observer {
                     setChanged();
                     notifyObservers(MethodsNames.START_GAME);
                     break;
-                case MethodsNames.DISCONNECT:
+
+                case MethodsNames.DISCONNECT_FROM_SERVER:
                     closeConnection();
                     setChanged();
-                    notifyObservers(MethodsNames.DISCONNECT);
+                    notifyObservers(MethodsNames.DISCONNECT_FROM_SERVER);
                     break;
             }
         }

@@ -13,7 +13,7 @@ public class MethodsNames {
     public static final String SET_ID = "setId";
     public static final String PLAYERS_LIST_UPDATED = "playersListUpdated";
     public static final String CONNECT = "connect";
-    public static final String DISCONNECT = "disconnect";
+    public static final String DISCONNECT_FROM_SERVER = "disconnectFromServer";
     public static final String TILES_WITH_SCORES = "tilesWithScores";
     public static final String NUMBER_OF_TILES_IN_BAG_UPDATED = "numberOfTilesInBagUpdated";
     public static final String TAKE_TILE_FROM_BAG = "takeTileFromBag";
