@@ -137,10 +137,10 @@ public class WelcomePageController {
                //close my window
                 Stage stage = (Stage) initBtn.getScene().getWindow();
                 stage.close();
-                Parent root = FXMLLoader.load(getClass().getResource("inGame.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
                 stage = new Stage();
                 stage.setTitle("BookScrabble!");
-                stage.setScene(new Scene(root, 1400, 1000));
+                stage.setScene(new Scene(root, 500, 500));
                 stage.setOnCloseRequest( event -> {
                     System.out.println("Closing Stage");
                     ViewModel.getViewModel().getModel().closeConnection();
