@@ -105,15 +105,12 @@ public class HostModel extends PlayerModel implements Observer {
             toAllPlayers.append(p.getId()).append(":" + MethodsNames.SCORE_UPDATED + ":").append(p.getScore()).append("\n");
             hostServer.sendToSpecificPlayer(p.getId(), "0:" + MethodsNames.SET_HAND + ":" + handToString(p.getTiles()) + "\n");
         }
-        this.currentPlayerId = 0;
+        setCurrentPlayerId(0);
 
         toAllPlayers.append(0).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(getCurrentPlayerId()).append("\n");
         toAllPlayers.append(0).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(bag.totalTiles).append("\n");
         toAllPlayers.append(0).append(":" + MethodsNames.START_GAME + ":").append("_\n");
-        toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
-        toNotify.append(MethodsNames.SCORE_UPDATED).append("\n");
         toNotify.append(MethodsNames.NEW_PLAYER_TURN).append("\n");
-        toNotify.append(MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED).append("\n");
         toNotify.append(MethodsNames.START_GAME).append("\n");
 
         hostServer.sendToAllPlayers(toAllPlayers.toString());
@@ -124,7 +121,7 @@ public class HostModel extends PlayerModel implements Observer {
     @Override
     public void closeConnection() {
         try {
-            hostServer.sendToAllPlayers("0:" + MethodsNames.DISCONNECT + ":_\n");
+            hostServer.sendToAllPlayers("0:" + MethodsNames.DISCONNECT_FROM_SERVER + ":_\n");
             Thread.sleep(500);
             hostServer.close();
         } catch (InterruptedException e) {
@@ -300,8 +297,8 @@ public class HostModel extends PlayerModel implements Observer {
                 String handToSend = handToString(connectedPlayers.get(requestedId).getTiles());
                 toNotify.append(MethodsNames.SET_HAND + ":").append(handToSend.equals("") ? "_" : handToSend).append("\n");
             }
-            toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(String.valueOf(connectedPlayers.get(requestedId).getTiles().size())).append("\n");
-            toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED + ":").append(String.valueOf(connectedPlayers.get(requestedId).getTiles().size())).append('\n');
+            toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(requestedId).getTiles().size()).append("\n");
+            toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append('\n');
 
             toAllPlayers.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append("\n");
             toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append('\n');
@@ -350,7 +347,7 @@ public class HostModel extends PlayerModel implements Observer {
         toAllPlayers.append(0).append(":" + MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append("\n");
         toNotify.append(MethodsNames.BOARD_UPDATED).append("\n");
         toSpecificPlayer.append(currentPlayerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(currentPlayerId).getTiles())).append("\n");
-        toAllPlayers.append(currentPlayerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size())).append("\n");
+        toAllPlayers.append(currentPlayerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(currentPlayerId).getTiles().size()).append("\n");
         toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
         toAllPlayers.append(0).append(":" + MethodsNames.SCORE_UPDATED + ":").append(String.valueOf(connectedPlayers.get(currentPlayerId).getScore())).append("\n");
         toNotify.append(MethodsNames.SCORE_UPDATED).append("\n");
@@ -369,7 +366,7 @@ public class HostModel extends PlayerModel implements Observer {
         refillPlayerHand(currentPlayerId);
         connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
         toSpecificPlayer.append(currentPlayerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(currentPlayerId).getTiles())).append("\n");
-        toAllPlayers.append(currentPlayerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(String.valueOf(connectedPlayers.get(currentPlayerId).getTiles().size())).append("\n");
+        toAllPlayers.append(currentPlayerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(currentPlayerId).getTiles().size()).append("\n");
         passTheTurn();
         toAllPlayers.append(requestedId).append(":" + MethodsNames.CHALLENGE + ":1,").append(word).append("\n");
         requestedId = -1;
@@ -393,14 +390,17 @@ public class HostModel extends PlayerModel implements Observer {
             requestedId = myPlayer.getId();
         Tile t = bag.getRand();
         connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
-        setChanged();
-        toNotify.append(requestedId).append(":" + MethodsNames.TAKE_TILE_FROM_BAG + ":").append(t.getLetter()).append(",").append(t.getScore()).append("\n");
+
         if (requestedId == myPlayer.getId()) {
-            toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(String.valueOf(getMyHand().size())).append("\n");
+            toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(getMyHand().size()).append("\n");
+            toAllPlayers.append(requestedId).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(bag.totalTiles).append("\n");
             hostServer.sendToAllPlayers(toAllPlayers.toString());
-            toNotify.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(String.valueOf(getMyHand().size())).append("\n");
+            toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
+            toNotify.append(MethodsNames.SET_HAND + ":").append("\n");
+            toNotify.append(MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED).append("\n");
             passTheTurn();
         }
+        setChanged();
         notifyObservers(toNotify);
     }
 
@@ -436,7 +436,7 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.sendToAllPlayers(toAllPlayers.toString());
         toNotify.append(-1).append(MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         setChanged();
-        toNotify.append(requestedId).append(":passTheTurn\n");
+        toNotify.append(MethodsNames.NEW_PLAYER_TURN).append("\n");
         notifyObservers(toNotify);
     }
 
@@ -558,8 +558,16 @@ public class HostModel extends PlayerModel implements Observer {
             case MethodsNames.TAKE_TILE_FROM_BAG: {
 //                requestedId = currentPlayerId;
                 takeTileFromBag();
-                hostServer.sendToSpecificPlayer(requestedId, MethodsNames.SET_HAND, handToString(connectedPlayers.get(currentPlayerId).getTiles()));
-                hostServer.sendToAllPlayers(requestedId, MethodsNames.NUM_OF_TILES_UPDATED, connectedPlayers.get(currentPlayerId).getTiles().toString());
+                StringBuilder toSpecificPlayer = new StringBuilder();
+                StringBuilder toAllPlayers = new StringBuilder();
+
+                toSpecificPlayer.append(requestedId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(requestedId).getTiles())).append("\n");
+                toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(requestedId).getTiles().size()).append("\n");
+                toAllPlayers.append(requestedId).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(getNumberOfTilesInBag()).append("\n");
+
+                hostServer.sendToSpecificPlayer(requestedId, toSpecificPlayer.toString());
+                hostServer.sendToAllPlayers(toAllPlayers.toString());
+
                 passTheTurn();
                 requestedId = -1;
                 break;

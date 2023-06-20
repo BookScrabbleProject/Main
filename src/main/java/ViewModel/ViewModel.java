@@ -35,6 +35,10 @@ public class ViewModel extends Observable implements Observer {
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
     }
 
+    public void startGame() {
+        model.startGame();
+    }
+
     /**
      * create a new ViewModel if it doesn't exist, and return it (singleton)
      *
@@ -57,6 +61,13 @@ public class ViewModel extends Observable implements Observer {
             this.model = model;
             this.model.addObserver(this);
         }
+    }
+    public void resetModel() {
+        this.model = null;
+    }
+
+    public void close() {
+        model.closeConnection();
     }
 
     public Model getModel() {
@@ -282,6 +293,8 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.NEW_PLAYER_TURN:
                     setCurrentPlayerId(model.getCurrentPlayerId());
+                    setChanged();
+                    notifyObservers(MethodsNames.NEW_PLAYER_TURN);
                     break;
 
                 case MethodsNames.SET_ID:
@@ -297,6 +310,8 @@ public class ViewModel extends Observable implements Observer {
                         if (!this.players.containsKey(id))
                             this.players.put(id, new PlayerVVM(id, name));
                     }
+                    setChanged();
+                    notifyObservers(MethodsNames.PLAYERS_LIST_UPDATED);
                     break;
 
                 case MethodsNames.TILES_WITH_SCORES:
@@ -311,9 +326,9 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.START_GAME:
                 case MethodsNames.CHALLENGE:
                 case MethodsNames.TRY_PLACE_WORD:
-                case MethodsNames.DISCONNECT:
+                case MethodsNames.DISCONNECT_FROM_SERVER:
                     setChanged();
-                    notifyObservers(arg);
+                    notifyObservers(methodName);
                     break;
 
                 case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:

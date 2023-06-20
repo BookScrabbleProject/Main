@@ -17,7 +17,6 @@ public class LFU implements CacheReplacementPolicy {
      * @param word add a word to the LFU cache
      */
     public void add(String word) {
-        // TODO Auto-generated method stub
         if(cache.containsKey(word)) {
             int key = cache.get(word);
             cache.remove(word);
@@ -36,7 +35,6 @@ public class LFU implements CacheReplacementPolicy {
      * @return the string that has been removed from the cache
      */
     public String remove(){
-        // TODO Auto-generated method stub
         int min = Integer.MAX_VALUE;
         String toReturn = "";
         for(String s : cache.keySet()) {
