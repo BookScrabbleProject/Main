@@ -35,6 +35,10 @@ public class ViewModel extends Observable implements Observer {
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
     }
 
+    public void startGame() {
+        model.startGame();
+    }
+
     /**
      * create a new ViewModel if it doesn't exist, and return it (singleton)
      *
