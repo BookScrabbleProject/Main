@@ -169,7 +169,7 @@ public class InGameController implements Observer {
     public void update(Observable o, Object arg) {
         System.out.println("View update "+arg);
         switch ((String) arg){
-            case MethodsNames.DISCONNECT:
+            case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
                 Platform.runLater(()->showBackAlert());
                 System.out.println("Alert Created");
