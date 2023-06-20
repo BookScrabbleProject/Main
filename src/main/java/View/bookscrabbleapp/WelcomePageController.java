@@ -53,7 +53,7 @@ public class WelcomePageController {
 
 
     public void joinBtnHandler(){
-        if(isHost)
+        if(!isHost)
             return;
         ipInput.setText("");
         portInput.setText("");
@@ -68,7 +68,7 @@ public class WelcomePageController {
         joinBtn.setStyle("-fx-background-color:LightBlue");
     }
     public void createBtnHandler(){
-        if(!isHost)
+        if(isHost)
             return;
         ipInput.setText("");
         portInput.setText("");
