@@ -310,7 +310,6 @@ public class ViewModel extends Observable implements Observer {
                         if (!this.players.containsKey(id))
                             this.players.put(id, new PlayerVVM(id, name));
                     }
-                    this.players.get(myPlayer.getId()).setName(myPlayer.getName());
                     setChanged();
                     notifyObservers(MethodsNames.PLAYERS_LIST_UPDATED);
                     break;
