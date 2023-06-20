@@ -4,6 +4,7 @@ import Model.GuestModel;
 import Model.HostModel;
 import Model.gameClasses.BookScrabbleHandler;
 import Model.gameClasses.MyServer;
+import View.LoginData;
 import ViewModel.ViewModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -108,20 +109,28 @@ public class WelcomePageController {
                 MyServer server = new MyServer(1235, new BookScrabbleHandler());
                 server.start();
                 System.out.println("Host");
+                LoginData ld=LoginData.getLoginData();
+                ld.setIp("127.0.0.1");
+                ld.setPort(Integer.parseInt(portInput.getText()));
+                ld.setIsHost(true);
+                ld.setPlayerName(nameInput.getText());
                 ViewModel vm = ViewModel.getViewModel();
                 HostModel hm = HostModel.getHost();
-                hm.setPlayerName(nameInput.getText());
+                hm.setPlayerName(ld.getPlayerName());
                 vm.setModel(hm);
-                hm.connectToBookScrabbleServer(Integer.parseInt(portInput.getText()), "127.0.0.1", 1235);
+                hm.connectToBookScrabbleServer(ld.getPort(), ld.getIp(), 1235);
             }
             else {
                 System.out.println("Client");
+                LoginData ld=LoginData.getLoginData();
+                ld.setIp(ipInput.getText());
+                ld.setPort(Integer.parseInt(portInput.getText()));
+                ld.setIsHost(false);
+                ld.setPlayerName(nameInput.getText());
                 ViewModel vm = ViewModel.getViewModel();
-                GuestModel gm = new GuestModel(ipInput.getText(), Integer.parseInt(portInput.getText()), nameInput.getText());
+                GuestModel gm = new GuestModel(ld.getIp(), ld.getPort(), ld.getPlayerName());
                 vm.setModel(gm);
                 gm.connectToHostServer();
-
-
             }
             //load the inGame.fxml
            try {
