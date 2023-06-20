@@ -1,6 +1,7 @@
 package View.bookscrabbleapp;
 
 import ViewModel.ViewModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 
 import javafx.fxml.FXMLLoader;
@@ -23,8 +24,10 @@ import General.MethodsNames;
 
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.ResourceBundle;
 
 
 public class InGameController implements Observer {
@@ -88,213 +91,6 @@ public class InGameController implements Observer {
     boolean isGameStarted = false;
 
 
-//   private void paintTheSquares(){
-//       String yellow = "-fx-background-color: #FFFF97";
-//       String cyan = "-fx-background-color: #5DC5FC";
-//       String red = "-fx-background-color: #FE3032";
-//       String blue = "-fx-background-color: #0B8EFA";
-//       String yellowLabel ="Double\nWord\nScore";
-//       String cyanLabel = "Double\nLetter\nScore";
-//       String redLabel = "Triple\nWord\nScore";
-//       String blueLabel = "Triple\nLetter\nScore";
-//
-//       //red
-//       StackPane sp = (StackPane) gridPane.getChildren().get(0*15+0);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label (redLabel));
-//       sp = (StackPane) gridPane.getChildren().get(0*15+7);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label (redLabel));
-//       sp = (StackPane) gridPane.getChildren().get(0*15+14);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label (redLabel));
-//       sp = (StackPane) gridPane.getChildren().get(7*15+0);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label (redLabel));
-//       sp = (StackPane) gridPane.getChildren().get(7*15+14);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label(redLabel));
-//       sp = (StackPane) gridPane.getChildren().get(14*15+0);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label (redLabel));
-//       sp = (StackPane) gridPane.getChildren().get(14*15+7);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label (redLabel));
-//       sp = (StackPane) gridPane.getChildren().get(14*15+14);
-//       sp.setStyle(red);
-//       sp.getChildren().add(new Label (redLabel));
-//       sp.setAlignment(Pos.CENTER);
-//
-//       //yellow
-//       sp = (StackPane) gridPane.getChildren().get(7*15+7);
-//       sp.setStyle(yellow);
-//       sp = (StackPane) gridPane.getChildren().get(1*15+1);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(2*15+2);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(3*15+3);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(4*15+4);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(1*15+13);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(2*15+12);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(3*15+11);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(4*15+10);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(13*15+13);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(12*15+12);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(11*15+11);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(10*15+10);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(10*15+4);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(11*15+3);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(12*15+2);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//       sp = (StackPane) gridPane.getChildren().get(13*15+1);
-//       sp.setStyle(yellow);
-//       sp.getChildren().add(new Label (yellowLabel));
-//
-//
-//
-//       //blue
-//       sp = (StackPane) gridPane.getChildren().get(1*15+5);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(1*15+9);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(5*15+1);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(5*15+5);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(5*15+9);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(5*15+13);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(9*15+1);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(9*15+5);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(9*15+9);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(9*15+13);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(13*15+5);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//       sp = (StackPane) gridPane.getChildren().get(13*15+9);
-//       sp.setStyle(blue);
-//       sp.getChildren().add(new Label (blueLabel));
-//
-//
-//
-//       //cyan
-//       sp = (StackPane) gridPane.getChildren().get(0*15+3);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(0*15+11);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(2*15+6);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(2*15+8);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(3*15+0);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp.setAlignment(Pos.CENTER);
-//       sp = (StackPane) gridPane.getChildren().get(3*15+7);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(3*15+14);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(6*15+2);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(6*15+6);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(6*15+8);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(6*15+12);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(7*15+3);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(7*15+11);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(8*15+2);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(8*15+6);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(8*15+8);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(8*15+12);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(11*15+0);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(11*15+7);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(11*15+14);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(12*15+6);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(12*15+8);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(14*15+3);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//       sp = (StackPane) gridPane.getChildren().get(14*15+11);
-//       sp.setStyle(cyan);
-//       sp.getChildren().add(new Label (cyanLabel));
-//
-//   }
 
     final int HGAP = 11;
     final int VGAP = 4;
@@ -374,24 +170,47 @@ public class InGameController implements Observer {
         System.out.println("View update "+arg);
         switch ((String) arg){
             case MethodsNames.DISCONNECT:
-                try {
-                    //TODO: close my window - and return to welcome page -- not ready yet
-                    Stage stage = (Stage) gridPane.getScene().getWindow();
-                    stage.close();
-                    Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
-                    stage = new Stage();
-                    stage.setTitle("BookScrabble!");
-                    stage.setScene(new Scene(root, 600, 600));
-                    stage.setOnCloseRequest( event -> {
-                        System.out.println("Closing Stage");
-                        System.exit(0);
-                    } );
-                    stage.show();
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                System.out.println("In Case Disconnect");
+                Platform.runLater(()->showBackAlert());
+                System.out.println("Alert Created");
                 break;
+        }
+    }
+
+    public void showBackAlert(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Host Has Disconnected");
+        alert.setHeaderText("Host Has Disconnected");
+        alert.setContentText("The Host Has Disconnected, You Will Be Redirected To The Main Menu");
+        //add a button of go back
+        ButtonType buttonTypeOne = new ButtonType("Go Back");
+
+        alert.getButtonTypes().setAll(buttonTypeOne);
+        alert.setOnCloseRequest(event -> {
+            System.out.println("Alert Closed");
+            ((Stage) alert.getDialogPane().getScene().getWindow()).close();
+            Platform.runLater(this::moveToLoginScene);
+
+        });
+        alert.showAndWait();
+    }
+
+    public void moveToLoginScene(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
+            //close the current window and change to the root
+            Scene scene = new Scene(root, 650, 650);
+            Stage stage = (Stage) gameBoard.getScene().getWindow();
+            stage.close();
+            stage = new Stage();
+            stage.setScene(scene);
+            stage.setOnCloseRequest(e -> {
+                Platform.exit();
+                System.exit(0);
+            });
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
