@@ -30,7 +30,6 @@ public class LRU implements CacheReplacementPolicy {
      * @param word a word to be added to LRU cache
      */
     public void add(String word) {
-        // TODO Auto-generated method stub
         if(cache.contains(word)) {
             cache.remove(word);
         }
@@ -46,7 +45,6 @@ public class LRU implements CacheReplacementPolicy {
      * @return the word that has been removed from the cache
      */
     public String remove() {
-        // TODO Auto-generated method stub
         String toReturn = cache.iterator().next();
         cache.remove(toReturn);
         return toReturn;

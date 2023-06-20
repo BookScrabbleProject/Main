@@ -59,6 +59,10 @@ public class ViewModel extends Observable implements Observer {
         }
     }
 
+    public void close() {
+        model.closeConnection();
+    }
+
     public Model getModel() {
         return model;
     }
@@ -297,6 +301,8 @@ public class ViewModel extends Observable implements Observer {
                         if (!this.players.containsKey(id))
                             this.players.put(id, new PlayerVVM(id, name));
                     }
+                    setChanged();
+                    notifyObservers(MethodsNames.PLAYERS_LIST_UPDATED);
                     break;
 
                 case MethodsNames.TILES_WITH_SCORES:
@@ -311,7 +317,7 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.START_GAME:
                 case MethodsNames.CHALLENGE:
                 case MethodsNames.TRY_PLACE_WORD:
-                case MethodsNames.DISCONNECT:
+                case MethodsNames.DISCONNECT_FROM_SERVER:
                     setChanged();
                     notifyObservers(arg);
                     break;
