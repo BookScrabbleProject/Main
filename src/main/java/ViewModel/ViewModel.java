@@ -59,6 +59,10 @@ public class ViewModel extends Observable implements Observer {
         }
     }
 
+    public void close() {
+        model.closeConnection();
+    }
+
     public Model getModel() {
         return model;
     }
