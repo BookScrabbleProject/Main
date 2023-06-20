@@ -54,7 +54,6 @@ public class GuestModelHandler implements ClientHandler {
     }
 
     public void close() {
-        // TODO implement here
     }
 
 }

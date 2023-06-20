@@ -19,19 +19,22 @@ public class ViewModelTest {
 
             ViewModel viewModel = ViewModel.getViewModel();
             viewModel.setModel(guest);
+            System.out.println(">>> connecting to host (guest1-VM) <<<");
             guest.connectToHostServer();
 
             Thread.sleep(2000);
 
             GuestModel guest2 = new GuestModel("localhost", 1235, "testGuest2");
+            System.out.println(">>> connecting to host (guest2) <<<");
             guest2.connectToHostServer();
+
 //            TODO: fix this - socket invokes close() method on server
             Thread.sleep(2000);
-
+            System.out.println(">>> starting game <<<");
             host.startGame();
 
             Thread.sleep(2000);
-
+            System.out.println(">>> taking tile from bag <<<");
             viewModel.takeTileFromBag();
 
 //            guest2.tryPlaceWord("week", 7, 7, true);
