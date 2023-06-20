@@ -117,6 +117,7 @@ public class WelcomePageController {
                 ViewModel vm = ViewModel.getViewModel();
                 HostModel hm = HostModel.getHost();
                 hm.setPlayerName(ld.getPlayerName());
+                vm.resetModel();
                 vm.setModel(hm);
                 hm.connectToBookScrabbleServer(ld.getPort(), ld.getIp(), 1235);
             }
@@ -129,6 +130,7 @@ public class WelcomePageController {
                 ld.setPlayerName(nameInput.getText());
                 ViewModel vm = ViewModel.getViewModel();
                 GuestModel gm = new GuestModel(ld.getIp(), ld.getPort(), ld.getPlayerName());
+                vm.resetModel();
                 vm.setModel(gm);
                 gm.connectToHostServer();
             }
