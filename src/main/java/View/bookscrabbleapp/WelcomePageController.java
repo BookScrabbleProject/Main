@@ -149,7 +149,7 @@ public class WelcomePageController {
                 stage.setScene(new Scene(root, 500, 500));
                 stage.setOnCloseRequest( event -> {
                     System.out.println("Closing Stage");
-                    ViewModel.getViewModel().getModel().closeConnection();
+                    ViewModel.getViewModel().close();
                     System.exit(0);
                 } );
                 stage.show();
