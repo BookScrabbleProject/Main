@@ -86,11 +86,6 @@ public class ViewModel extends Observable implements Observer {
         model.closeConnection();
     }
 
-    private Model getModel() {
-//        Todo: maybe delete this function
-        return model;
-    }
-
     /**
      * Run when the player clicks the "Place Word" button.
      * Tries to place the word on the board if it is valid (from changesList) using the Model.
