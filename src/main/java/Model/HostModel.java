@@ -234,7 +234,11 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
-     * @return new id of the player
+     * The generateId function is used to assign a unique id to each player that connects.
+     * The function first creates an array of booleans, with the length equal to the maximum number of players allowed in a game (4).
+     * Then, it iterates through all connected players and sets their corresponding index in the boolean array as true.
+     * Finally, it iterates through this boolean array and returns the first index that is false (i.e., not taken by another player).
+     * @return The first available id
      */
     int generateId() {
         boolean[] ids = new boolean[4];
