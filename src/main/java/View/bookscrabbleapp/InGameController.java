@@ -116,33 +116,8 @@ public class InGameController implements Observer, Initializable {
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
 
-//        gc.strokeRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
-//        gc.setFill(Paint.valueOf("#43B14F"));
-//        gc.fillRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
-//        final double width = gameBoard.getWidth();
-//        final double height = gameBoard.getHeight();
-//        final double cellWidth = width / 15 ;
-//        final double cellHeight = height / 15 ;
-
-//        gc.setFill(Paint.valueOf("#43B14F"));
-//        for( int i=0; i<15; i++) {
-//            for (int j = 0; j < 15; j++) {
-//                if(i==7 && j==7) continue;
-//                gc.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
-//            }
-//        }
-        //put a label on every square
-//        gc.setFill(Color.BLACK);
-//        for( int i=0; i<15; i++) {
-//            for (int j = 0; j < 15; j++) {
-//                if(i==7 && j==7) continue;
-//                gc.fillText(i + "," + j, i * cellWidth+15, j * cellHeight + 15);
-//            }
-//        }
         if(!isGameStarted) {
-
             char myC = 'a';
-            //paintTheSquares();
             for(int i=0; i<15;i++){
                 for(int j=0; j<15;j++){
 
@@ -159,8 +134,8 @@ public class InGameController implements Observer, Initializable {
                     System.out.println("Added stackpane to gridpane");
                 }
             }
-
         }
+        ViewModel.getViewModel().takeTileFromBag();
     }
 
 
@@ -170,10 +145,37 @@ public class InGameController implements Observer, Initializable {
         switch ((String) arg){
             case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
-                Platform.runLater(()->showBackAlert());
+                Platform.runLater(this::showBackAlert);
                 System.out.println("Alert Created");
                 break;
+
+            case MethodsNames.SET_HAND:
+                Platform.runLater(this::setHand);
+                break;
         }
+
+    }
+    private void setHand() {
+        double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*6) / 7; //the width of each square
+        double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()); //the height of each square
+        if(tilesInHandGrid.getChildren().size() > 0)
+            tilesInHandGrid.getChildren().clear();
+        for(int i=0; i<ViewModel.getViewModel().myPlayer.getHand().size();i++) {
+            Character myC = ViewModel.getViewModel().myPlayer.getHand().get(i);
+            Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
+            ImageView iv = new ImageView(tile);
+            iv.setFitWidth(HAND_SQUARE_WIDTH);
+            iv.setFitHeight(HAND_SQUARE_HEIGHT);
+            StackPane sp = new StackPane(iv);
+            sp.setAlignment(Pos.CENTER);
+            tilesInHandGrid.add(sp, i, 0);
+
+            System.out.println("Added stackpane to hand gridpane");
+        }
+
+
+
+
     }
 
     public void showBackAlert(){
@@ -217,19 +219,7 @@ public class InGameController implements Observer, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ViewModel.getViewModel().addObserver(this);
         isGameStarted = true;
-        double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*6) / 7; //the width of each square
-        double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()-BOARD_VGAP*6) / 7; //the height of each square
-        for(int i=0; i<ViewModel.getViewModel().myPlayer.getHand().size();i++) {
-            Character myC = ViewModel.getViewModel().myPlayer.getHand().get(i);
-            Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
-            ImageView iv = new ImageView(tile);
-            iv.setFitWidth(HAND_SQUARE_WIDTH - 3);
-            iv.setFitHeight(HAND_SQUARE_HEIGHT - 2);
-            StackPane sp = new StackPane(iv);
-            sp.setAlignment(Pos.CENTER);
-            tilesInHandGrid.add(sp, i, 0);
-            System.out.println("Added stackpane to hand gridpane");
-        }
+        setHand();
         fillPlayersDetails();
 
 
