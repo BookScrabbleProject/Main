@@ -256,7 +256,7 @@
                   </HBox>
                   <Pane prefHeight="146.0" prefWidth="824.0" style="-fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 5;">
                      <children>
-                        <GridPane fx:id="tilesGrid" hgap="20.0" layoutX="56.0" layoutY="43.0" prefHeight="60.0" prefWidth="652.0">
+                        <GridPane fx:id="tilesInHandGrid" hgap="20.0" layoutX="56.0" layoutY="43.0" prefHeight="60.0" prefWidth="652.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -287,7 +287,7 @@
             <Insets bottom="5.0" />
          </padding>
       </HBox>
-      <Canvas fx:id="gameBoard" height="824.0" layoutX="492.0" layoutY="1.0" onMouseEntered="#init" translateZ="2.0" visible="false" width="836.0" AnchorPane.leftAnchor="492.0">
+      <Canvas fx:id="gameBoard" height="824.0" layoutX="492.0" layoutY="1.0" translateZ="2.0" visible="false" width="836.0" AnchorPane.leftAnchor="492.0">
          <effect>
             <InnerShadow choke="0.45" height="18.07" radius="11.465" width="29.79" />
          </effect>
@@ -297,7 +297,7 @@
             <Image url="@../../Images/board.jpeg" />
          </image>
       </ImageView>
-      <GridPane fx:id="gridPane" hgap="11.0" layoutX="522.0" layoutY="60.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#init" prefHeight="660.0" prefWidth="779.0" style="-fx-border-radius: 50;" vgap="4.0">
+      <GridPane fx:id="gridPane" hgap="11.0" layoutX="522.0" layoutY="60.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#boardClickHandler" prefHeight="660.0" prefWidth="779.0" style="-fx-border-radius: 50;" vgap="4.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
