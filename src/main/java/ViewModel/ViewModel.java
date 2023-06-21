@@ -63,6 +63,7 @@ public class ViewModel extends Observable implements Observer {
         }
     }
     public void resetModel() {
+        model.deleteObserver(this);
         this.model = null;
     }
 
