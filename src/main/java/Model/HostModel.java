@@ -422,7 +422,7 @@ public class HostModel extends PlayerModel implements Observer {
             requestedPlayerTiles.clear();
             refillPlayerHand(requestedId);
             if(requestedId == myPlayer.getId())
-                toNotify.append(MethodsNames.SET_HAND);
+                toNotify.append(MethodsNames.SET_HAND).append("\n");
 
             setChanged();
             notifyObservers(toNotify.toString());
