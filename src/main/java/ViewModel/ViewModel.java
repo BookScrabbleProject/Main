@@ -48,6 +48,10 @@ public class ViewModel extends Observable implements Observer {
         return myPlayer;
     }
 
+    public int getCurrentPlayerId() {
+        return currentPlayerId;
+    }
+
     public Character[][] getBoard() {
         return board;
     }
