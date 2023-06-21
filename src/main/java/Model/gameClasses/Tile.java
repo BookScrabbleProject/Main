@@ -103,14 +103,13 @@ public class Tile {
             return this.tiles[indexchar];
         }
 
-        public void addTile(char c) {
-            if(c > 'Z' || c < 'A'){
-                return;
-            }
+        public void addTileToBag(char c) {
+            if(c > 'Z' || c < 'A') return;
+
             int indexchar = c-'A';
-            if(this.letters[indexchar]==0) {
-                return;
-            }
+
+            if(this.letters[indexchar]==this.originalAmountOfLetters[indexchar]) return;
+
             totalTiles++;
             this.letters[indexchar]++;
         }
@@ -120,7 +119,7 @@ public class Tile {
             if (c > 'Z' || c < 'A')
                 return null;
 
-            addTile(c);
+            addTileToBag(c);
             return getTile(c);
         }
 

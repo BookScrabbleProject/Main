@@ -430,7 +430,8 @@ public class HostModel extends PlayerModel implements Observer {
         List<Character> requestedPlayerTiles = connectedPlayers.get(requestedId).getTiles();
         if (requestedPlayerTiles.size() == 7) {
             for (Character c : requestedPlayerTiles) {
-                bag.addTile(c.charValue());
+//                bag.addTile(c.charValue());
+                Tile.Bag.getBag().addTileToBag(c.charValue());
             }
             requestedPlayerTiles.clear();
             refillPlayerHand(requestedId);
