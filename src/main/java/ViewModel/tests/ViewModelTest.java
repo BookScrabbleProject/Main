@@ -18,7 +18,7 @@ public class ViewModelTest {
             GuestModel guest = new GuestModel("localhost", 1235, "guest");
 
             ViewModel viewModel = ViewModel.getViewModel();
-            viewModel.setModel(guest);
+            viewModel.setModel(host);
             System.out.println(">>> connecting to host (guest1-VM) <<<");
             guest.connectToHostServer();
 

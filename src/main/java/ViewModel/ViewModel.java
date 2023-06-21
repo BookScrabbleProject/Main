@@ -301,6 +301,8 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.SET_HAND:
                     this.myPlayer.setHand(model.getMyHand());
+                    setChanged();
+                    notifyObservers(MethodsNames.SET_HAND);
                     break;
 
                 case MethodsNames.NEW_PLAYER_TURN:
