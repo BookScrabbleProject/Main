@@ -217,21 +217,61 @@ public class InGameController implements Observer, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ViewModel.getViewModel().addObserver(this);
         isGameStarted = true;
-//        double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*9) / 10; //the width of each square
-//        double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()-BOARD_VGAP*9) / 10; //the height of each square
-//        for(int i=0; i<ViewModel.getViewModel().myPlayer.getHand().size();i++) {
-//            Character myC = ViewModel.getViewModel().myPlayer.getHand().get(i);
-//            Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
-//            ImageView iv = new ImageView(tile);
-//            iv.setFitWidth(HAND_SQUARE_WIDTH - 3);
-//            iv.setFitHeight(HAND_SQUARE_HEIGHT - 2);
-//            StackPane sp = new StackPane(iv);
-//            sp.setAlignment(Pos.CENTER);
-//            tilesInHandGrid.add(sp, i, 0);
-//            System.out.println("Added stackpane to hand gridpane");
-//        }
+        double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*6) / 7; //the width of each square
+        double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()-BOARD_VGAP*6) / 7; //the height of each square
+        for(int i=0; i<ViewModel.getViewModel().myPlayer.getHand().size();i++) {
+            Character myC = ViewModel.getViewModel().myPlayer.getHand().get(i);
+            Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
+            ImageView iv = new ImageView(tile);
+            iv.setFitWidth(HAND_SQUARE_WIDTH - 3);
+            iv.setFitHeight(HAND_SQUARE_HEIGHT - 2);
+            StackPane sp = new StackPane(iv);
+            sp.setAlignment(Pos.CENTER);
+            tilesInHandGrid.add(sp, i, 0);
+            System.out.println("Added stackpane to hand gridpane");
+        }
+        fillPlayersDetails();
 
 
+    }
+
+    private void fillPlayersDetails() {
+        int myID = ViewModel.getViewModel().myPlayer.getId();
+        int myScore = ViewModel.getViewModel().myPlayer.getScore();
+        for(int i=0;i<3;i++){
+            if(ViewModel.getViewModel().players.get(i) == null) continue;
+            if(ViewModel.getViewModel().players.get(i).getId() == myID) continue;
+            String name = ViewModel.getViewModel().players.get(i).getName();
+            insertPlayerDetails(name);
+        }
+    }
+
+    public void insertPlayerDetails(String name){
+        if(player1Name.getText().equals("")){
+            player1Name.setText(name);
+            player1Score.setText(0+" pts");
+            player1Name.setVisible(true);
+            player1Score.setVisible(true);
+            //player1Image.setVisible(true);
+            player1ImageCircle.setVisible(true);
+        }
+        else if(player2Name.getText().equals("")){
+            player2Name.setText(name);
+            player2Score.setText(0+" pts");
+            player2Name.setVisible(true);
+            player2Score.setVisible(true);
+            //player2Image.setVisible(true);
+            player2ImageCircle.setVisible(true);
+
+        }
+        else if(player3Name.getText().equals("")){
+            player3Name.setText(name);
+            player3Score.setText(0+" pts");
+            player3Name.setVisible(true);
+            player3Score.setVisible(true);
+            //player3Image.setVisible(true);
+            player3ImageCircle.setVisible(true);
+        }
     }
 }
 
