@@ -92,7 +92,7 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer = new HostServer(myPort, new GuestModelHandler(), gameServerIp, gameServerPort);
         hostServer.addObserver(this);
         setChanged();
-        notifyObservers(MethodsNames.SET_ID + ":0\n");
+        notifyObservers(MethodsNames.SET_ID + ":" + myPlayer.getId() + "\n");
     }
 
     @Override
@@ -238,6 +238,7 @@ public class HostModel extends PlayerModel implements Observer {
      * The function first creates an array of booleans, with the length equal to the maximum number of players allowed in a game (4).
      * Then, it iterates through all connected players and sets their corresponding index in the boolean array as true.
      * Finally, it iterates through this boolean array and returns the first index that is false (i.e., not taken by another player).
+     *
      * @return The first available id
      */
     int generateId() {
@@ -420,6 +421,7 @@ public class HostModel extends PlayerModel implements Observer {
      * The refillPlayerHand function is called when a player's hand has less than 7 tiles.
      * It adds the missing number of tiles to the player's hand, and updates all players with
      * the new number of tiles in their hands and in the bag.
+     *
      * @param playerId int | Identify the player that is requesting to refill his hand
      * @return The number of tiles in the bag
      */
@@ -432,7 +434,7 @@ public class HostModel extends PlayerModel implements Observer {
             for (int i = numOfTiles; i < 7; i++)
                 connectedPlayers.get(playerId).addTiles(String.valueOf(bag.getRand().letter));
 
-        if(playerId != myPlayer.getId())
+        if (playerId != myPlayer.getId())
             toSpecificPlayer.append(playerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(playerId).getTiles())).append("\n");
         else
             toNotify.append(MethodsNames.SET_HAND).append("\n");
