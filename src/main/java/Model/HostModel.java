@@ -123,7 +123,7 @@ public class HostModel extends PlayerModel implements Observer {
     @Override
     public void closeConnection() {
         try {
-//            hostServer.sendToAllPlayers("0:" + MethodsNames.DISCONNECT_FROM_SERVER + ":_\n");
+            hostServer.sendToAllPlayers("0:" + MethodsNames.DISCONNECT_FROM_SERVER + ":_\n");
             Thread.sleep(500);
             hostServer.close();
         } catch (InterruptedException e) {
