@@ -37,7 +37,7 @@ public class ViewModel extends Observable implements Observer {
         this.changesList = new ArrayList<>();
         this.currentPlayerId = -1;
         this.numberOfTilesInBag = 0;
-        this.numberOfTilesInBagProperty = new SimpleStringProperty("");
+//        this.numberOfTilesInBagProperty = new SimpleStringProperty("");
         this.players = new HashMap<>();
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
     }
@@ -272,7 +272,7 @@ public class ViewModel extends Observable implements Observer {
 
     private void setNumberOfTilesInBag(int numberOfTilesInBag) {
         this.numberOfTilesInBag = numberOfTilesInBag;
-        numberOfTilesInBagProperty.setValue(String.valueOf(this.numberOfTilesInBag));
+        this.numberOfTilesInBagProperty = new SimpleStringProperty(String.valueOf(this.numberOfTilesInBag));
     }
 
     private void setCurrentPlayerId(int currentPlayerId) {
