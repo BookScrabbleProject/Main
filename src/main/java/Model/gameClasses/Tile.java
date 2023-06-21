@@ -103,7 +103,7 @@ public class Tile {
             return this.tiles[indexchar];
         }
 
-        private void addTile(char c) {
+        public void addTile(char c) {
             if(c > 'Z' || c < 'A'){
                 return;
             }

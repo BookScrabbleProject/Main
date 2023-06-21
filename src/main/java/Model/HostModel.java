@@ -413,6 +413,22 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder toAllPlayers = new StringBuilder();
         if (requestedId == -1)
             requestedId = myPlayer.getId();
+
+        List<Character> requestedPlayerTiles = connectedPlayers.get(requestedId).getTiles();
+        if(requestedPlayerTiles.size() == 7){
+            for(Character c : requestedPlayerTiles){
+                bag.addTile(c.charValue());
+            }
+            requestedPlayerTiles.clear();
+            refillPlayerHand(requestedId);
+            if(requestedId == myPlayer.getId())
+                toNotify.append(MethodsNames.SET_HAND).append("\n");
+
+            setChanged();
+            notifyObservers(toNotify);
+            return;
+        }
+
         Tile t = bag.getRand();
         connectedPlayers.get(requestedId).addTiles(String.valueOf(t.letter));
 
