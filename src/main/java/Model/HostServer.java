@@ -169,7 +169,7 @@ public class HostServer extends Observable {
     public void sendToSpecificPlayer(int playerID, String methodName, String output) {
         Socket socket = clientsSockets.get(playerID);
         if (socket == null) {
-            throw new RuntimeException("Player with id " + playerID + " is not connected to the server");
+            return;
         }
         try {
             PrintWriter out = new PrintWriter(socket.getOutputStream());
@@ -185,7 +185,7 @@ public class HostServer extends Observable {
     public void sendToSpecificPlayer(int playerId, String message) {
         Socket socket = clientsSockets.get(playerId);
         if (socket == null) {
-//            throw new RuntimeException("Player with id " + playerId + " is not connected to the server");
+            return;
         }
         try {
             PrintWriter out = new PrintWriter(socket.getOutputStream());
