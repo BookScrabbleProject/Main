@@ -19,8 +19,11 @@ public class PlayerVVM {
 
     public PlayerVVM(int id, String name, int score, int numberOfTiles) {
         setId(id);
+        this.nameProperty = new javafx.beans.property.SimpleStringProperty(name);
         setName(name);
+        this.scoreProperty = new javafx.beans.property.SimpleStringProperty(String.valueOf(score));
         setScore(score);
+        this.numberOfTilesProperty = new javafx.beans.property.SimpleStringProperty(String.valueOf(numberOfTiles));
         setNumberOfTiles(numberOfTiles);
     }
 

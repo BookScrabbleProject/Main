@@ -3,6 +3,7 @@ package ViewModel;
 import Model.Model;
 import Model.gameClasses.Player;
 import General.MethodsNames;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import java.lang.reflect.Method;
@@ -36,6 +37,7 @@ public class ViewModel extends Observable implements Observer {
         this.changesList = new ArrayList<>();
         this.currentPlayerId = -1;
         this.numberOfTilesInBag = 0;
+        this.numberOfTilesInBagProperty = new SimpleStringProperty("");
         this.players = new HashMap<>();
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
     }
