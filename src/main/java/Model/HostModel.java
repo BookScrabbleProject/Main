@@ -417,21 +417,34 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
-     * Method that refill player hand tiles after he placed tiles on the board
-     * notify all the other players by the format - requestedId + ":" + method + ":" + inputs
+     * The refillPlayerHand function is called when a player's hand has less than 7 tiles.
+     * It adds the missing number of tiles to the player's hand, and updates all players with
+     * the new number of tiles in their hands and in the bag.
+     * @param playerId int | Identify the player that is requesting to refill his hand
+     * @return The number of tiles in the bag
      */
     public void refillPlayerHand(int playerId) {
+        StringBuilder toAllPlayers = new StringBuilder();
+        StringBuilder toSpecificPlayer = new StringBuilder();
         StringBuilder toNotify = new StringBuilder();
         int numOfTiles = connectedPlayers.get(playerId).getTiles().size();
         if (numOfTiles < 7)
             for (int i = numOfTiles; i < 7; i++)
                 connectedPlayers.get(playerId).addTiles(String.valueOf(bag.getRand().letter));
 
-//        TODO: send to players (specific player / all players), notify observers
+        if(playerId != myPlayer.getId())
+            toSpecificPlayer.append(playerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(playerId).getTiles())).append("\n");
+        else
+            toNotify.append(MethodsNames.SET_HAND).append("\n");
+        toAllPlayers.append(playerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(playerId).getTiles().size()).append("\n");
+        toAllPlayers.append(playerId).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(bag.totalTiles).append("\n");
+        toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
+        toNotify.append(MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED).append("\n");
 
-//        toNotify.append(playerId).append(":refillPlayerHand\n");
-//        setChanged();
-//        notifyObservers(toNotify);
+        hostServer.sendToSpecificPlayer(playerId, toSpecificPlayer.toString());
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+        setChanged();
+        notifyObservers(toNotify.toString());
     }
 
     /**
