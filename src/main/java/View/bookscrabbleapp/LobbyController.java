@@ -79,7 +79,7 @@ public class LobbyController implements Initializable, Observer {
             stage.setScene(new Scene(root, 1400, 1000));
             stage.setOnCloseRequest( event -> {
                 System.out.println("Closing Stage");
-                ViewModel.getViewModel().getModel().closeConnection();
+                ViewModel.getViewModel().close();
                 System.exit(0);
             } );
             stage.show();
