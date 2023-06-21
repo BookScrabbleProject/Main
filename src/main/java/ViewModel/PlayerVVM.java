@@ -1,5 +1,6 @@
 package ViewModel;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class PlayerVVM {
@@ -19,11 +20,8 @@ public class PlayerVVM {
 
     public PlayerVVM(int id, String name, int score, int numberOfTiles) {
         setId(id);
-        this.nameProperty = new javafx.beans.property.SimpleStringProperty(name);
         setName(name);
-        this.scoreProperty = new javafx.beans.property.SimpleStringProperty(String.valueOf(score));
         setScore(score);
-        this.numberOfTilesProperty = new javafx.beans.property.SimpleStringProperty(String.valueOf(numberOfTiles));
         setNumberOfTiles(numberOfTiles);
     }
 
@@ -41,7 +39,7 @@ public class PlayerVVM {
 
     public void setName(String name) {
         this.name = name;
-        nameProperty.setValue(name);
+        this.nameProperty = new SimpleStringProperty(name);
     }
 
     public int getScore() {
@@ -50,7 +48,7 @@ public class PlayerVVM {
 
     public void setScore(int score) {
         this.score = score;
-        scoreProperty.setValue(String.valueOf(score));
+        this.scoreProperty = new SimpleStringProperty(String.valueOf(score));
     }
 
     public int getNumberOfTiles() {
@@ -59,6 +57,6 @@ public class PlayerVVM {
 
     public void setNumberOfTiles(int numberOfTiles) {
         this.numberOfTiles = numberOfTiles;
-        numberOfTilesProperty.setValue(String.valueOf(numberOfTiles));
+        this.numberOfTilesProperty = new SimpleStringProperty(String.valueOf(numberOfTiles));
     }
 }
