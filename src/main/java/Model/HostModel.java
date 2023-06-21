@@ -425,7 +425,7 @@ public class HostModel extends PlayerModel implements Observer {
                 toNotify.append(MethodsNames.SET_HAND).append("\n");
 
             setChanged();
-            notifyObservers(toNotify);
+            notifyObservers(toNotify.toString());
             return;
         }
 
