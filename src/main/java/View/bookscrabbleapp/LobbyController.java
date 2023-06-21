@@ -61,8 +61,8 @@ public class LobbyController implements Initializable, Observer {
         String[] arr = new String[4];
         for (int i = 0; i < 4; i++)
             arr[i] = "";
-        for (int i = 0; i < ViewModel.getViewModel().players.size(); i++)
-            arr[i] = ViewModel.getViewModel().players.get(i).getName();
+        for (int i = 0; i < ViewModel.getViewModel().getPlayers().size(); i++)
+            arr[i] = ViewModel.getViewModel().getPlayers().get(i).getName();
         player1Name.setText(arr[0]);
         player2Name.setText(arr[1]);
         player3Name.setText(arr[2]);
