@@ -1,5 +1,11 @@
 package View.bookscrabbleapp;
 
+import Model.GuestModel;
+import Model.HostModel;
+import Model.gameClasses.BookScrabbleHandler;
+import Model.gameClasses.MyServer;
+import View.LoginData;
+import ViewModel.ViewModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,6 +53,8 @@ public class WelcomePageController {
 
 
     public void joinBtnHandler(){
+        if(!isHost)
+            return;
         ipInput.setText("");
         portInput.setText("");
         nameInput.setText("");
@@ -60,6 +68,8 @@ public class WelcomePageController {
         joinBtn.setStyle("-fx-background-color:LightBlue");
     }
     public void createBtnHandler(){
+        if(isHost)
+            return;
         ipInput.setText("");
         portInput.setText("");
         nameInput.setText("");
@@ -99,15 +109,49 @@ public class WelcomePageController {
        if(isError)
            return;
         else {
+            if(isHost) {
+                MyServer server = new MyServer(1235, new BookScrabbleHandler());
+                server.start();
+                System.out.println("Host");
+                LoginData ld=LoginData.getLoginData();
+                ld.setIp("127.0.0.1");
+                ld.setPort(Integer.parseInt(portInput.getText()));
+                ld.setIsHost(true);
+                ld.setPlayerName(nameInput.getText());
+                ViewModel vm = ViewModel.getViewModel();
+                HostModel hm = HostModel.getHost();
+                hm.setPlayerName(ld.getPlayerName());
+                vm.resetModel();
+                vm.setModel(hm);
+                hm.connectToBookScrabbleServer(ld.getPort(), ld.getIp(), 1235);
+            }
+            else {
+                System.out.println("Client");
+                LoginData ld=LoginData.getLoginData();
+                ld.setIp(ipInput.getText());
+                ld.setPort(Integer.parseInt(portInput.getText()));
+                ld.setIsHost(false);
+                ld.setPlayerName(nameInput.getText());
+                ViewModel vm = ViewModel.getViewModel();
+                GuestModel gm = new GuestModel(ld.getIp(), ld.getPort(), ld.getPlayerName());
+                vm.resetModel();
+                vm.setModel(gm);
+                gm.connectToHostServer();
+            }
             //load the inGame.fxml
            try {
                //close my window
                 Stage stage = (Stage) initBtn.getScene().getWindow();
                 stage.close();
-                Parent root = FXMLLoader.load(getClass().getResource("inGame.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
                 stage = new Stage();
                 stage.setTitle("BookScrabble!");
-                stage.setScene(new Scene(root, 1400, 1000));
+                stage.setScene(new Scene(root, 500, 500));
+                stage.setOnCloseRequest( event -> {
+                    System.out.println("Closing Stage");
+                    ViewModel.getViewModel().getModel().closeConnection();
+                    System.exit(0);
+                } );
                 stage.show();
 
            } catch (IOException e) {
