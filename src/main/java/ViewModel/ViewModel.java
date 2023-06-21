@@ -23,7 +23,8 @@ public class ViewModel extends Observable implements Observer {
     private int wordStartCol;
 
     /**
-     * default Ctor for ViewModel - initialize the data members (for the singleton)
+     * The ViewModel function is the constructor of the ViewModel class.
+     * It initializes all of its fields to their default values.
      */
     private ViewModel() {
         model = null;
@@ -63,11 +64,24 @@ public class ViewModel extends Observable implements Observer {
             this.model.addObserver(this);
         }
     }
+
+    /**
+     * The resetModel function is used to reset the model of the game.
+     * This function is called when a new game is started, and it deletes
+     * any observers that are attached to the old model. It then sets
+     * this.model = null; so that we can create a new instance of our
+     * GameModel class in our startGame function in GameController class.
+     */
     public void resetModel() {
         model.deleteObserver(this);
         this.model = null;
     }
 
+    /**
+     * The close function closes the connection.
+     * If the model is GuestModel, it closes the connection to the server.
+     * If the model is HostModel, it closes the connection to the BookScrabbleServer (MyServer) and close the HostServer.
+     */
     public void close() {
         model.closeConnection();
     }

@@ -237,7 +237,13 @@ public class HostModel extends PlayerModel implements Observer {
      * @return new id of the player
      */
     int generateId() {
-        return nextId++;
+        boolean[] ids = new boolean[4];
+        for (Integer id : connectedPlayers.keySet())
+            ids[id] = true;
+        for (int i = 0; i < ids.length; i++)
+            if (!ids[i])
+                return i;
+        return -1;
     }
 
     /**
