@@ -92,7 +92,7 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer = new HostServer(myPort, new GuestModelHandler(), gameServerIp, gameServerPort);
         hostServer.addObserver(this);
         setChanged();
-        notifyObservers(MethodsNames.SET_ID + ":0\n");
+        notifyObservers(MethodsNames.SET_ID + ":" + myPlayer.getId() + "\n");
     }
 
     @Override
@@ -234,10 +234,21 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
-     * @return new id of the player
+     * The generateId function is used to assign a unique id to each player that connects.
+     * The function first creates an array of booleans, with the length equal to the maximum number of players allowed in a game (4).
+     * Then, it iterates through all connected players and sets their corresponding index in the boolean array as true.
+     * Finally, it iterates through this boolean array and returns the first index that is false (i.e., not taken by another player).
+     *
+     * @return The first available id
      */
     int generateId() {
-        return nextId++;
+        boolean[] ids = new boolean[4];
+        for (Integer id : connectedPlayers.keySet())
+            ids[id] = true;
+        for (int i = 0; i < ids.length; i++)
+            if (!ids[i])
+                return i;
+        return -1;
     }
 
     /**
@@ -407,21 +418,35 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     /**
-     * Method that refill player hand tiles after he placed tiles on the board
-     * notify all the other players by the format - requestedId + ":" + method + ":" + inputs
+     * The refillPlayerHand function is called when a player's hand has less than 7 tiles.
+     * It adds the missing number of tiles to the player's hand, and updates all players with
+     * the new number of tiles in their hands and in the bag.
+     *
+     * @param playerId int | Identify the player that is requesting to refill his hand
+     * @return The number of tiles in the bag
      */
     public void refillPlayerHand(int playerId) {
+        StringBuilder toAllPlayers = new StringBuilder();
+        StringBuilder toSpecificPlayer = new StringBuilder();
         StringBuilder toNotify = new StringBuilder();
         int numOfTiles = connectedPlayers.get(playerId).getTiles().size();
         if (numOfTiles < 7)
             for (int i = numOfTiles; i < 7; i++)
                 connectedPlayers.get(playerId).addTiles(String.valueOf(bag.getRand().letter));
 
-//        TODO: send to players (specific player / all players), notify observers
+        if (playerId != myPlayer.getId())
+            toSpecificPlayer.append(playerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(playerId).getTiles())).append("\n");
+        else
+            toNotify.append(MethodsNames.SET_HAND).append("\n");
+        toAllPlayers.append(playerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(playerId).getTiles().size()).append("\n");
+        toAllPlayers.append(playerId).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(bag.totalTiles).append("\n");
+        toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
+        toNotify.append(MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED).append("\n");
 
-//        toNotify.append(playerId).append(":refillPlayerHand\n");
-//        setChanged();
-//        notifyObservers(toNotify);
+        hostServer.sendToSpecificPlayer(playerId, toSpecificPlayer.toString());
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+        setChanged();
+        notifyObservers(toNotify.toString());
     }
 
     /**
