@@ -40,7 +40,8 @@ public class ViewModelTest {
 //            guest2.tryPlaceWord("week", 7, 7, true);
             Thread.sleep(5000);
             System.out.println("\n>>> closing connections <<<");
-            viewModel.getModel().closeConnection();
+//            viewModel.getModel().closeConnection();
+            viewModel.close();
             guest2.closeConnection();
             host.closeConnection();
             server.stop();
