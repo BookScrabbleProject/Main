@@ -28,8 +28,20 @@ public class ViewModelTest {
             System.out.println("\n>>> connecting to host (guest2) <<<");
             guest2.connectToHostServer();
 
+            Thread.sleep(1000);
+
+            GuestModel guest3= new GuestModel("localhost", 1235, "testGuest3");
+            System.out.println("\n>>> connecting to host (guest3) <<<");
+            guest3.connectToHostServer();
+            Thread.sleep(1000);
+
+            GuestModel guest4= new GuestModel("localhost", 1235, "testGuest3");
+            System.out.println("\n>>> connecting to host (guest4) <<<");
+            guest4.connectToHostServer();
+
+            Thread.sleep(1000);
+
 //            TODO: fix this - socket invokes close() method on server
-            Thread.sleep(2000);
             System.out.println("\n>>> starting game <<<");
             host.startGame();
 
@@ -43,6 +55,8 @@ public class ViewModelTest {
 //            viewModel.getModel().closeConnection();
             viewModel.close();
             guest2.closeConnection();
+            guest3.closeConnection();
+            guest4.closeConnection();
             host.closeConnection();
             server.stop();
 

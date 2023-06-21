@@ -139,11 +139,12 @@ public class HostModel extends PlayerModel implements Observer {
      * @param socket - socket parameter that send to the hostServer
      */
     public void addPlayer(Socket socket) {
-        if (connectedPlayers.size() == 3) {
+        if (connectedPlayers.size() >= 4) {
             try {
                 PrintWriter out = new PrintWriter(socket.getOutputStream());
                 out.println("0:" + MethodsNames.CONNECT + ":0\n"); // 0 means the game is full
                 out.flush();
+                return;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
