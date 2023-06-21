@@ -3,21 +3,24 @@ package ViewModel;
 import Model.Model;
 import Model.gameClasses.Player;
 import General.MethodsNames;
+import javafx.beans.property.StringProperty;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
     public static ViewModel vm = null;
-    public Character[][] board;
+    private Character[][] board;
     public List<DataChanges> changesList;
-    public int currentPlayerId;
-    public int numberOfTilesInBag;
-    public Map<Integer, PlayerVVM> players;
-    public MyPlayerVVM myPlayer;
+    private int currentPlayerId;
+    private int numberOfTilesInBag;
+    public StringProperty numberOfTilesInBagProperty;
+
+    private Map<Integer, PlayerVVM> players;
+    private MyPlayerVVM myPlayer;
     //    data binding
-    Map<Character, Integer> tilesScores;
-    Model model;
+    private Map<Character, Integer> tilesScores;
+    private Model model;
     private String word;
     private int wordStartRow;
     private int wordStartCol;
@@ -35,6 +38,18 @@ public class ViewModel extends Observable implements Observer {
         this.numberOfTilesInBag = 0;
         this.players = new HashMap<>();
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
+    }
+
+    public Map<Integer, PlayerVVM> getPlayers() {
+        return players;
+    }
+
+    public MyPlayerVVM getMyPlayer() {
+        return myPlayer;
+    }
+
+    public Character[][] getBoard() {
+        return board;
     }
 
     public void startGame() {
@@ -251,6 +266,7 @@ public class ViewModel extends Observable implements Observer {
 
     private void setNumberOfTilesInBag(int numberOfTilesInBag) {
         this.numberOfTilesInBag = numberOfTilesInBag;
+        numberOfTilesInBagProperty.setValue(String.valueOf(this.numberOfTilesInBag));
     }
 
     private void setCurrentPlayerId(int currentPlayerId) {

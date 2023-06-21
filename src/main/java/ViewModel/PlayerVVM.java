@@ -1,10 +1,16 @@
 package ViewModel;
 
+import javafx.beans.property.StringProperty;
+
 public class PlayerVVM {
-    public int id;
-    public String name;
-    public int score;
-    public int numberOfTiles;
+    private int id;
+    private String name;
+    private int score;
+    private int numberOfTiles;
+
+    public StringProperty nameProperty;
+    public StringProperty scoreProperty;
+    public StringProperty numberOfTilesProperty;
 
     public PlayerVVM(int id, String name) {
         this.id = id;
@@ -12,10 +18,10 @@ public class PlayerVVM {
     }
 
     public PlayerVVM(int id, String name, int score, int numberOfTiles) {
-        this.id = id;
-        this.name = name;
-        this.score = score;
-        this.numberOfTiles = numberOfTiles;
+        setId(id);
+        setName(name);
+        setScore(score);
+        setNumberOfTiles(numberOfTiles);
     }
 
     public int getId() {
@@ -32,6 +38,7 @@ public class PlayerVVM {
 
     public void setName(String name) {
         this.name = name;
+        nameProperty.setValue(name);
     }
 
     public int getScore() {
@@ -40,6 +47,7 @@ public class PlayerVVM {
 
     public void setScore(int score) {
         this.score = score;
+        scoreProperty.setValue(String.valueOf(score));
     }
 
     public int getNumberOfTiles() {
@@ -48,5 +56,6 @@ public class PlayerVVM {
 
     public void setNumberOfTiles(int numberOfTiles) {
         this.numberOfTiles = numberOfTiles;
+        numberOfTilesProperty.setValue(String.valueOf(numberOfTiles));
     }
 }

@@ -24,6 +24,7 @@ public class HostModel extends PlayerModel implements Observer {
     String password;
     int lastWordScore;
     String wordFromPlayers;
+    boolean isGameStarted;
 
     /**
      * Default constructor method to the host model
@@ -46,6 +47,7 @@ public class HostModel extends PlayerModel implements Observer {
         requestedId = -1;
         lastWordScore = 0;
         wordFromPlayers = null;
+        isGameStarted = false;
     }
 
     /**
@@ -98,6 +100,7 @@ public class HostModel extends PlayerModel implements Observer {
 
     @Override
     public void startGame() {
+        isGameStarted = true;
         StringBuilder toAllPlayers = new StringBuilder();
         StringBuilder toNotify = new StringBuilder();
 
@@ -139,6 +142,16 @@ public class HostModel extends PlayerModel implements Observer {
      * @param socket - socket parameter that send to the hostServer
      */
     public void addPlayer(Socket socket) {
+        if (isGameStarted) {
+            try {
+                PrintWriter out = new PrintWriter(socket.getOutputStream());
+                out.println("0:" + MethodsNames.GAME_ALREADY_STARTED + ":_\n"); // 0 means the game is full
+                out.flush();
+                return;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         if (connectedPlayers.size() >= 4) {
             try {
                 PrintWriter out = new PrintWriter(socket.getOutputStream());
@@ -415,13 +428,14 @@ public class HostModel extends PlayerModel implements Observer {
             requestedId = myPlayer.getId();
 
         List<Character> requestedPlayerTiles = connectedPlayers.get(requestedId).getTiles();
-        if(requestedPlayerTiles.size() == 7){
-            for(Character c : requestedPlayerTiles){
-                bag.addTile(c.charValue());
+        if (requestedPlayerTiles.size() == 7) {
+            for (Character c : requestedPlayerTiles) {
+//                bag.addTile(c.charValue());
+                Tile.Bag.getBag().addTileToBag(c.charValue());
             }
             requestedPlayerTiles.clear();
             refillPlayerHand(requestedId);
-            if(requestedId == myPlayer.getId())
+            if (requestedId == myPlayer.getId())
                 toNotify.append(MethodsNames.SET_HAND).append("\n");
 
             setChanged();
