@@ -1,14 +1,17 @@
 package View.bookscrabbleapp;
 
+import General.MethodsNames;
 import Model.GuestModel;
 import Model.HostModel;
 import Model.gameClasses.BookScrabbleHandler;
 import Model.gameClasses.MyServer;
 import View.LoginData;
 import ViewModel.ViewModel;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -19,9 +22,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-public class WelcomePageController {
+public class WelcomePageController implements Observer, Initializable {
     @FXML
     Button joinBtn;
     @FXML
@@ -33,7 +40,7 @@ public class WelcomePageController {
     @FXML
     VBox ipWarningDiv;
     @FXML
-     VBox portWarningDiv;
+    VBox portWarningDiv;
     @FXML
     TextField nameInput;
     @FXML
@@ -48,12 +55,13 @@ public class WelcomePageController {
     HBox ipDiv;
     @FXML
     Label nameWarningLabel;
-    Boolean isHost=false;
+    @FXML
+    Label fullServerWarning;
+    Boolean isHost = false;
 
 
-
-    public void joinBtnHandler(){
-        if(!isHost)
+    public void joinBtnHandler() {
+        if (!isHost)
             return;
         ipInput.setText("");
         portInput.setText("");
@@ -62,13 +70,15 @@ public class WelcomePageController {
         ipWarningDiv.setVisible(false);
         portWarningDiv.setVisible(false);
         nameWarningLabel.setVisible(false);
-        isHost=false;
+        fullServerWarning.setVisible(false);
+        isHost = false;
         initBtn.setText("Join");
         createBtn.setStyle("-fx-background-color:GREY");
         joinBtn.setStyle("-fx-background-color:LightBlue");
     }
-    public void createBtnHandler(){
-        if(isHost)
+
+    public void createBtnHandler() {
+        if (isHost)
             return;
         ipInput.setText("");
         portInput.setText("");
@@ -77,7 +87,8 @@ public class WelcomePageController {
         ipWarningDiv.setVisible(false);
         portWarningDiv.setVisible(false);
         nameWarningLabel.setVisible(false);
-        isHost=true;
+        fullServerWarning.setVisible(false);
+        isHost = true;
         initBtn.setText("Open Lobby");
         createBtn.setStyle("-fx-background-color:LightBlue");
         joinBtn.setStyle("-fx-background-color:GREY");
@@ -85,35 +96,32 @@ public class WelcomePageController {
 
 
     public void initBtnHandler(ActionEvent actionEvent) {
-       boolean isError=false;
-        if(!validName(nameInput.getText())) {
+        boolean isError = false;
+        if (!validName(nameInput.getText())) {
             nameWarningLabel.setVisible(true);
-            isError=true;
-       }
-        else
+            isError = true;
+        } else
             nameWarningLabel.setVisible(false);
-       if(!validPort(portInput.getText())) {
-           portWarningDiv.setVisible(true);
-           isError=true;
-       }
-       else
-           portWarningDiv.setVisible(false);
-       if(!isHost) {
-           if (!validIpAddress(ipInput.getText())){
-               ipWarningDiv.setVisible(true);
-               isError=true;
-           }
-           else
-               ipWarningDiv.setVisible(false);
-       }
-       if(isError)
-           return;
+        if (!validPort(portInput.getText())) {
+            portWarningDiv.setVisible(true);
+            isError = true;
+        } else
+            portWarningDiv.setVisible(false);
+        if (!isHost) {
+            if (!validIpAddress(ipInput.getText())) {
+                ipWarningDiv.setVisible(true);
+                isError = true;
+            } else
+                ipWarningDiv.setVisible(false);
+        }
+        if (isError)
+            return;
         else {
-            if(isHost) {
+            if (isHost) {
                 MyServer server = new MyServer(1235, new BookScrabbleHandler());
                 server.start();
                 System.out.println("Host");
-                LoginData ld=LoginData.getLoginData();
+                LoginData ld = LoginData.getLoginData();
                 ld.setIp("127.0.0.1");
                 ld.setPort(Integer.parseInt(portInput.getText()));
                 ld.setIsHost(true);
@@ -124,10 +132,10 @@ public class WelcomePageController {
                 vm.resetModel();
                 vm.setModel(hm);
                 hm.connectToBookScrabbleServer(ld.getPort(), ld.getIp(), 1235);
-            }
-            else {
+                moveToLobby();
+            } else {
                 System.out.println("Client");
-                LoginData ld=LoginData.getLoginData();
+                LoginData ld = LoginData.getLoginData();
                 ld.setIp(ipInput.getText());
                 ld.setPort(Integer.parseInt(portInput.getText()));
                 ld.setIsHost(false);
@@ -138,35 +146,17 @@ public class WelcomePageController {
                 vm.setModel(gm);
                 gm.connectToHostServer();
             }
-            //load the inGame.fxml
-           try {
-               //close my window
-                Stage stage = (Stage) initBtn.getScene().getWindow();
-                stage.close();
-                Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
-                stage = new Stage();
-                stage.setTitle("BookScrabble!");
-                stage.setScene(new Scene(root, 500, 500));
-                stage.setOnCloseRequest( event -> {
-                    System.out.println("Closing Stage");
-                    ViewModel.getViewModel().close();
-                    System.exit(0);
-                } );
-                stage.show();
-
-           } catch (IOException e) {
-               throw new RuntimeException(e);
-           }
-
-       }
+        }
     }
-    private boolean validName(String name){
+
+    private boolean validName(String name) {
         return !name.equals("");
     }
-    private boolean validPort(String port){
+
+    private boolean validPort(String port) {
         if (portInput.getText().equals("")) {
             portWarningDiv.setVisible(true);
-              return false;
+            return false;
         }
         if (!portInput.getText().trim().matches("\\d+")) // the string contains a non digit character
         {
@@ -182,7 +172,8 @@ public class WelcomePageController {
         }
         return true;
     }
-    private boolean validIpAddress(String ip){
+
+    private boolean validIpAddress(String ip) {
         String IP_ADDRESS_PATTERN =
                 "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
         Pattern pattern = Pattern.compile(IP_ADDRESS_PATTERN);
@@ -191,5 +182,47 @@ public class WelcomePageController {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ViewModel.getViewModel().addObserver(this);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String[] arguments = ((String) arg).split(":");
+        switch (arguments[0]) {
+            case MethodsNames.CONNECT:
+                if (arguments[1].equals("1"))
+                    Platform.runLater(this::moveToLobby);
+                else {
+                    ViewModel.getViewModel().close();
+                    ViewModel.getViewModel().resetModel();
+                    fullServerWarning.setVisible(true);
+                }
+
+        }
+    }
+
+    private void moveToLobby() {
+        try {
+            //close my window
+            Stage stage = (Stage) initBtn.getScene().getWindow();
+            stage.close();
+            Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
+            stage = new Stage();
+            stage.setTitle("BookScrabble!");
+            stage.setScene(new Scene(root, 500, 500));
+            stage.setOnCloseRequest(event -> {
+                System.out.println("Closing Stage");
+                ViewModel.getViewModel().close();
+                System.exit(0);
+            });
+            stage.show();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

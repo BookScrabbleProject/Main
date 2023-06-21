@@ -194,7 +194,7 @@
             </VBox>
             <VBox alignment="CENTER" prefHeight="132.0" prefWidth="216.0" spacing="6.0">
                <children>
-                  <Button fx:id="finishTurnBtn" mnemonicParsing="false" prefHeight="29.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Finish My Turn">
+                  <Button fx:id="finishTurnBtn" disable="true" mnemonicParsing="false" prefHeight="29.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Finish My Turn">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
