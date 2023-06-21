@@ -73,7 +73,6 @@ public class ViewModel extends Observable implements Observer {
      * GameModel class in our startGame function in GameController class.
      */
     public void resetModel() {
-        model.deleteObserver(this);
         this.model = null;
     }
 
