@@ -4,6 +4,7 @@ import Model.gameClasses.*;
 import General.MethodsNames;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.*;
@@ -138,6 +139,16 @@ public class HostModel extends PlayerModel implements Observer {
      * @param socket - socket parameter that send to the hostServer
      */
     public void addPlayer(Socket socket) {
+        if (connectedPlayers.size() >= 4) {
+            try {
+                PrintWriter out = new PrintWriter(socket.getOutputStream());
+                out.println("0:" + MethodsNames.CONNECT + ":0\n"); // 0 means the game is full
+                out.flush();
+                return;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         StringBuilder nameBuilder = new StringBuilder();
         try {
             Scanner s = new Scanner(socket.getInputStream());
@@ -166,6 +177,7 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder toSpecificPlayer = new StringBuilder();
         toSpecificPlayer.append(p.getId()).append(":" + MethodsNames.SET_ID + ":").append(p.getId()).append("\n");
         toSpecificPlayer.append(p.getId()).append(":" + MethodsNames.TILES_WITH_SCORES + ":").append(tilesWithScores()).append("\n");
+        toSpecificPlayer.append(p.getId()).append(":" + MethodsNames.CONNECT + ":1").append("\n"); // 1 means success connection
 
         StringBuilder toAllPlayers = new StringBuilder();
         toAllPlayers.append(-1).append(":" + MethodsNames.PLAYERS_LIST_UPDATED + ":").append(playersIdsAndNames.toString()).append("\n");
