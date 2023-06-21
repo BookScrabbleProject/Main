@@ -4,6 +4,7 @@ import Model.Model;
 import Model.gameClasses.Player;
 import General.MethodsNames;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
@@ -71,7 +72,8 @@ public class ViewModel extends Observable implements Observer {
         model.closeConnection();
     }
 
-    public Model getModel() {
+    private Model getModel() {
+//        Todo: maybe delete this function
         return model;
     }
 
@@ -103,7 +105,7 @@ public class ViewModel extends Observable implements Observer {
     /**
      * @return true if the word is valid, false otherwise (from changesList)
      */
-    public boolean isChangeValid() {
+    private boolean isChangeValid() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         int numberOfColRowChanges = 0;
         int colForCheck = sortedChangesList.get(0).getNewCol();
@@ -125,7 +127,7 @@ public class ViewModel extends Observable implements Observer {
     /**
      * @return the word that the player is trying to place
      */
-    public String getWord() {
+    private String getWord() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         StringBuilder sb = new StringBuilder();
         if (isWordVertical()) {
@@ -182,7 +184,7 @@ public class ViewModel extends Observable implements Observer {
     /**
      * @return the row of the first letter of the word
      */
-    public int getWordStartRow() {
+    private int getWordStartRow() {
         int minRow = changesList.get(0).getNewRow();
         for (DataChanges dc : changesList) {
             if (dc.getNewRow() < minRow) minRow = dc.getNewRow();
@@ -200,7 +202,7 @@ public class ViewModel extends Observable implements Observer {
     /**
      * @return the column of the first letter of the word
      */
-    public int getWordStartCol() {
+    private int getWordStartCol() {
         int minCol = changesList.get(0).getNewCol();
         for (DataChanges dc : changesList) {
             if (dc.getNewCol() < minCol) minCol = dc.getNewCol();
@@ -218,7 +220,7 @@ public class ViewModel extends Observable implements Observer {
     /**
      * @return true if the word is vertical, false if it is horizontal
      */
-    public boolean isWordVertical() {
+    private boolean isWordVertical() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         return sortedChangesList.get(0).getNewCol() == sortedChangesList.get(1).getNewCol();
     }
@@ -239,12 +241,14 @@ public class ViewModel extends Observable implements Observer {
         this.board = boardStatus;
     }
 
-    public void setNumberOfTilesInBag(int numberOfTilesInBag) {
+    private void setNumberOfTilesInBag(int numberOfTilesInBag) {
         this.numberOfTilesInBag = numberOfTilesInBag;
     }
 
-    public void setCurrentPlayerId(int currentPlayerId) {
+    private void setCurrentPlayerId(int currentPlayerId) {
         this.currentPlayerId = currentPlayerId;
+        setChanged();
+        notifyObservers(MethodsNames.NEW_PLAYER_TURN);
     }
 
     /**
@@ -262,14 +266,13 @@ public class ViewModel extends Observable implements Observer {
         Queue<String> messagesQ = new LinkedList<>(Arrays.asList(messages.split("\n")));
         while (!messagesQ.isEmpty()) {
             String message = messagesQ.poll();
-            System.out.println("VM update: " + message);
+            System.out.println("VM update: " + message); // Todo: delete this line after debug
             String methodName = message.split(":")[0];
             String[] args = null;
 
             try {
                 args = message.split(":")[1].split(",");
-            } catch (Exception e) {
-            }
+            } catch (Exception e) {}
 
             switch (methodName) {
                 case MethodsNames.BOARD_UPDATED:
