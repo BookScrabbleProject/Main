@@ -221,7 +221,7 @@ public class WelcomePageController implements Observer, Initializable {
             Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
             stage = new Stage();
             stage.setTitle("BookScrabble!");
-            stage.setScene(new Scene(root, 500, 500));
+            stage.setScene(new Scene(root, 600, 450));
             stage.setOnCloseRequest(event -> {
                 System.out.println("Closing Stage");
                 ViewModel.getViewModel().close();
