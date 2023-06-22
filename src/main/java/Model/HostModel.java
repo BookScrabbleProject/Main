@@ -498,6 +498,7 @@ public class HostModel extends PlayerModel implements Observer {
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      */
     public void passTheTurn() {
+        // Todo: check if player has the maximum score and end the game
         StringBuilder toNotify = new StringBuilder();
         StringBuilder toAllPlayers = new StringBuilder();
         currentPlayerId++;
