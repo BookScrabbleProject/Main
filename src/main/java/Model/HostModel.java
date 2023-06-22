@@ -352,7 +352,7 @@ public class HostModel extends PlayerModel implements Observer {
             toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(requestedId).getTiles().size()).append("\n");
             toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append('\n');
 
-            toAllPlayers.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append("\n");
+            toAllPlayers.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append(',').append(String.join(",", wordsStrings)).append("\n");
             toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append(",").append(String.join(",", wordsStrings)).append('\n');
         } else {
             toSpecificPlayer.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":0").append("\n");
