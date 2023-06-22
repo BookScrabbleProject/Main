@@ -441,6 +441,7 @@ public class HostModel extends PlayerModel implements Observer {
             setChanged();
             notifyObservers(toNotify.toString());
             requestedId = -1;
+            passTheTurn();
             return;
         }
 
@@ -504,10 +505,9 @@ public class HostModel extends PlayerModel implements Observer {
         prevBoard = board.getTiles();
         toAllPlayers.append(-1).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         hostServer.sendToAllPlayers(toAllPlayers.toString());
-        toNotify.append(-1).append(MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
+        toNotify.append(MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         setChanged();
-        toNotify.append(MethodsNames.NEW_PLAYER_TURN).append("\n");
-        notifyObservers(toNotify);
+        notifyObservers(toNotify.toString());
     }
 
     /**
