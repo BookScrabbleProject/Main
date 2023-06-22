@@ -288,6 +288,12 @@ public class GuestModel extends PlayerModel implements Observer {
                     setChanged();
                     notifyObservers(MethodsNames.CONNECT + ":" + splitedArgString[2]);
                     break;
+
+                case MethodsNames.END_GAME:
+                    System.out.println(argString);
+                    setChanged();
+                    notifyObservers(MethodsNames.END_GAME + ":" + splitedArgString[2]);
+                    break;
             }
         }
     }

@@ -375,6 +375,11 @@ public class ViewModel extends Observable implements Observer {
                     setChanged();
                     notifyObservers(MethodsNames.CONNECT + ":" + args[0]);
                     break;
+
+                case MethodsNames.END_GAME:
+                    setChanged();
+                    notifyObservers(MethodsNames.END_GAME+ ":" + String.join(",", args));
+                    break;
             }
 
         }

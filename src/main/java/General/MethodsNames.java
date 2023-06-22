@@ -18,4 +18,5 @@ public class MethodsNames {
     public static final String NUMBER_OF_TILES_IN_BAG_UPDATED = "numberOfTilesInBagUpdated";
     public static final String TAKE_TILE_FROM_BAG = "takeTileFromBag";
     public static final String GAME_ALREADY_STARTED = "gameAlreadyStarted";
+    public static final String END_GAME = "endGame";
 }
