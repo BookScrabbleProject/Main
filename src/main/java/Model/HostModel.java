@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Host server class
@@ -25,6 +26,7 @@ public class HostModel extends PlayerModel implements Observer {
     int lastWordScore;
     String wordFromPlayers;
     boolean isGameStarted;
+    private int maxScore = 0;
 
     /**
      * Default constructor method to the host model
@@ -48,6 +50,7 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
         isGameStarted = false;
+        maxScore = 2;
     }
 
     /**
@@ -111,7 +114,7 @@ public class HostModel extends PlayerModel implements Observer {
             toAllPlayers.append(p.getId()).append(":" + MethodsNames.SCORE_UPDATED + ":").append(p.getScore()).append("\n");
             hostServer.sendToSpecificPlayer(p.getId(), "0:" + MethodsNames.SET_HAND + ":" + handToString(p.getTiles()) + "\n");
         }
-        setCurrentPlayerId(0);
+        setCurrentPlayerId(myPlayer.getId());
 
         toAllPlayers.append(0).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(getCurrentPlayerId()).append("\n");
         toAllPlayers.append(0).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(bag.totalTiles).append("\n");
@@ -430,7 +433,8 @@ public class HostModel extends PlayerModel implements Observer {
         List<Character> requestedPlayerTiles = connectedPlayers.get(requestedId).getTiles();
         if (requestedPlayerTiles.size() == 7) {
             for (Character c : requestedPlayerTiles) {
-                bag.addTile(c.charValue());
+//                bag.addTile(c.charValue());
+                Tile.Bag.getBag().addTileToBag(c.charValue());
             }
             requestedPlayerTiles.clear();
             refillPlayerHand(requestedId);
@@ -440,6 +444,7 @@ public class HostModel extends PlayerModel implements Observer {
             setChanged();
             notifyObservers(toNotify.toString());
             requestedId = -1;
+            passTheTurn();
             return;
         }
 
@@ -496,6 +501,10 @@ public class HostModel extends PlayerModel implements Observer {
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      */
     public void passTheTurn() {
+        if(isPlayerWon()){
+            endGameWithWinner();
+            return;
+        }
         StringBuilder toNotify = new StringBuilder();
         StringBuilder toAllPlayers = new StringBuilder();
         currentPlayerId++;
@@ -503,10 +512,42 @@ public class HostModel extends PlayerModel implements Observer {
         prevBoard = board.getTiles();
         toAllPlayers.append(-1).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         hostServer.sendToAllPlayers(toAllPlayers.toString());
-        toNotify.append(-1).append(MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
+        toNotify.append(MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         setChanged();
-        toNotify.append(MethodsNames.NEW_PLAYER_TURN).append("\n");
-        notifyObservers(toNotify);
+        notifyObservers(toNotify.toString());
+    }
+
+    /**
+     * The isPlayerWon function checks to see if any of the players have reached the max score.
+     * @return A boolean value, true if a player has reached the max score and false otherwise
+     */
+    private boolean isPlayerWon() {
+        for (Player p : connectedPlayers.values()) {
+            if (p.getScore() >= maxScore)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * The endGameWithWinner function is called when the game has ended and there is a winner.
+     * It sends to all players the message that the game has ended, and who won it.
+     */
+    private void endGameWithWinner() {
+        StringBuilder toNotify = new StringBuilder();
+        StringBuilder toAllPlayers = new StringBuilder();
+        StringBuilder playersIdScoreBuilder = new StringBuilder();
+        // map to stream - sort by score highest score first - get the first player - get his id
+        List<Player> sortedPlayers = connectedPlayers.values().stream().sorted(Comparator.comparing(Player::getScore).reversed()).collect(Collectors.toList());
+        for(Player p : sortedPlayers)
+            playersIdScoreBuilder.append(p.getId()).append("-").append(p.getScore()).append(",");
+
+        toAllPlayers.append(0).append(":" + MethodsNames.END_GAME + ":").append(playersIdScoreBuilder.toString()).append("\n");
+        toNotify.append(MethodsNames.END_GAME + ":").append(playersIdScoreBuilder.toString()).append("\n");
+
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
+        setChanged();
+        notifyObservers(toNotify.toString());
     }
 
     /**

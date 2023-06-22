@@ -2,6 +2,8 @@ package View.bookscrabbleapp;
 
 import ViewModel.ViewModel;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 
 import javafx.fxml.FXMLLoader;
@@ -19,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import General.MethodsNames;
@@ -87,15 +90,25 @@ public class InGameController implements Observer, Initializable {
     @FXML
     private Circle myPlayerImageCircle;
 
+
+    Label[] playersNames = new Label[4];
+    Label[] playersScores = new Label[4];
+    ImageView[] playersImages = new ImageView[4];
+    Circle[] playersImagesCircles = new Circle[4];
+
+
     boolean isGameStarted = false;
-    List<Character> tilesInHand = new ArrayList<>();
     Character pickedTile = null;
+    int[] playersPosition = new int[4];
+
 
 
     final int BOARD_HGAP = 11;
     final int BOARD_VGAP = 4;
     final int HAND_HGAP = 20;
     public void boardClickHandler(MouseEvent e){
+        if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
+            return;
         double MOUSE_CLICKED_X = e.getX(); //the y of the mouse click relative to the scene
         double MOUSE_CLICKED_Y = e.getY(); //the x of the mouse click relative to the scene
 
@@ -116,33 +129,8 @@ public class InGameController implements Observer, Initializable {
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
 
-//        gc.strokeRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
-//        gc.setFill(Paint.valueOf("#43B14F"));
-//        gc.fillRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
-//        final double width = gameBoard.getWidth();
-//        final double height = gameBoard.getHeight();
-//        final double cellWidth = width / 15 ;
-//        final double cellHeight = height / 15 ;
-
-//        gc.setFill(Paint.valueOf("#43B14F"));
-//        for( int i=0; i<15; i++) {
-//            for (int j = 0; j < 15; j++) {
-//                if(i==7 && j==7) continue;
-//                gc.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
-//            }
-//        }
-        //put a label on every square
-//        gc.setFill(Color.BLACK);
-//        for( int i=0; i<15; i++) {
-//            for (int j = 0; j < 15; j++) {
-//                if(i==7 && j==7) continue;
-//                gc.fillText(i + "," + j, i * cellWidth+15, j * cellHeight + 15);
-//            }
-//        }
         if(!isGameStarted) {
-
             char myC = 'a';
-            //paintTheSquares();
             for(int i=0; i<15;i++){
                 for(int j=0; j<15;j++){
 
@@ -159,8 +147,8 @@ public class InGameController implements Observer, Initializable {
                     System.out.println("Added stackpane to gridpane");
                 }
             }
-
         }
+        ViewModel.getViewModel().takeTileFromBag();
     }
 
 
@@ -170,9 +158,62 @@ public class InGameController implements Observer, Initializable {
         switch ((String) arg){
             case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
-                Platform.runLater(()->showBackAlert());
+                Platform.runLater(this::showBackAlert);
                 System.out.println("Alert Created");
                 break;
+
+            case MethodsNames.SET_HAND:
+                Platform.runLater(this::setHand);
+                break;
+            case MethodsNames.NEW_PLAYER_TURN:
+                Platform.runLater(this::newPlayerTurn);
+                break;
+        }
+
+    }
+
+    private void newPlayerTurn() {
+        for(int i=0; i<4; i++){
+            if(ViewModel.getViewModel().getPlayers().get(i)==null) continue;
+            if(playersNames[i]==null) continue;
+            if(ViewModel.getViewModel().getPlayers().get(i).getId()==ViewModel.getViewModel().getCurrentPlayerId()){
+                playersImagesCircles[i].setStroke(Color.RED);
+            }
+            else{
+                playersImagesCircles[i].setStroke(Color.BLACK);
+            }
+        }
+
+        if(ViewModel.getViewModel().getMyPlayer().getId()==ViewModel.getViewModel().getCurrentPlayerId()){
+            resetBtn.setDisable(false);
+            undoBtn.setDisable(false);
+            finishTurnBtn.setDisable(false);
+        }
+        else{
+            resetBtn.setDisable(true);
+            undoBtn.setDisable(true);
+            finishTurnBtn.setDisable(true);
+        }
+
+    }
+
+    private void setHand() {
+        double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*6) / 7; //the width of each square
+        double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()); //the height of each square
+        if(tilesInHandGrid.getChildren().size() > 0)
+            tilesInHandGrid.getChildren().clear();
+        if(ViewModel.getViewModel().getMyPlayer().getHand() == null || ViewModel.getViewModel().getMyPlayer().getHand().size()==0 ) return;
+        for(int i = 0; i< ViewModel.getViewModel().getMyPlayer().getHand().size(); i++) {
+            Character myC = ViewModel.getViewModel().getMyPlayer().getHand().get(i);
+            Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
+            ImageView iv = new ImageView(tile);
+            iv.setFitWidth(HAND_SQUARE_WIDTH);
+            iv.setFitHeight(HAND_SQUARE_HEIGHT);
+            StackPane sp = new StackPane(iv);
+            sp.setAlignment(Pos.CENTER);
+            tilesInHandGrid.add(sp, i, 0);
+
+            System.out.println("Added stackpane to hand gridpane");
         }
     }
 
@@ -216,37 +257,38 @@ public class InGameController implements Observer, Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ViewModel.getViewModel().addObserver(this);
-        isGameStarted = true;
-        double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*6) / 7; //the width of each square
-        double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()-BOARD_VGAP*6) / 7; //the height of each square
-        for(int i=0; i<ViewModel.getViewModel().myPlayer.getHand().size();i++) {
-            Character myC = ViewModel.getViewModel().myPlayer.getHand().get(i);
-            Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
-            ImageView iv = new ImageView(tile);
-            iv.setFitWidth(HAND_SQUARE_WIDTH - 3);
-            iv.setFitHeight(HAND_SQUARE_HEIGHT - 2);
-            StackPane sp = new StackPane(iv);
-            sp.setAlignment(Pos.CENTER);
-            tilesInHandGrid.add(sp, i, 0);
-            System.out.println("Added stackpane to hand gridpane");
+        for(int i=0;i<3;i++){
+            playersPosition[i] = -1;
         }
+        isGameStarted = true;
+        setHand();
         fillPlayersDetails();
+        numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
+        numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
 
+        newPlayerTurn();
 
     }
 
     private void fillPlayersDetails() {
-        int myID = ViewModel.getViewModel().myPlayer.getId();
-        int myScore = ViewModel.getViewModel().myPlayer.getScore();
+        int myID = ViewModel.getViewModel().getMyPlayer().getId();
+        int myScore = ViewModel.getViewModel().getMyPlayer().getScore();
         for(int i=0;i<3;i++){
-            if(ViewModel.getViewModel().players.get(i) == null) continue;
-            if(ViewModel.getViewModel().players.get(i).getId() == myID) continue;
-            String name = ViewModel.getViewModel().players.get(i).getName();
-            insertPlayerDetails(name);
+            if(ViewModel.getViewModel().getPlayers().get(i) == null) continue;
+            if(ViewModel.getViewModel().getPlayers().get(i).getId() == myID) {
+                playersPosition[i]=4;
+                playersNames[i] = myPlayerName;
+                playersScores[i] = myPlayerScore;
+                playersImagesCircles[i] = myPlayerImageCircle;
+                playersImages[i] = myPlayerImage;
+                continue;
+            }
+            String name = ViewModel.getViewModel().getPlayers().get(i).getName();
+            insertPlayerDetails(name, i);
         }
     }
 
-    public void insertPlayerDetails(String name){
+    public void insertPlayerDetails(String name, int id){
         if(player1Name.getText().equals("")){
             player1Name.setText(name);
             player1Score.setText(0+" pts");
@@ -254,6 +296,11 @@ public class InGameController implements Observer, Initializable {
             player1Score.setVisible(true);
             //player1Image.setVisible(true);
             player1ImageCircle.setVisible(true);
+            playersPosition[id] = 1;
+            playersNames[id] = player1Name;
+            playersScores[id] = player1Score;
+            playersImagesCircles[id] = player1ImageCircle;
+            playersImages[id] = player1Image;
         }
         else if(player2Name.getText().equals("")){
             player2Name.setText(name);
@@ -262,6 +309,12 @@ public class InGameController implements Observer, Initializable {
             player2Score.setVisible(true);
             //player2Image.setVisible(true);
             player2ImageCircle.setVisible(true);
+            playersPosition[id] = 2;
+            playersNames[id] = player2Name;
+            playersScores[id] = player2Score;
+            playersImagesCircles[id] = player2ImageCircle;
+            playersImages[id] = player2Image;
+
 
         }
         else if(player3Name.getText().equals("")){
@@ -271,6 +324,11 @@ public class InGameController implements Observer, Initializable {
             player3Score.setVisible(true);
             //player3Image.setVisible(true);
             player3ImageCircle.setVisible(true);
+            playersPosition[id] = 3;
+            playersNames[id] = player3Name;
+            playersScores[id] = player3Score;
+            playersImagesCircles[id] = player3ImageCircle;
+            playersImages[id] = player3Image;
         }
     }
 }

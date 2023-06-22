@@ -3,21 +3,25 @@ package ViewModel;
 import Model.Model;
 import Model.gameClasses.Player;
 import General.MethodsNames;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
     public static ViewModel vm = null;
-    public Character[][] board;
+    private Character[][] board;
     public List<DataChanges> changesList;
-    public int currentPlayerId;
-    public int numberOfTilesInBag;
-    public Map<Integer, PlayerVVM> players;
-    public MyPlayerVVM myPlayer;
+    private int currentPlayerId;
+    private int numberOfTilesInBag;
+    public StringProperty numberOfTilesInBagProperty;
+
+    private Map<Integer, PlayerVVM> players;
+    private MyPlayerVVM myPlayer;
     //    data binding
-    Map<Character, Integer> tilesScores;
-    Model model;
+    private Map<Character, Integer> tilesScores;
+    private Model model;
     private String word;
     private int wordStartRow;
     private int wordStartCol;
@@ -33,8 +37,25 @@ public class ViewModel extends Observable implements Observer {
         this.changesList = new ArrayList<>();
         this.currentPlayerId = -1;
         this.numberOfTilesInBag = 0;
+//        this.numberOfTilesInBagProperty = new SimpleStringProperty("");
         this.players = new HashMap<>();
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
+    }
+
+    public Map<Integer, PlayerVVM> getPlayers() {
+        return players;
+    }
+
+    public MyPlayerVVM getMyPlayer() {
+        return myPlayer;
+    }
+
+    public int getCurrentPlayerId() {
+        return currentPlayerId;
+    }
+
+    public Character[][] getBoard() {
+        return board;
     }
 
     public void startGame() {
@@ -251,6 +272,7 @@ public class ViewModel extends Observable implements Observer {
 
     private void setNumberOfTilesInBag(int numberOfTilesInBag) {
         this.numberOfTilesInBag = numberOfTilesInBag;
+        this.numberOfTilesInBagProperty = new SimpleStringProperty(String.valueOf(this.numberOfTilesInBag));
     }
 
     private void setCurrentPlayerId(int currentPlayerId) {
@@ -352,6 +374,11 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.CONNECT:
                     setChanged();
                     notifyObservers(MethodsNames.CONNECT + ":" + args[0]);
+                    break;
+
+                case MethodsNames.END_GAME:
+                    setChanged();
+                    notifyObservers(MethodsNames.END_GAME+ ":" + String.join(",", args));
                     break;
             }
 
