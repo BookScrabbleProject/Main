@@ -323,7 +323,7 @@ public class HostModel extends PlayerModel implements Observer {
             try {
                 Scanner s = new Scanner(bookScrabbleSocket.getInputStream());
                 String answerFromBookScrabble = s.next();
-                if (!Boolean.getBoolean(answerFromBookScrabble)) {
+                if (answerFromBookScrabble.equals("false")) {
                     toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(0).append('\n');
                     setChanged();
                     notifyObservers(toNotify.toString());

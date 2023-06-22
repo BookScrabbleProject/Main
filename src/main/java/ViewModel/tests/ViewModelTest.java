@@ -5,6 +5,7 @@ import Model.GuestModel;
 import Model.gameClasses.BookScrabbleHandler;
 import Model.gameClasses.MyServer;
 import ViewModel.ViewModel;
+import ViewModel.DataChanges;
 
 
 public class ViewModelTest {
@@ -30,12 +31,12 @@ public class ViewModelTest {
 
             Thread.sleep(1000);
 
-            GuestModel guest3= new GuestModel("localhost", 1235, "testGuest3");
+            GuestModel guest3 = new GuestModel("localhost", 1235, "testGuest3");
             System.out.println("\n>>> connecting to host (guest3) <<<");
             guest3.connectToHostServer();
             Thread.sleep(1000);
 
-            GuestModel guest4= new GuestModel("localhost", 1235, "testGuest3");
+            GuestModel guest4 = new GuestModel("localhost", 1235, "testGuest3");
             System.out.println("\n>>> connecting to host (guest4) <<<");
             guest4.connectToHostServer();
 
@@ -50,7 +51,16 @@ public class ViewModelTest {
             System.out.println("\n>>> taking tile from bag <<<");
 //            viewModel.takeTileFromBag();
 
-            guest2.tryPlaceWord("week", 7, 7, true);
+            DataChanges d1 = new DataChanges('w', 7, 7, -1, -1);
+            DataChanges d2 = new DataChanges('e', 7, 8, -1, -1);
+            DataChanges d3 = new DataChanges('e', 7, 9, -1, -1);
+            DataChanges d4 = new DataChanges('k', 7, 10, -1, -1);
+            viewModel.changesList.add(d1);
+            viewModel.changesList.add(d2);
+            viewModel.changesList.add(d3);
+            viewModel.changesList.add(d4);
+            viewModel.tryPlaceWord();
+
             Thread.sleep(5000);
             System.out.println("\n>>> closing connections <<<");
 //            viewModel.getModel().closeConnection();
