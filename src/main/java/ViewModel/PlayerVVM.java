@@ -16,6 +16,10 @@ public class PlayerVVM {
     public PlayerVVM(int id, String name) {
         this.id = id;
         this.name = name;
+        this.score = 0;
+        this.numberOfTiles = 0;
+        scoreProperty = new SimpleStringProperty(String.valueOf(score));
+        numberOfTilesProperty = new SimpleStringProperty(String.valueOf(numberOfTiles));
     }
 
     public PlayerVVM(int id, String name, int score, int numberOfTiles) {
