@@ -1,6 +1,6 @@
 package View.bookscrabbleapp;
 
-import ViewModel.ViewModel;
+import ViewModel.*;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -31,6 +32,7 @@ import General.MethodsNames;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 //testing
 public class InGameController implements Observer, Initializable {
@@ -112,6 +114,15 @@ public class InGameController implements Observer, Initializable {
     final int BOARD_VGAP = 4;
     final int HAND_HGAP = 20;
     public void boardClickHandler(MouseEvent e){
+        DataChanges data1 = new DataChanges('w', 7,7,-1,-1);
+        DataChanges data2 = new DataChanges('e', 7,8,-1,-1);
+        DataChanges data3 = new DataChanges('e', 7,9,-1,-1);
+        DataChanges data4 = new DataChanges('k', 7,10,-1,-1);
+        ViewModel.getViewModel().changesList.add(data1);
+        ViewModel.getViewModel().changesList.add(data2);
+        ViewModel.getViewModel().changesList.add(data3);
+        ViewModel.getViewModel().changesList.add(data4);
+        ViewModel.getViewModel().tryPlaceWord();
         if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
             return;
         double MOUSE_CLICKED_X = e.getX(); //the y of the mouse click relative to the scene
@@ -153,6 +164,7 @@ public class InGameController implements Observer, Initializable {
             }
         }
         ViewModel.getViewModel().takeTileFromBag();
+
     }
 
 
@@ -176,25 +188,34 @@ public class InGameController implements Observer, Initializable {
                 Platform.runLater(this::newPlayerTurn);
                 break;
             case MethodsNames.TRY_PLACE_WORD:
-                String[] splitedArguments=arguments.split(",");
-                if(splitedArguments[0].equals("0"))
-                {
-                    //todo : need to make popUp for the player that his word is invalid
-                }
-                else{
-                    if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
-                        List<String>words=new ArrayList<>(List.of(splitedArguments));
-                        words.remove(0);
-                        showChallengeAlert((String[]) words.toArray());
+                Platform.runLater(()->{
+                    System.out.println("In Try Place Word Case");
+                    String[] splitedArguments=arguments.split(",");
+                    if(splitedArguments[0].equals("0"))
+                    {
+                        //todo : need to make popUp for the player that his word is invalid
                     }
-                }
+                    else{
+                        if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
+                            List<String>words=new ArrayList<>(splitedArguments.length-1);
+                            for(int i=1;i<splitedArguments.length;i++){
+                                words.add(splitedArguments[i]);
+                            }
+                            String[] wordsArray=new String[words.size()];
+                            wordsArray=words.toArray(wordsArray);
+                            showChallengeAlert(wordsArray);
+                        }
+                    }
+                });
                 break;
             case MethodsNames.CHALLENGE:
                 //todo challenge success/fail logic
                 break;
             case MethodsNames.CLOSE_CHALLENGE_ALERT:
-                if(challengeAlert.isShowing())
-                    challengeAlert.close();
+                Platform.runLater(()->{
+                    if(challengeAlert.isShowing())
+                        challengeAlert.close();
+                });
                 break;
             case MethodsNames.INVALID_PLACEMENT:
                 //todo pop a popUp for the player that tried to put the word, that his placement is invalid
@@ -266,6 +287,7 @@ public class InGameController implements Observer, Initializable {
             });
             wordsCreated.getChildren().add(b);
         }
+        wordsCreated.setSpacing(10);
         challengeAlert.getDialogPane().setContent(wordsCreated);
         ButtonType buttonTypeOne = new ButtonType("Close");
         challengeAlert.getButtonTypes().setAll(buttonTypeOne);
@@ -284,8 +306,12 @@ public class InGameController implements Observer, Initializable {
         alert.setContentText("The Host Has Disconnected, You Will Be Redirected To The Main Menu");
         //add a button of go back
         ButtonType buttonTypeOne = new ButtonType("Go Back");
-
         alert.getButtonTypes().setAll(buttonTypeOne);
+
+
+
+
+
         alert.setOnCloseRequest(event -> {
             System.out.println("Alert Closed");
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
