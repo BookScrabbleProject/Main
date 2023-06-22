@@ -259,7 +259,7 @@
                   </HBox>
                   <Pane prefHeight="146.0" prefWidth="824.0" style="-fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 5;">
                      <children>
-                        <GridPane fx:id="tilesInHandGrid" hgap="20.0" layoutX="56.0" layoutY="43.0" prefHeight="60.0" prefWidth="732.0">
+                        <GridPane fx:id="tilesInHandGrid" hgap="20.0" layoutX="56.0" layoutY="43.0" prefHeight="60.0" prefWidth="652.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
