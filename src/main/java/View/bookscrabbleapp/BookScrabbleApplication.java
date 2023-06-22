@@ -11,9 +11,11 @@ public class BookScrabbleApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(BookScrabbleApplication.class.getResource("welcomePage.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 650, 650);
+        Scene scene = new Scene(fxmlLoader.load(), 650, 500);
         stage.setTitle("BookScrabble!");
         stage.setScene(scene);
+        stage.setResizable(false);
+
         stage.show();
     }
 

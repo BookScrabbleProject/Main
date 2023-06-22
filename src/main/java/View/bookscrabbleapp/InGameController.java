@@ -242,7 +242,7 @@ public class InGameController implements Observer, Initializable {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
             //close the current window and change to the root
-            Scene scene = new Scene(root, 650, 650);
+            Scene scene = new Scene(root, 650, 500);
             Stage stage = (Stage) gameBoard.getScene().getWindow();
             stage.close();
             stage = new Stage();
@@ -265,13 +265,12 @@ public class InGameController implements Observer, Initializable {
         }
         isGameStarted = true;
         setHand();
-        fillPlayersDetails();;
+        fillPlayersDetails();
         myPlayerImageCircle.setFill(new ImagePattern(userIcon));
-
 
         numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
         numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
-
+        myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty.concat(" pts"));
         newPlayerTurn();
 
     }
@@ -283,8 +282,8 @@ public class InGameController implements Observer, Initializable {
             if(ViewModel.getViewModel().getPlayers().get(i) == null) continue;
             if(ViewModel.getViewModel().getPlayers().get(i).getId() == myID) {
                 playersPosition[i]=4;
+                myPlayerScore.textProperty().bind(ViewModel.getViewModel().getPlayers().get(i).scoreProperty.concat(" pts"));
                 playersNames[i] = myPlayerName;
-                playersScores[i] = myPlayerScore;
                 playersImagesCircles[i] = myPlayerImageCircle;
                 playersImages[i] = myPlayerImage;
                 continue;
@@ -297,7 +296,7 @@ public class InGameController implements Observer, Initializable {
     public void insertPlayerDetails(String name, int id){
         if(player1Name.getText().equals("")){
             player1Name.setText(name);
-            player1Score.setText(0+" pts");
+            player1Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
             player1Name.setVisible(true);
             player1Score.setVisible(true);
             player1ImageCircle.setFill(new ImagePattern(userIcon));
@@ -310,7 +309,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player2Name.getText().equals("")){
             player2Name.setText(name);
-            player2Score.setText(0+" pts");
+            player2Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
             player2Name.setVisible(true);
             player2Score.setVisible(true);
             player2ImageCircle.setFill(new ImagePattern(userIcon));
@@ -325,7 +324,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player3Name.getText().equals("")){
             player3Name.setText(name);
-            player3Score.setText(0+" pts");
+            player3Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
             player3Name.setVisible(true);
             player3Score.setVisible(true);
             player3ImageCircle.setFill(new ImagePattern(userIcon));
