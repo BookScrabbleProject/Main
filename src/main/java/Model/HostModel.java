@@ -51,12 +51,12 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
         isGameStarted = false;
-        maxScore = 2;
+        maxScore = 100;
         challengeTimerThread = new Thread(() -> {
             System.out.println("challenge timer started");
             try {
                 Thread.sleep(7500);
-                hostServer.sendToAllPlayers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+                hostServer.sendToAllPlayers("0:"+MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
                 setChanged();
                 notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
             } catch (InterruptedException e) {
