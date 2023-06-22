@@ -364,7 +364,7 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.TRY_PLACE_WORD:
                 case MethodsNames.DISCONNECT_FROM_SERVER:
                     setChanged();
-                    notifyObservers(methodName);
+                    notifyObservers(message);
                     break;
 
                 case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:
