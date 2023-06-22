@@ -51,10 +51,10 @@ public class ViewModelTest {
             System.out.println("\n>>> taking tile from bag <<<");
 //            viewModel.takeTileFromBag();
 
-            DataChanges d1 = new DataChanges('w', 7, 7, -1, -1);
-            DataChanges d2 = new DataChanges('e', 7, 8, -1, -1);
-            DataChanges d3 = new DataChanges('e', 7, 9, -1, -1);
-            DataChanges d4 = new DataChanges('k', 7, 10, -1, -1);
+            DataChanges d1 = new DataChanges('w', 7, 7);
+            DataChanges d2 = new DataChanges('e', 7, 8);
+            DataChanges d3 = new DataChanges('e', 7, 9);
+            DataChanges d4 = new DataChanges('k', 7, 10);
             viewModel.changesList.add(d1);
             viewModel.changesList.add(d2);
             viewModel.changesList.add(d3);
