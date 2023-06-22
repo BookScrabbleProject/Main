@@ -19,4 +19,6 @@ public class MethodsNames {
     public static final String TAKE_TILE_FROM_BAG = "takeTileFromBag";
     public static final String GAME_ALREADY_STARTED = "gameAlreadyStarted";
     public static final String END_GAME = "endGame";
+    public static final String CLOSE_CHALLENGE_ALERT = "closeChallengeAlert";
+    public static final String INVALID_PLACEMENT = "invalidPlacement";
 }

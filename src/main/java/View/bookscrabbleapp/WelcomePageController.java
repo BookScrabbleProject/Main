@@ -56,7 +56,7 @@ public class WelcomePageController implements Observer, Initializable {
     @FXML
     Label nameWarningLabel;
     @FXML
-    Label fullServerWarning;
+    Label serverWarning;
     Boolean isHost = false;
 
 
@@ -70,7 +70,7 @@ public class WelcomePageController implements Observer, Initializable {
         ipWarningDiv.setVisible(false);
         portWarningDiv.setVisible(false);
         nameWarningLabel.setVisible(false);
-        fullServerWarning.setVisible(false);
+        serverWarning.setVisible(false);
         isHost = false;
         initBtn.setText("Join");
         createBtn.setStyle("-fx-background-color:GREY");
@@ -87,7 +87,7 @@ public class WelcomePageController implements Observer, Initializable {
         ipWarningDiv.setVisible(false);
         portWarningDiv.setVisible(false);
         nameWarningLabel.setVisible(false);
-        fullServerWarning.setVisible(false);
+        serverWarning.setVisible(false);
         isHost = true;
         initBtn.setText("Open Lobby");
         createBtn.setStyle("-fx-background-color:LightBlue");
@@ -199,8 +199,16 @@ public class WelcomePageController implements Observer, Initializable {
                 else {
                     ViewModel.getViewModel().close();
                     ViewModel.getViewModel().resetModel();
-                    fullServerWarning.setVisible(true);
+                    serverWarning.setText("Server is full");
+                    serverWarning.setVisible(true);
                 }
+                break;
+            case MethodsNames.GAME_ALREADY_STARTED:
+                ViewModel.getViewModel().close();
+                ViewModel.getViewModel().resetModel();
+                serverWarning.setText("Game already started");
+                serverWarning.setVisible(true);
+                break;
 
         }
     }
@@ -213,7 +221,7 @@ public class WelcomePageController implements Observer, Initializable {
             Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
             stage = new Stage();
             stage.setTitle("BookScrabble!");
-            stage.setScene(new Scene(root, 500, 500));
+            stage.setScene(new Scene(root, 600, 450));
             stage.setOnCloseRequest(event -> {
                 System.out.println("Closing Stage");
                 ViewModel.getViewModel().close();

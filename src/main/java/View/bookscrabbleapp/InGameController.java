@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-
+//testing
 public class InGameController implements Observer, Initializable {
     @FXML
     private Label welcomeText;
@@ -90,6 +90,7 @@ public class InGameController implements Observer, Initializable {
     private Circle player3ImageCircle;
     @FXML
     private Circle myPlayerImageCircle;
+    Alert challengeAlert;
 
     private Image userIcon = new Image(getClass().getResource("/Images/userIcon.jpg").toExternalForm());
 
@@ -155,21 +156,52 @@ public class InGameController implements Observer, Initializable {
     }
 
 
+
     @Override
     public void update(Observable o, Object arg) {
         System.out.println("View update "+arg);
-        switch ((String) arg){
+        String[] splitedArgString = ((String)arg).split(":");
+        String methodName = splitedArgString[0];
+        String arguments=splitedArgString.length>1?splitedArgString[1]:"";
+        switch (methodName){
             case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
                 Platform.runLater(this::showBackAlert);
                 System.out.println("Alert Created");
                 break;
-
             case MethodsNames.SET_HAND:
                 Platform.runLater(this::setHand);
                 break;
             case MethodsNames.NEW_PLAYER_TURN:
                 Platform.runLater(this::newPlayerTurn);
+                break;
+            case MethodsNames.TRY_PLACE_WORD:
+                String[] splitedArguments=arguments.split(",");
+                if(splitedArguments[0].equals("0"))
+                {
+                    //todo : need to make popUp for the player that his word is invalid
+                }
+                else{
+                    if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
+                        List<String>words=new ArrayList<>(List.of(splitedArguments));
+                        words.remove(0);
+                        showChallengeAlert((String[]) words.toArray());
+                    }
+                }
+                break;
+            case MethodsNames.CHALLENGE:
+                //todo challenge success/fail logic
+                break;
+            case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                if(challengeAlert.isShowing())
+                    challengeAlert.close();
+                break;
+            case MethodsNames.INVALID_PLACEMENT:
+                //todo pop a popUp for the player that tried to put the word, that his placement is invalid
+                break;
+            case MethodsNames.END_GAME:
+                //todo pop a popUp that the game has ended->victory popUp
+                //we get the players id-score list ordered by the descending scores
                 break;
         }
 
@@ -218,6 +250,31 @@ public class InGameController implements Observer, Initializable {
 
             System.out.println("Added stackpane to hand gridpane");
         }
+    }
+    public void showChallengeAlert(String... words){
+        challengeAlert = new Alert(Alert.AlertType.INFORMATION);
+        challengeAlert.setTitle("Challenge");
+        challengeAlert.setHeaderText("Would You Like To Challenge The Player?");
+        challengeAlert.setContentText("The List Of Words That Were Created During This Turn:");
+        VBox wordsCreated=new VBox();
+        for(String word : words)
+        {
+            Button b=new Button(word);
+            b.setOnMouseClicked((event)-> {
+                ViewModel.getViewModel().challenge(word);
+                ((Stage) challengeAlert.getDialogPane().getScene().getWindow()).close();
+            });
+            wordsCreated.getChildren().add(b);
+        }
+        challengeAlert.getDialogPane().setContent(wordsCreated);
+        ButtonType buttonTypeOne = new ButtonType("Close");
+        challengeAlert.getButtonTypes().setAll(buttonTypeOne);
+        challengeAlert.setOnCloseRequest(event -> {
+            System.out.println("Alert Closed");
+            ((Stage) challengeAlert.getDialogPane().getScene().getWindow()).close();
+        });
+        challengeAlert.showAndWait();
+        //todo show to all the players the score that the player will get
     }
 
     public void showBackAlert(){
