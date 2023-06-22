@@ -11,12 +11,11 @@ import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
     public static ViewModel vm = null;
-    private Character[][] board;
     public List<DataChanges> changesList;
+    public StringProperty numberOfTilesInBagProperty;
+    private Character[][] board;
     private int currentPlayerId;
     private int numberOfTilesInBag;
-    public StringProperty numberOfTilesInBagProperty;
-
     private Map<Integer, PlayerVVM> players;
     private MyPlayerVVM myPlayer;
     //    data binding
@@ -42,6 +41,18 @@ public class ViewModel extends Observable implements Observer {
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
     }
 
+    /**
+     * create a new ViewModel if it doesn't exist, and return it (singleton)
+     *
+     * @return the ViewModel
+     */
+    public static ViewModel getViewModel() {
+        if (vm == null) {
+            vm = new ViewModel();
+        }
+        return vm;
+    }
+
     public Map<Integer, PlayerVVM> getPlayers() {
         return players;
     }
@@ -54,24 +65,22 @@ public class ViewModel extends Observable implements Observer {
         return currentPlayerId;
     }
 
+    private void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+        setChanged();
+        notifyObservers(MethodsNames.NEW_PLAYER_TURN);
+    }
+
     public Character[][] getBoard() {
         return board;
     }
 
-    public void startGame() {
-        model.startGame();
+    private void setBoard(Character[][] boardStatus) {
+        this.board = boardStatus;
     }
 
-    /**
-     * create a new ViewModel if it doesn't exist, and return it (singleton)
-     *
-     * @return the ViewModel
-     */
-    public static ViewModel getViewModel() {
-        if (vm == null) {
-            vm = new ViewModel();
-        }
-        return vm;
+    public void startGame() {
+        model.startGame();
     }
 
     /**
@@ -266,19 +275,9 @@ public class ViewModel extends Observable implements Observer {
         return sortedChangesList;
     }
 
-    private void setBoard(Character[][] boardStatus) {
-        this.board = boardStatus;
-    }
-
     private void setNumberOfTilesInBag(int numberOfTilesInBag) {
         this.numberOfTilesInBag = numberOfTilesInBag;
         this.numberOfTilesInBagProperty = new SimpleStringProperty(String.valueOf(this.numberOfTilesInBag));
-    }
-
-    private void setCurrentPlayerId(int currentPlayerId) {
-        this.currentPlayerId = currentPlayerId;
-        setChanged();
-        notifyObservers(MethodsNames.NEW_PLAYER_TURN);
     }
 
     /**
@@ -302,7 +301,8 @@ public class ViewModel extends Observable implements Observer {
 
             try {
                 args = message.split(":")[1].split(",");
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
 
             switch (methodName) {
                 case MethodsNames.BOARD_UPDATED:
@@ -378,7 +378,11 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.END_GAME:
                     setChanged();
-                    notifyObservers(MethodsNames.END_GAME+ ":" + String.join(",", args));
+                    notifyObservers(MethodsNames.END_GAME + ":" + String.join(",", args));
+                    break;
+                case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT);
                     break;
             }
 

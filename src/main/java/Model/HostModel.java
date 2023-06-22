@@ -27,7 +27,7 @@ public class HostModel extends PlayerModel implements Observer {
     String wordFromPlayers;
     boolean isGameStarted;
     private int maxScore = 0;
-    private Thread challengeTimerThread;
+    private final Thread challengeTimerThread;
 
     /**
      * Default constructor method to the host model
@@ -53,9 +53,12 @@ public class HostModel extends PlayerModel implements Observer {
         isGameStarted = false;
         maxScore = 2;
         challengeTimerThread = new Thread(() -> {
+            System.out.println("challenge timer started");
             try {
                 Thread.sleep(7500);
                 hostServer.sendToAllPlayers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+                setChanged();
+                notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

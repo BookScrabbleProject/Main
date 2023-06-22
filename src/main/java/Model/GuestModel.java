@@ -294,6 +294,10 @@ public class GuestModel extends PlayerModel implements Observer {
                     setChanged();
                     notifyObservers(MethodsNames.END_GAME + ":" + splitedArgString[2]);
                     break;
+                case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT);
+                    break;
             }
         }
     }
