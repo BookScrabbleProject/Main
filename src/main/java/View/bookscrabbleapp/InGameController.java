@@ -189,7 +189,7 @@ public class InGameController implements Observer, Initializable {
             undoBtn.setDisable(false);
             finishTurnBtn.setDisable(false);
         }
-        else{ִ
+        else{
             resetBtn.setDisable(true);
             undoBtn.setDisable(true);
             finishTurnBtn.setDisable(true);
