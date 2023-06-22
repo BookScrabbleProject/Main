@@ -46,6 +46,7 @@ public class ViewModelTest {
             host.startGame();
 
             Thread.sleep(2000);
+            host.getConnectedPlayers().get(2).setScore(5);
             System.out.println("\n>>> taking tile from bag <<<");
             viewModel.takeTileFromBag();
 

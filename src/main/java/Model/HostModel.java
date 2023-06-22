@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Host server class
@@ -25,6 +26,7 @@ public class HostModel extends PlayerModel implements Observer {
     int lastWordScore;
     String wordFromPlayers;
     boolean isGameStarted;
+    private int maxScore = 0;
 
     /**
      * Default constructor method to the host model
@@ -48,6 +50,7 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
         isGameStarted = false;
+        maxScore = 2;
     }
 
     /**
@@ -498,7 +501,10 @@ public class HostModel extends PlayerModel implements Observer {
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      */
     public void passTheTurn() {
-        // Todo: check if player has the maximum score and end the game
+        if(isPlayerWon()){
+            endGameWithWinner();
+            return;
+        }
         StringBuilder toNotify = new StringBuilder();
         StringBuilder toAllPlayers = new StringBuilder();
         currentPlayerId++;
@@ -507,6 +513,39 @@ public class HostModel extends PlayerModel implements Observer {
         toAllPlayers.append(-1).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         hostServer.sendToAllPlayers(toAllPlayers.toString());
         toNotify.append(MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
+        setChanged();
+        notifyObservers(toNotify.toString());
+    }
+
+    /**
+     * The isPlayerWon function checks to see if any of the players have reached the max score.
+     * @return A boolean value, true if a player has reached the max score and false otherwise
+     */
+    private boolean isPlayerWon() {
+        for (Player p : connectedPlayers.values()) {
+            if (p.getScore() >= maxScore)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * The endGameWithWinner function is called when the game has ended and there is a winner.
+     * It sends to all players the message that the game has ended, and who won it.
+     */
+    private void endGameWithWinner() {
+        StringBuilder toNotify = new StringBuilder();
+        StringBuilder toAllPlayers = new StringBuilder();
+        StringBuilder playersIdScoreBuilder = new StringBuilder();
+        // map to stream - sort by score highest score first - get the first player - get his id
+        List<Player> sortedPlayers = connectedPlayers.values().stream().sorted(Comparator.comparing(Player::getScore).reversed()).collect(Collectors.toList());
+        for(Player p : sortedPlayers)
+            playersIdScoreBuilder.append(p.getId()).append("-").append(p.getScore()).append(",");
+
+        toAllPlayers.append(0).append(":" + MethodsNames.END_GAME + ":").append(playersIdScoreBuilder.toString()).append("\n");
+        toNotify.append(MethodsNames.END_GAME + ":").append(playersIdScoreBuilder.toString()).append("\n");
+
+        hostServer.sendToAllPlayers(toAllPlayers.toString());
         setChanged();
         notifyObservers(toNotify.toString());
     }
