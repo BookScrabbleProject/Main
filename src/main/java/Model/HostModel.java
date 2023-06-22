@@ -27,6 +27,7 @@ public class HostModel extends PlayerModel implements Observer {
     String wordFromPlayers;
     boolean isGameStarted;
     private int maxScore = 0;
+    private Thread challengeTimerThread;
 
     /**
      * Default constructor method to the host model
@@ -51,6 +52,14 @@ public class HostModel extends PlayerModel implements Observer {
         wordFromPlayers = null;
         isGameStarted = false;
         maxScore = 2;
+        challengeTimerThread = new Thread(() -> {
+            try {
+                Thread.sleep(7500);
+                hostServer.sendToAllPlayers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -354,6 +363,7 @@ public class HostModel extends PlayerModel implements Observer {
 
             toAllPlayers.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append(',').append(String.join(",", wordsStrings)).append("\n");
             toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append(",").append(String.join(",", wordsStrings)).append('\n');
+            startChallengeTimer();
         } else {
             toSpecificPlayer.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":0").append("\n");
             toNotify.append(MethodsNames.TRY_PLACE_WORD + ":0").append('\n');
@@ -365,6 +375,10 @@ public class HostModel extends PlayerModel implements Observer {
         setChanged();
         notifyObservers(toNotify.toString());
         requestedId = -1;
+    }
+
+    private void startChallengeTimer() {
+        challengeTimerThread.start();
     }
 
     /**
