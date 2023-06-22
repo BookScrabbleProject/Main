@@ -51,7 +51,7 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
         isGameStarted = false;
-        maxScore = 2;
+        maxScore = 40;
         challengeTimerThread = new Thread(() -> {
             System.out.println("challenge timer started");
             try {
