@@ -27,6 +27,7 @@ public class HostModel extends PlayerModel implements Observer {
     String wordFromPlayers;
     boolean isGameStarted;
     private int maxScore = 0;
+    private final Thread challengeTimerThread;
 
     /**
      * Default constructor method to the host model
@@ -51,6 +52,17 @@ public class HostModel extends PlayerModel implements Observer {
         wordFromPlayers = null;
         isGameStarted = false;
         maxScore = 2;
+        challengeTimerThread = new Thread(() -> {
+            System.out.println("challenge timer started");
+            try {
+                Thread.sleep(7500);
+                hostServer.sendToAllPlayers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+                setChanged();
+                notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -279,6 +291,13 @@ public class HostModel extends PlayerModel implements Observer {
         return -1;
     }
 
+    private String tilesToString(Tile[] tiles) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Tile tile : tiles)
+            stringBuilder.append(tile.letter);
+        return stringBuilder.toString();
+    }
+
     /**
      * A method that try to place the word on the board
      * create tile[] from the string word, create Word.
@@ -325,6 +344,10 @@ public class HostModel extends PlayerModel implements Observer {
             for (Character c : wordFromPlayers.toCharArray())
                 connectedPlayers.get(requestedId).getTiles().remove(c);
 
+            List<Word> words = board.getWords(w);
+            List<String> wordsStrings = words.stream().map(currentWord->tilesToString(currentWord.getTiles())).collect(Collectors.toList());
+
+
             connectedPlayers.get(requestedId).addScore(lastWordScore);
             toAllPlayers.append(requestedId).append(":" + MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append("\n");
             toNotify.append(MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append('\n');
@@ -341,8 +364,9 @@ public class HostModel extends PlayerModel implements Observer {
             toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(requestedId).getTiles().size()).append("\n");
             toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append('\n');
 
-            toAllPlayers.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append("\n");
-            toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append('\n');
+            toAllPlayers.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append(',').append(String.join(",", wordsStrings)).append("\n");
+            toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append(",").append(String.join(",", wordsStrings)).append('\n');
+            startChallengeTimer();
         } else {
             toSpecificPlayer.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":0").append("\n");
             toNotify.append(MethodsNames.TRY_PLACE_WORD + ":0").append('\n');
@@ -354,6 +378,10 @@ public class HostModel extends PlayerModel implements Observer {
         setChanged();
         notifyObservers(toNotify.toString());
         requestedId = -1;
+    }
+
+    private void startChallengeTimer() {
+        challengeTimerThread.start();
     }
 
     /**

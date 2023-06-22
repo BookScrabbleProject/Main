@@ -48,9 +48,9 @@ public class ViewModelTest {
             Thread.sleep(2000);
             host.getConnectedPlayers().get(2).setScore(5);
             System.out.println("\n>>> taking tile from bag <<<");
-            viewModel.takeTileFromBag();
+//            viewModel.takeTileFromBag();
 
-//            guest2.tryPlaceWord("week", 7, 7, true);
+            guest2.tryPlaceWord("week", 7, 7, true);
             Thread.sleep(5000);
             System.out.println("\n>>> closing connections <<<");
 //            viewModel.getModel().closeConnection();

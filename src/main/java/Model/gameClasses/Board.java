@@ -220,7 +220,7 @@ public class Board {
      * @param word a given word that the user might place.
      * @return a list of words that are created by the given word.
      */
-    private ArrayList<Word> getWords(Word word) {
+    public ArrayList<Word> getWords(Word word) {
         ArrayList<Word> createdWords = new ArrayList<Word>();
         int col = word.getCol();
         int row = word.getRow();
