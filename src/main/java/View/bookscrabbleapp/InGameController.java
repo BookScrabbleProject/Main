@@ -178,16 +178,21 @@ public class InGameController implements Observer, Initializable {
             if(playersNames[i]==null) continue;
             if(ViewModel.getViewModel().getPlayers().get(i).getId()==ViewModel.getViewModel().getCurrentPlayerId()){
                 playersImagesCircles[i].setStroke(Color.RED);
-                resetBtn.setDisable(false);
-                undoBtn.setDisable(false);
-                finishTurnBtn.setDisable(false);
             }
             else{
                 playersImagesCircles[i].setStroke(Color.BLACK);
-                resetBtn.setDisable(true);
-                undoBtn.setDisable(true);
-                finishTurnBtn.setDisable(true);
             }
+        }
+
+        if (ViewModel.getViewModel().getMyPlayer().getId() == ViewModel.getViewModel().getCurrentPlayerId()) {
+            resetBtn.setDisable(false);
+            undoBtn.setDisable(false);
+            finishTurnBtn.setDisable(false);
+        }
+        else{
+            resetBtn.setDisable(true);
+            undoBtn.setDisable(true);
+            finishTurnBtn.setDisable(true);
         }
 
     }
