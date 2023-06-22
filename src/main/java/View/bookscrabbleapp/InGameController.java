@@ -22,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import General.MethodsNames;
@@ -90,6 +91,7 @@ public class InGameController implements Observer, Initializable {
     @FXML
     private Circle myPlayerImageCircle;
 
+    private Image userIcon = new Image(getClass().getResource("/Images/userIcon.jpg").toExternalForm());
 
     Label[] playersNames = new Label[4];
     Label[] playersScores = new Label[4];
@@ -99,6 +101,8 @@ public class InGameController implements Observer, Initializable {
 
     boolean isGameStarted = false;
     Character pickedTile = null;
+
+    //in every index we can find the player's id. the first player that we see in the game is the player in index 0 with id X
     int[] playersPosition = new int[4];
 
 
@@ -133,7 +137,6 @@ public class InGameController implements Observer, Initializable {
             char myC = 'a';
             for(int i=0; i<15;i++){
                 for(int j=0; j<15;j++){
-
                     Image tile = new Image(getClass().getResource("/Images/Tiles/"+myC+"Letter.png").toExternalForm());
                     myC++;
                     if(myC>'z') myC = 'a';
@@ -262,7 +265,10 @@ public class InGameController implements Observer, Initializable {
         }
         isGameStarted = true;
         setHand();
-        fillPlayersDetails();
+        fillPlayersDetails();;
+        myPlayerImageCircle.setFill(new ImagePattern(userIcon));
+
+
         numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
         numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
 
@@ -294,7 +300,7 @@ public class InGameController implements Observer, Initializable {
             player1Score.setText(0+" pts");
             player1Name.setVisible(true);
             player1Score.setVisible(true);
-            //player1Image.setVisible(true);
+            player1ImageCircle.setFill(new ImagePattern(userIcon));
             player1ImageCircle.setVisible(true);
             playersPosition[id] = 1;
             playersNames[id] = player1Name;
@@ -307,7 +313,7 @@ public class InGameController implements Observer, Initializable {
             player2Score.setText(0+" pts");
             player2Name.setVisible(true);
             player2Score.setVisible(true);
-            //player2Image.setVisible(true);
+            player2ImageCircle.setFill(new ImagePattern(userIcon));
             player2ImageCircle.setVisible(true);
             playersPosition[id] = 2;
             playersNames[id] = player2Name;
@@ -322,7 +328,7 @@ public class InGameController implements Observer, Initializable {
             player3Score.setText(0+" pts");
             player3Name.setVisible(true);
             player3Score.setVisible(true);
-            //player3Image.setVisible(true);
+            player3ImageCircle.setFill(new ImagePattern(userIcon));
             player3ImageCircle.setVisible(true);
             playersPosition[id] = 3;
             playersNames[id] = player3Name;
