@@ -279,6 +279,13 @@ public class HostModel extends PlayerModel implements Observer {
         return -1;
     }
 
+    private String tilesToString(Tile[] tiles) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Tile tile : tiles)
+            stringBuilder.append(tile.letter);
+        return stringBuilder.toString();
+    }
+
     /**
      * A method that try to place the word on the board
      * create tile[] from the string word, create Word.
@@ -325,6 +332,10 @@ public class HostModel extends PlayerModel implements Observer {
             for (Character c : wordFromPlayers.toCharArray())
                 connectedPlayers.get(requestedId).getTiles().remove(c);
 
+            List<Word> words = board.getWords(w);
+            List<String> wordsStrings = words.stream().map(currentWord->tilesToString(currentWord.getTiles())).collect(Collectors.toList());
+
+
             connectedPlayers.get(requestedId).addScore(lastWordScore);
             toAllPlayers.append(requestedId).append(":" + MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append("\n");
             toNotify.append(MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append('\n');
@@ -342,7 +353,7 @@ public class HostModel extends PlayerModel implements Observer {
             toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append('\n');
 
             toAllPlayers.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append("\n");
-            toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append('\n');
+            toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(String.valueOf(lastWordScore)).append(",").append(String.join(",", wordsStrings)).append('\n');
         } else {
             toSpecificPlayer.append(requestedId).append(":" + MethodsNames.TRY_PLACE_WORD + ":0").append("\n");
             toNotify.append(MethodsNames.TRY_PLACE_WORD + ":0").append('\n');
