@@ -111,7 +111,7 @@ public class HostModel extends PlayerModel implements Observer {
             toAllPlayers.append(p.getId()).append(":" + MethodsNames.SCORE_UPDATED + ":").append(p.getScore()).append("\n");
             hostServer.sendToSpecificPlayer(p.getId(), "0:" + MethodsNames.SET_HAND + ":" + handToString(p.getTiles()) + "\n");
         }
-        setCurrentPlayerId(0);
+        setCurrentPlayerId(myPlayer.getId());
 
         toAllPlayers.append(0).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(getCurrentPlayerId()).append("\n");
         toAllPlayers.append(0).append(":" + MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED + ":").append(bag.totalTiles).append("\n");
