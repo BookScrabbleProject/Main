@@ -122,7 +122,7 @@ public class ViewModel extends Observable implements Observer {
      */
     public void tryPlaceWord() {
         if (isChangeValid()) {
-            model.tryPlaceWord(getWord(), getWordStartRow(), getWordStartCol(), isWordVertical());
+            model.tryPlaceWord(getWord(), getWordStartCol(), getWordStartRow(), isWordVertical());
             word = null;
             wordStartRow = -1;
             wordStartCol = -1;
