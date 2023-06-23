@@ -9,18 +9,18 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.LobbyController">
+<AnchorPane prefHeight="449.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.LobbyController">
    <children>
       <Button fx:id="startGameBtn" layoutX="220.0" layoutY="285.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="39.0" prefWidth="170.0" style="-fx-background-color: GREEN;" text="Start Game" textAlignment="CENTER" textFill="WHITE" visible="false">
          <font>
             <Font name="System Bold" size="13.0" />
          </font></Button>
-      <Text fx:id="welcomeText" layoutX="172.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to the Lobby!" textAlignment="CENTER" wrappingWidth="257.21630859375">
+      <Text fx:id="welcomeText" layoutX="172.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to the Lobby!" textAlignment="CENTER" underline="true" wrappingWidth="257.21630859375">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <Text layoutX="235.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Connected Players:" textAlignment="CENTER" wrappingWidth="134.2356439626651" />
+      <Text layoutX="235.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Connected Players:" textAlignment="CENTER" underline="true" wrappingWidth="134.2356439626651" />
       <VBox layoutX="238.0" layoutY="159.0" prefHeight="105.0" prefWidth="128.0" spacing="10.0" AnchorPane.topAnchor="159.0">
          <children>
             <Label fx:id="player1Name" />
@@ -33,13 +33,13 @@
          <children>
             <HBox>
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="IP:" wrappingWidth="15.21630859375" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="IP:" underline="true" wrappingWidth="15.21630859375" />
                   <Label fx:id="ip" prefHeight="17.0" prefWidth="116.0" />
                </children>
             </HBox>
             <HBox>
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Port:" wrappingWidth="29.21630859375">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Port:" underline="true" wrappingWidth="29.21630859375">
                      <HBox.margin>
                         <Insets top="1.0" />
                      </HBox.margin>
@@ -49,5 +49,10 @@
             </HBox>
          </children>
       </VBox>
+      <Button fx:id="backBtn" layoutX="40.0" layoutY="410.0" mnemonicParsing="false" onMouseClicked="#moveToLoginScene" style="-fx-background-color: #dc3545;" text="Go back" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Button>
+      <Label fx:id="waitingForHost" layoutX="225.0" layoutY="296.0" text="Waiting for host to start game" textAlignment="CENTER" visible="false" />
    </children>
 </AnchorPane>
