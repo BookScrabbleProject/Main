@@ -19,7 +19,7 @@ public class ViewModelTest {
             GuestModel guest = new GuestModel("localhost", 1235, "guest");
 
             ViewModel viewModel = ViewModel.getViewModel();
-            viewModel.setModel(host);
+            viewModel.setModel(guest);
             System.out.println(">>> connecting to host (guest1-VM) <<<");
             guest.connectToHostServer();
 
@@ -62,6 +62,8 @@ public class ViewModelTest {
             viewModel.tryPlaceWord();
             Thread.sleep(1000);
             viewModel.challenge("WEEK");
+            Thread.sleep(1000);
+            viewModel.challenge("SDFGSDFBSDFV");
 
             Thread.sleep(5000);
             System.out.println("\n>>> closing connections <<<");
