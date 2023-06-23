@@ -129,7 +129,7 @@ public class ViewModel extends Observable implements Observer {
             return;
         }
         setChanged();
-        notifyObservers("tryPlaceWordInvalid"); // Todo: update Yuval about it (the case he has to handle)
+        notifyObservers(MethodsNames.INVALID_PLACEMENT); // Todo: update Yuval about it (the case he has to handle)
     }
 
     public void challenge(String word) {
@@ -329,6 +329,7 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.NEW_PLAYER_TURN:
                     setCurrentPlayerId(model.getCurrentPlayerId());
+                    changesList.clear();
                     setChanged();
                     notifyObservers(MethodsNames.NEW_PLAYER_TURN);
                     break;

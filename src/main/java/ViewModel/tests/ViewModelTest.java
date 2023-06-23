@@ -60,6 +60,8 @@ public class ViewModelTest {
             viewModel.changesList.add(d3);
             viewModel.changesList.add(d4);
             viewModel.tryPlaceWord();
+            Thread.sleep(1000);
+            viewModel.challenge("WEEK");
 
             Thread.sleep(5000);
             System.out.println("\n>>> closing connections <<<");
