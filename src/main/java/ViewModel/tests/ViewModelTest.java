@@ -51,19 +51,27 @@ public class ViewModelTest {
             System.out.println("\n>>> taking tile from bag <<<");
 //            viewModel.takeTileFromBag();
 
-            DataChanges d1 = new DataChanges('w', 7, 7);
-            DataChanges d2 = new DataChanges('e', 7, 8);
-            DataChanges d3 = new DataChanges('e', 7, 9);
-            DataChanges d4 = new DataChanges('k', 7, 10);
+            DataChanges d1 = new DataChanges('w', 7, 6);
+            DataChanges d2 = new DataChanges('e', 7, 7);
+            DataChanges d3 = new DataChanges('e', 7, 8);
+            DataChanges d4 = new DataChanges('k', 7, 9);
             viewModel.changesList.add(d1);
             viewModel.changesList.add(d2);
             viewModel.changesList.add(d3);
             viewModel.changesList.add(d4);
             viewModel.tryPlaceWord();
             Thread.sleep(1000);
-            viewModel.challenge("WEEK");
+            viewModel.changesList.clear();
+            DataChanges d10 = new DataChanges('e', 7, 10);
+            DataChanges d20 = new DataChanges('n', 7, 11);
+            DataChanges d30 = new DataChanges('d', 7, 12);
+//            DataChanges d40 = new DataChanges('k', 7, 7);
+            viewModel.changesList.add(d10);
+            viewModel.changesList.add(d20);
+            viewModel.changesList.add(d30);
+//            viewModel.changesList.add(d40);
+            viewModel.tryPlaceWord();
             Thread.sleep(1000);
-            viewModel.challenge("SDFGSDFBSDFV");
 
             Thread.sleep(5000);
             System.out.println("\n>>> closing connections <<<");
