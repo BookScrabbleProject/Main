@@ -550,6 +550,7 @@ public class HostModel extends PlayerModel implements Observer {
         }
         StringBuilder toNotify = new StringBuilder();
         StringBuilder toAllPlayers = new StringBuilder();
+        refillPlayerHand(currentPlayerId);
         currentPlayerId++;
         currentPlayerId %= connectedPlayers.size();
         prevBoard = board.getTiles();
