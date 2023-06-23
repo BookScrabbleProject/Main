@@ -358,7 +358,7 @@ public class InGameController implements Observer, Initializable {
 
         //numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
         //numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
-        myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty);
+        //myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty);
         newPlayerTurn();
         for(int i=0;i<15;i++){
             for(int j=0;j<15;j++){
@@ -486,6 +486,16 @@ public class InGameController implements Observer, Initializable {
         for(DataChanges data: dataChangesList){
             ViewModel.getViewModel().changesList.add(data);
         }
+
+
+
+        System.out.println("------------------View Board before try place word --------------------");
+        for(int i=0;i<15;i++){
+            for(int j=0;j<15;j++){
+                System.out.print(boardStatus[i][j]);
+            }
+            System.out.println("");
+        }
         ViewModel.getViewModel().tryPlaceWord();
     }
 
@@ -549,12 +559,20 @@ public class InGameController implements Observer, Initializable {
 
             case MethodsNames.BOARD_UPDATED:
                 Platform.runLater(()->{
-                    boardStatus = ViewModel.getViewModel().getBoard();
+                    copyBoardStatus();
                     drawBoard();
                 });
                 break;
         }
 
+    }
+
+    private void copyBoardStatus() {
+        for(int i=0;i<15;i++){
+            for(int j=0;j<15;j++){
+                boardStatus[i][j]=ViewModel.getViewModel().getBoard()[i][j];
+            }
+        }
     }
 }
 
