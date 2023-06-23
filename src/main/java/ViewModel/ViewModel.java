@@ -307,6 +307,8 @@ public class ViewModel extends Observable implements Observer {
             switch (methodName) {
                 case MethodsNames.BOARD_UPDATED:
                     setBoard(model.getBoardStatus());
+                    setChanged();
+                    notifyObservers(MethodsNames.BOARD_UPDATED);
                     break;
 
                 case MethodsNames.SCORE_UPDATED:
