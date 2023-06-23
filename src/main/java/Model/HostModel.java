@@ -27,7 +27,6 @@ public class HostModel extends PlayerModel implements Observer {
     String wordFromPlayers;
     boolean isGameStarted;
     private int maxScore = 0;
-    private final Thread challengeTimerThread;
 
     private boolean isChallengeClicked = false;
 
@@ -54,21 +53,6 @@ public class HostModel extends PlayerModel implements Observer {
         wordFromPlayers = null;
         isGameStarted = false;
         maxScore = 100;
-        challengeTimerThread = new Thread(() -> {
-            System.out.println("challenge timer started");
-            try {
-                Thread.sleep(7500);
-                StringBuilder toAllPlayers = new StringBuilder();
-                toAllPlayers.append("0:").append(MethodsNames.CLOSE_CHALLENGE_ALERT).append("\n");
-                if(!isChallengeClicked)
-                    passTheTurn();
-                hostServer.sendToAllPlayers(toAllPlayers.toString());
-                setChanged();
-                notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     /**
@@ -387,7 +371,21 @@ public class HostModel extends PlayerModel implements Observer {
     }
 
     private void startChallengeTimer() {
-        challengeTimerThread.start();
+        new Thread(() -> {
+            System.out.println("challenge timer started");
+            try {
+                Thread.sleep(7500);
+                StringBuilder toAllPlayers = new StringBuilder();
+                toAllPlayers.append("0:").append(MethodsNames.CLOSE_CHALLENGE_ALERT).append("\n");
+                if(!isChallengeClicked)
+                    passTheTurn();
+                hostServer.sendToAllPlayers(toAllPlayers.toString());
+                setChanged();
+                notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     /**

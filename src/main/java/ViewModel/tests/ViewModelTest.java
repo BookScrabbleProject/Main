@@ -60,20 +60,24 @@ public class ViewModelTest {
             viewModel.changesList.add(d3);
             viewModel.changesList.add(d4);
             viewModel.tryPlaceWord();
-            Thread.sleep(1000);
+            Thread.sleep(8000);
             viewModel.changesList.clear();
             DataChanges d10 = new DataChanges('e', 7, 10);
             DataChanges d20 = new DataChanges('n', 7, 11);
             DataChanges d30 = new DataChanges('d', 7, 12);
+            viewModel.resetModel();
+            viewModel.setModel(guest2);
 //            DataChanges d40 = new DataChanges('k', 7, 7);
             viewModel.changesList.add(d10);
             viewModel.changesList.add(d20);
             viewModel.changesList.add(d30);
 //            viewModel.changesList.add(d40);
             viewModel.tryPlaceWord();
-            Thread.sleep(1000);
+            Thread.sleep(30000);
 
-            Thread.sleep(5000);
+//            Thread.sleep(60000);
+
+
             System.out.println("\n>>> closing connections <<<");
 //            viewModel.getModel().closeConnection();
             viewModel.close();
