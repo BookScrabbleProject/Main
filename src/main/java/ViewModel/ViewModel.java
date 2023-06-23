@@ -33,6 +33,9 @@ public class ViewModel extends Observable implements Observer {
         model = null;
         this.tilesScores = new HashMap<>();
         this.board = new Character[15][15];
+        for (int i = 0; i < this.board.length; i++) {
+            Arrays.fill(this.board[i], '_');
+        }
         this.changesList = new ArrayList<>();
         this.currentPlayerId = -1;
         this.numberOfTilesInBag = 0;
@@ -162,15 +165,75 @@ public class ViewModel extends Observable implements Observer {
         return numberOfColRowChanges == sortedChangesList.size() - 1;
     }
 
-    /**
-     * @return the word that the player is trying to place
-     */
     private String getWord() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         StringBuilder sb = new StringBuilder();
         if (isWordVertical()) {
+            this.wordStartRow = sortedChangesList.get(0).getNewRow();
+            while (this.wordStartRow > 0 && board[this.wordStartRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                this.wordStartRow--;
+            }
+            for (int i = this.wordStartRow; i < sortedChangesList.get(0).getNewRow(); i++) {
+                sb.append(board[i][sortedChangesList.get(0).getNewCol()]);
+            }
+
+            for (int i = sortedChangesList.get(0).getNewRow(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i++) {
+                if (board[i][sortedChangesList.get(0).getNewCol()] == '_') {
+                    sb.append(sortedChangesList.get(0).getLetter());
+                } else {
+                    sb.append(board[i][sortedChangesList.get(0).getNewCol()]);
+                    i--;
+                }
+            }
+
+            int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                endRow++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow() + 1; i <= endRow; i++) {
+                sb.append(board[i][sortedChangesList.get(0).getNewCol()]);
+            }
+        } else {
+            this.wordStartCol = sortedChangesList.get(0).getNewCol();
+            while (this.wordStartCol > 0 && board[sortedChangesList.get(0).getNewRow()][this.wordStartCol - 1] != '_') {
+                this.wordStartCol--;
+            }
+            for (int i = this.wordStartCol; i < sortedChangesList.get(0).getNewCol(); i++) {
+                sb.append(board[sortedChangesList.get(0).getNewRow()][i]);
+            }
+
+            int changeIndex = 0;
+            for (int i = sortedChangesList.get(0).getNewCol(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewCol(); i++, changeIndex++) {
+                if (board[sortedChangesList.get(0).getNewRow()][i] == '_') {
+                    sb.append(sortedChangesList.get(changeIndex).getLetter());
+                } else {
+                    sb.append(board[sortedChangesList.get(0).getNewRow()][i]);
+                    changeIndex--;
+                }
+            }
+
+            int endCol = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol();
+            while (endCol < 14 && board[sortedChangesList.get(0).getNewRow()][endCol + 1] != '_') {
+                endCol++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol() + 1; i <= endCol; i++) {
+                sb.append(board[sortedChangesList.get(0).getNewRow()][i]);
+            }
+        }
+        System.out.println("word: " + sb.toString());
+        this.word = sb.toString();
+        return this.word;
+    }
+
+    /**
+     * @return the word that the player is trying to place
+     */
+    private String getWord_old() {
+        List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
+        StringBuilder sb = new StringBuilder();
+        if (isWordVertical()) {
             int startRow = sortedChangesList.get(0).getNewRow();
-            while (startRow > 0 && board[startRow - 1][sortedChangesList.get(0).getNewCol()] != null) {
+            while (startRow > 0 && board[startRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
                 startRow--;
             }
             for (int i = startRow; i < sortedChangesList.get(0).getNewRow(); i++) {
@@ -200,7 +263,7 @@ public class ViewModel extends Observable implements Observer {
 
         if (isWordVertical()) {
             int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
-            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != null) {
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
                 endRow++;
             }
             for (int i = endRow; i > sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i--) {
