@@ -73,7 +73,7 @@ public class ViewModelTest {
             viewModel.changesList.add(d30);
 //            viewModel.changesList.add(d40);
             viewModel.tryPlaceWord();
-            Thread.sleep(30000);
+            Thread.sleep(5000);
 
 //            Thread.sleep(60000);
 

@@ -171,12 +171,12 @@ public class ViewModel extends Observable implements Observer {
         this.wordStartCol = sortedChangesList.get(0).getNewCol();
         this.wordStartRow = sortedChangesList.get(0).getNewRow();
         if (isWordVertical()) {
-//            while (this.wordStartRow > 0 && board[this.wordStartRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
-//                this.wordStartRow--;
-//            }
-//            for (int i = this.wordStartRow; i < sortedChangesList.get(0).getNewRow(); i++) {
-//                sb.append(board[i][sortedChangesList.get(0).getNewCol()]);
-//            }
+            while (this.wordStartRow > 0 && board[this.wordStartRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                this.wordStartRow--;
+            }
+            for (int i = this.wordStartRow; i < sortedChangesList.get(0).getNewRow(); i++) {
+                sb.append('_');
+            }
             int changeIndex = 0;
             for (int i = sortedChangesList.get(0).getNewRow(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i++, changeIndex++) {
                 if (board[i][sortedChangesList.get(0).getNewCol()] == '_') {
@@ -186,21 +186,21 @@ public class ViewModel extends Observable implements Observer {
                     i--;
                 }
             }
-//
-//            int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
-//            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
-//                endRow++;
-//            }
-//            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow() + 1; i <= endRow; i++) {
-//                sb.append(board[i][sortedChangesList.get(0).getNewCol()]);
-//            }
+
+            int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                endRow++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow() + 1; i <= endRow; i++) {
+                sb.append('_');
+            }
         } else {
-//            while (this.wordStartCol > 0 && board[sortedChangesList.get(0).getNewRow()][this.wordStartCol - 1] != '_') {
-//                this.wordStartCol--;
-//            }
-//            for (int i = this.wordStartCol; i < sortedChangesList.get(0).getNewCol(); i++) {
-//                sb.append(board[sortedChangesList.get(0).getNewRow()][i]);
-//            }
+            while (this.wordStartCol > 0 && board[sortedChangesList.get(0).getNewRow()][this.wordStartCol - 1] != '_') {
+                this.wordStartCol--;
+            }
+            for (int i = this.wordStartCol; i < sortedChangesList.get(0).getNewCol(); i++) {
+                sb.append('_');
+            }
 
             int changeIndex = 0;
             for (int i = sortedChangesList.get(0).getNewCol(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewCol(); i++, changeIndex++) {
@@ -212,13 +212,13 @@ public class ViewModel extends Observable implements Observer {
                 }
             }
 
-//            int endCol = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol();
-//            while (endCol < 14 && board[sortedChangesList.get(0).getNewRow()][endCol + 1] != '_') {
-//                endCol++;
-//            }
-//            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol() + 1; i <= endCol; i++) {
-//                sb.append(board[sortedChangesList.get(0).getNewRow()][i]);
-//            }
+            int endCol = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol();
+            while (endCol < 14 && board[sortedChangesList.get(0).getNewRow()][endCol + 1] != '_') {
+                endCol++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol() + 1; i <= endCol; i++) {
+                sb.append('_');
+            }
         }
 
         this.word = sb.toString().toLowerCase();
