@@ -410,21 +410,26 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder toNotify = new StringBuilder();
         StringBuilder toSpecificPlayer = new StringBuilder();
         StringBuilder toAllPlayers = new StringBuilder();
+
         board.setTiles(prevBoard);
-        connectedPlayers.get(currentPlayerId).setScore(connectedPlayers.get(currentPlayerId).getScore() - lastWordScore);
-        connectedPlayers.get(currentPlayerId).addTiles(wordFromPlayers);
         toAllPlayers.append(0).append(":" + MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append("\n");
         toNotify.append(MethodsNames.BOARD_UPDATED).append("\n");
+
+        connectedPlayers.get(currentPlayerId).addTiles(wordFromPlayers);
         toSpecificPlayer.append(currentPlayerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(currentPlayerId).getTiles())).append("\n");
         toAllPlayers.append(currentPlayerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(currentPlayerId).getTiles().size()).append("\n");
         toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append("\n");
+
+        connectedPlayers.get(currentPlayerId).setScore(connectedPlayers.get(currentPlayerId).getScore() - lastWordScore);
         toAllPlayers.append(0).append(":" + MethodsNames.SCORE_UPDATED + ":").append(String.valueOf(connectedPlayers.get(currentPlayerId).getScore())).append("\n");
         toNotify.append(MethodsNames.SCORE_UPDATED).append("\n");
+
         toAllPlayers.append(requestedId).append(":" + MethodsNames.CHALLENGE + ":0,").append(word).append("\n");
         toNotify.append(MethodsNames.CHALLENGE + ":0,").append(word).append('\n');
-        setChanged();
+
         hostServer.sendToSpecificPlayer(currentPlayerId, toSpecificPlayer.toString());
         hostServer.sendToAllPlayers(toAllPlayers.toString());
+        setChanged();
         notifyObservers(toNotify.toString());
     }
 
@@ -432,10 +437,12 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder toNotify = new StringBuilder();
         StringBuilder toSpecificPlayer = new StringBuilder();
         StringBuilder toAllPlayers = new StringBuilder();
+
         refillPlayerHand(currentPlayerId);
         connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
         toSpecificPlayer.append(currentPlayerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(currentPlayerId).getTiles())).append("\n");
         toAllPlayers.append(currentPlayerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(currentPlayerId).getTiles().size()).append("\n");
+
         passTheTurn();
         toAllPlayers.append(requestedId).append(":" + MethodsNames.CHALLENGE + ":1,").append(word).append("\n");
         requestedId = -1;
