@@ -15,7 +15,7 @@ public class PlayerVVM {
 
     public PlayerVVM(int id, String name) {
         nameProperty = new SimpleStringProperty(name);
-        scoreProperty = new SimpleStringProperty("0");
+        scoreProperty = new SimpleStringProperty("0 pts");
         numberOfTilesProperty = new SimpleStringProperty("0");
         setId(id);
         setName(name);
@@ -25,7 +25,7 @@ public class PlayerVVM {
 
     public PlayerVVM(int id, String name, int score, int numberOfTiles) {
         nameProperty = new SimpleStringProperty(name);
-        scoreProperty = new SimpleStringProperty("0");
+        scoreProperty = new SimpleStringProperty("0 pts");
         numberOfTilesProperty = new SimpleStringProperty("0");
         setId(id);
         setName(name);
@@ -56,7 +56,7 @@ public class PlayerVVM {
 
     public void setScore(int score) {
         this.score = score;
-        this.scoreProperty.setValue(String.valueOf(score));
+        this.scoreProperty.setValue(score + " pts");
     }
 
     public int getNumberOfTiles() {
