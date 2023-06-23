@@ -140,18 +140,22 @@ public class Board {
         int col = word.getCol();
         int row = word.getRow();
         int len = word.getTiles().length;
-        if (word.getTiles().length < 1)
+        if (word.getTiles().length < 1){
             return false;
+        }
         //If the center square is null - so it's the first turn -
         // we must check that the word pass in the Star square
         if (!isWordInBorders(word)) {
+            System.out.println("BOARD_LEGAL: IF 2");
             return false;
         }
         if (gameBoard[7][7].getTile() == null) {
+            System.out.println("BOARD_LEGAL: IF 3");
             return isWordOnStarSquare(word);
         }
 
         //not the first word on the boarder
+        System.out.println("BOARD_LEGAL: IF 4 && 5");
         return (isLeaning(word) && donotReplaceLetter(word));
         /*if(!donotReplaceLetter(word)){//changes the word
             return false;
@@ -399,107 +403,6 @@ public class Board {
         }
     }
 
-    /*
-    //////////////Old Functions instead of GetWord///////////////////
-
-    //finds new word from left
-    private Word leftWord(int row, int col, Word w, int index) {
-        Word toReturn;
-        Tile[] wordTiles;
-        int startCol = col;
-        int endCol = col;
-        int len;
-
-        while (startCol - 1 >= 0 && gameBoard[row][col - 1] != null)
-            startCol--;
-        while ((endCol + 1 < size && gameBoard[row][startCol + 1] != null) || endCol<col)
-            endCol++;
-        if(!w.isVertical())
-            endCol=w.getCol()-1+w.getTiles().length;
-        len = endCol - startCol + 1;
-        wordTiles = new Tile[len];
-        for (int i = 0; i < len; i++) {
-            wordTiles[i] = gameBoard[row][startCol + i].getTile();
-            if(wordTiles[i]==null) {
-                wordTiles[i] = w.getTiles()[index];
-                index++;
-            }
-        }
-        toReturn = new Word(wordTiles, row, startCol, false);
-        return toReturn;
-    }
-
-    //finds new word from right
-    private Word rightWord(int row, int col, Word w, int index) {
-        Word toReturn;
-        Tile[] wordTiles;
-        int startCol = col;
-        int endCol = col;
-        int len;
-        while (endCol + 1 < size && gameBoard[row][endCol + 1].getTile() != null)
-            endCol++;
-        len = endCol - startCol + 1;
-        wordTiles = new Tile[len];
-        for (int i = 0; i < len; i++) {
-            wordTiles[i] = gameBoard[row][col + i].getTile();
-            if(wordTiles[i]==null){
-                wordTiles[i] = w.getTiles()[index];
-            }
-        }
-        toReturn = new Word(wordTiles, row, startCol, false);
-        return toReturn;
-    }
-
-    //finds new word from top
-    private Word topWord(int row, int col, Word w, int index) {
-        Word toReturn;
-        Tile[] wordTiles;
-        int startRow = row;
-        int endRow = row;
-        int len;
-
-
-
-        while (startRow - 1 >= 0 && gameBoard[startRow - 1][col].getTile() != null)
-            startRow--;
-        while ((endRow + 1 < size && gameBoard[endRow + 1][col].getTile() != null) || endRow<row)
-            endRow++;
-        if(w.isVertical()) //added
-            endRow=w.getRow()-1+w.getTiles().length; //added
-        len = endRow - startRow + 1;
-        wordTiles = new Tile[len];
-        for (int i = 0; i < len; i++) {
-            wordTiles[i] = gameBoard[startRow + i][col].getTile();
-            if(wordTiles[i]==null) {
-                wordTiles[i] = w.getTiles()[index];
-                index++; //added
-            }
-        }
-
-        toReturn = new Word(wordTiles, startRow, col, true);
-        return toReturn;
-    }
-
-    //finds new word from bottom
-    private Word bottomWord(int row, int col, Word w, int index) {
-        Word toReturn;
-        Tile[] wordTiles;
-        int startRow = row;
-        int endRow = row;
-        int len;
-        while (endRow + 1 < size && gameBoard[endRow + 1][col].getTile() != null)
-            endRow++;
-        len = endRow - startRow + 1;
-        wordTiles = new Tile[len];
-        for (int i = 0; i < len; i++) {
-            wordTiles[i] = gameBoard[startRow + i][col].getTile();
-            if(wordTiles[i]==null){
-                wordTiles[i] = w.getTiles()[index];
-            }
-        }
-        toReturn = new Word(wordTiles, startRow, col, true);
-        return toReturn;
-    }*/
 
     /**
      * Checks if the whole word is inside the board borders.
@@ -530,17 +433,20 @@ public class Board {
     private boolean isWordOnStarSquare(Word word) {
         int col = word.getCol();
         int row = word.getRow();
-        int len = word.getTiles().length;
+        int len = word.getTiles().length;;
 
         if (word.isVertical()) {
-            if (col != 7 || row > 7 || row + size - 1 < 7) {
+            System.out.println("IS WORD ON STAR SQUARE: VERTICAL" + row + " " + col + " " + len  );
+            if (col != 7 || row > 7 || row + len - 1 < 7) {
                 return false;
             }
         } else {
-            if (row != 7 || col > 7 || col + size - 1 < 7) {
+            System.out.println("IS WORD ON STAR SQUARE:HORIZONTAL"  );
+            if (row != 7 || col > 7 || col + len - 1 < 7) {
                 return false;
             }
         }
+        System.out.println("IS WORD ON STAR SQUARE: TRUE");
         return true;
     }
 
@@ -595,11 +501,7 @@ public class Board {
         return false;
     }
 
-    /**
-     * gets the full word without null tiles
-     * @param word a given word that could be with under lines (for example F_RM).
-     * @return the full word
-     */
+
     private Word fullWord(Word word) {
         int len = word.getTiles().length;
         int col = word.getCol();

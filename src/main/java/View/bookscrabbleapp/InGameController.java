@@ -201,6 +201,7 @@ public class InGameController implements Observer, Initializable {
             undoBtn.setDisable(true);
             finishTurnBtn.setDisable(true);
         }
+        setHand();
 
     }
 
@@ -210,6 +211,7 @@ public class InGameController implements Observer, Initializable {
         if(tilesInHandGrid.getChildren().size() > 0)
             tilesInHandGrid.getChildren().clear();
         if(ViewModel.getViewModel().getMyPlayer().getHand() == null || ViewModel.getViewModel().getMyPlayer().getHand().size()==0 ) return;
+        System.out.println(String.join(",", ViewModel.getViewModel().getMyPlayer().getHand().stream().map(c->c.toString()).collect(Collectors.toList())));
         for(int i = 0; i< ViewModel.getViewModel().getMyPlayer().getHand().size(); i++) {
             Character myC = ViewModel.getViewModel().getMyPlayer().getHand().get(i);
             Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
@@ -223,6 +225,7 @@ public class InGameController implements Observer, Initializable {
                 if(sp.isVisible())
                     tileInHandClickHandler(event, finalI, myC);
             });
+            sp.setVisible(true);
             tilesInHandGrid.add(sp, i, 0);
 
             System.out.println("Added stackpane to hand gridpane");
@@ -353,8 +356,8 @@ public class InGameController implements Observer, Initializable {
         fillPlayersDetails();
         myPlayerImageCircle.setFill(new ImagePattern(userIcon));
 
-        numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
-        numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
+        //numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
+        //numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
         myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty);
         newPlayerTurn();
         for(int i=0;i<15;i++){
@@ -384,7 +387,7 @@ public class InGameController implements Observer, Initializable {
     public void insertPlayerDetails(String name, int id){
         if(player1Name.getText().equals("")){
             player1Name.setText(name);
-            player1Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
+            //player1Score.textProperty().bindBidirectional(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
             player1Name.setVisible(true);
             player1Score.setVisible(true);
             player1ImageCircle.setFill(new ImagePattern(userIcon));
@@ -397,7 +400,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player2Name.getText().equals("")){
             player2Name.setText(name);
-            player2Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
+            //player2Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
             player2Name.setVisible(true);
             player2Score.setVisible(true);
             player2ImageCircle.setFill(new ImagePattern(userIcon));
@@ -412,7 +415,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player3Name.getText().equals("")){
             player3Name.setText(name);
-            player3Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
+            //player3Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
             player3Name.setVisible(true);
             player3Score.setVisible(true);
             player3ImageCircle.setFill(new ImagePattern(userIcon));
@@ -425,6 +428,11 @@ public class InGameController implements Observer, Initializable {
         }
     }
 
+    /**
+     * this function is called when the user clicks on undo button
+     * it will undo the last move that the user did
+     * it will remove the last tile that the user put on the board and will return it to the hand
+     */
     public void undoBtnClickHandler(){
         if(dataChangesList.size()==0 || indexChangesList.size()==0) return;
         DataChanges toRemove = dataChangesList.get(dataChangesList.size()-1);
@@ -435,12 +443,20 @@ public class InGameController implements Observer, Initializable {
         indexChangesList.remove(indexChangesList.size()-1);
     }
 
+    /**
+     * this function is called when the user clicks on reset button
+     * it will undo all the moves that the user did
+     * it will remove all the tiles that the user put on the board and will return them to the hand
+     */
     public void resetBtnClickHandler(){
         while(dataChangesList.size()!=0){
             undoBtnClickHandler();
         }
     }
 
+    /**
+     * this function iterates through the boardStatus and draws the board
+     */
     public void drawBoard(){
         gridPane.getChildren().clear();
         for(int i=0;i<15;i++){
@@ -460,6 +476,11 @@ public class InGameController implements Observer, Initializable {
         }
     }
 
+    /**
+     * this function is called when the user clicks on the finish my turn button
+     * it will clear the changes list in the viewModel
+     * it will send the changes that the user did to the viewModel and will try to place the word
+     */
     public void finishMyTurnBtnHandler(){
         ViewModel.getViewModel().changesList.clear();
         for(DataChanges data: dataChangesList){
