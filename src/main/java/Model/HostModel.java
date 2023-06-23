@@ -29,6 +29,8 @@ public class HostModel extends PlayerModel implements Observer {
     private int maxScore = 0;
     private final Thread challengeTimerThread;
 
+    private boolean isChallengeClicked = false;
+
     /**
      * Default constructor method to the host model
      * create map from id to player
@@ -56,7 +58,11 @@ public class HostModel extends PlayerModel implements Observer {
             System.out.println("challenge timer started");
             try {
                 Thread.sleep(7500);
-                hostServer.sendToAllPlayers("0:"+MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+                StringBuilder toAllPlayers = new StringBuilder();
+                toAllPlayers.append("0:").append(MethodsNames.CLOSE_CHALLENGE_ALERT).append("\n");
+                if(!isChallengeClicked)
+                    passTheTurn();
+                hostServer.sendToAllPlayers(toAllPlayers.toString());
                 setChanged();
                 notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
             } catch (InterruptedException e) {
@@ -393,6 +399,7 @@ public class HostModel extends PlayerModel implements Observer {
      */
     @Override
     public void challenge(String word) {
+        isChallengeClicked = true;
         if (requestedId == -1)
             requestedId = myPlayer.getId();
         Socket bookScrabbleSocket = hostServer.sendToBookScrabbleServer("C", word);
@@ -536,6 +543,7 @@ public class HostModel extends PlayerModel implements Observer {
      * notify to the binding objects by a format - requestedId + ":" + method + ":" + inputs
      */
     public void passTheTurn() {
+        isChallengeClicked = false;
         if(isPlayerWon()){
             endGameWithWinner();
             return;
