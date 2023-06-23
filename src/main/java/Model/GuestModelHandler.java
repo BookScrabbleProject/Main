@@ -16,6 +16,7 @@ public class GuestModelHandler implements ClientHandler {
             Scanner lineScanner =  new Scanner(new BufferedReader(new InputStreamReader(inFromclient)));
             PrintWriter sendToGuest = new PrintWriter(outToClient);
             line = lineScanner.next();
+            System.out.println("GuestModelHandler: " + line);
             String[] splitted = line.split(":");
             String id = splitted[0];
             String methodName = splitted[1];
@@ -48,6 +49,8 @@ public class GuestModelHandler implements ClientHandler {
             }
 
         } catch (Exception e) {
+//            System.out.println("GuestModelHandler Catch: ");
+//            e.printStackTrace();
         }
     }
 

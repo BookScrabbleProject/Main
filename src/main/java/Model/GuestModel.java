@@ -200,7 +200,7 @@ public class GuestModel extends PlayerModel implements Observer {
             try {
                 arguments = splitedArgString[2].split(",");
             } catch (Exception e) {
-                System.out.println("error");
+//                System.out.println(">>>> GM update: try to split arguments from splitedArgString[2] but there are no arguments\nmsg: " + argString + " <<<");
             }
 
 
