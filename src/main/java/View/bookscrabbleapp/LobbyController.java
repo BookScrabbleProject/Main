@@ -1,6 +1,7 @@
 package View.bookscrabbleapp;
 import ViewModel.*;
 import View.LoginData;
+import ViewModel.ViewModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,10 +38,6 @@ public class LobbyController implements Initializable, Observer {
     Label port;
     @FXML
     Text welcomeText;
-    @FXML
-    Label waitingForHost;
-    @FXML
-    Button backBtn;
 
     LoginData ld = LoginData.getLoginData();
     Stage currentStage = new Stage();
@@ -55,10 +52,8 @@ public class LobbyController implements Initializable, Observer {
             startGameBtn.setVisible(true);
             player1Name.setText("Me");
         }
-        else {
+        else
             handlerPlayerList();
-            waitingForHost.setVisible(true);
-        }
         ip.setText(ld.getIp());
         port.setText(String.valueOf(ld.getPort()));
     }
@@ -73,25 +68,6 @@ public class LobbyController implements Initializable, Observer {
         player3Name.setText(arr[2]);
         player4Name.setText(arr[3]);
     }
-    public void moveToLoginScene(){
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
-            //close the current window and change to the root
-            Scene scene = new Scene(root, 650, 500);
-            Stage stage = (Stage) backBtn.getScene().getWindow();
-            stage.close();
-            stage = new Stage();
-            stage.setScene(scene);
-            stage.setOnCloseRequest(e -> {
-                Platform.exit();
-                System.exit(0);
-            });
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void moveInGameScene(){
         try {
             //close my window
