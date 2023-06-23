@@ -56,8 +56,7 @@ public class PlayerVVM {
 
     public void setScore(int score) {
         this.score = score;
-        String scoreString = score + " pts";
-        this.scoreProperty.setValue(scoreString);
+        this.scoreProperty.setValue(score + " pts");
     }
 
     public int getNumberOfTiles() {
