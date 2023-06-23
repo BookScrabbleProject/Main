@@ -140,7 +140,7 @@ public class Board {
         int col = word.getCol();
         int row = word.getRow();
         int len = word.getTiles().length;
-        if (word.getTiles().length < 2)
+        if (word.getTiles().length < 1)
             return false;
         //If the center square is null - so it's the first turn -
         // we must check that the word pass in the Star square
