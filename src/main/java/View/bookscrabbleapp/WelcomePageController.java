@@ -1,5 +1,4 @@
 package View.bookscrabbleapp;
-
 import General.MethodsNames;
 import Model.GuestModel;
 import Model.HostModel;
@@ -20,7 +19,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Observable;
@@ -61,7 +59,9 @@ public class WelcomePageController implements Observer, Initializable {
     AnchorPane welcomePane;
     Boolean isHost = false;
 
-
+    /**
+     * button handler that presents the Input fields for joining an existing lobby
+     */
     public void joinBtnHandler() {
         if (!isHost)
             return;
@@ -79,6 +79,9 @@ public class WelcomePageController implements Observer, Initializable {
         joinBtn.setStyle("-fx-background-color:LightBlue");
     }
 
+    /**
+     * button handler that presents the Input fields for creating a lobby
+     */
     public void createBtnHandler() {
         if (isHost)
             return;
@@ -96,7 +99,12 @@ public class WelcomePageController implements Observer, Initializable {
         joinBtn.setStyle("-fx-background-color:GREY");
     }
 
-
+    /**
+     * this function validates the user's input and if no problems with the input were detected,asks permission from the hostServer to connect
+     * ,and redirects the user to the lobby page
+     * @param actionEvent - the event that we caught
+     *
+     */
     public void initBtnHandler(ActionEvent actionEvent) {
         boolean isError = false;
         if (!validName(nameInput.getText())) {
@@ -151,10 +159,20 @@ public class WelcomePageController implements Observer, Initializable {
         }
     }
 
+    /**
+     *
+     * @param name - the user's name
+     * @return - true if the name isn't empty,false otherwise
+     */
     private boolean validName(String name) {
         return !name.equals("");
     }
 
+    /**
+     *
+     * @param port- the host's port
+     * @return -true if the port is valid,false otherwise
+     */
     private boolean validPort(String port) {
         if (portInput.getText().equals("")) {
             portWarningDiv.setVisible(true);
@@ -175,6 +193,11 @@ public class WelcomePageController implements Observer, Initializable {
         return true;
     }
 
+    /**
+     *
+     * @param ip - the host's ip address
+     * @return - true if the ip address is valid,false otherwise
+     */
     private boolean validIpAddress(String ip) {
         String IP_ADDRESS_PATTERN =
                 "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
@@ -186,6 +209,10 @@ public class WelcomePageController implements Observer, Initializable {
         return true;
     }
 
+    /**
+     * sets background image to the front page of the app
+     * sets this class as an observer of the ViewModel
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ViewModel.getViewModel().addObserver(this);
@@ -197,6 +224,13 @@ public class WelcomePageController implements Observer, Initializable {
 
     }
 
+    /**
+     *
+     * @param o     the observable object.
+     * @param arg   an argument passed to the {@code notifyObservers}
+     *                 method.
+     * example of usage:  methodName:argument1,argument2,argument3....argumentn
+     */
     @Override
     public void update(Observable o, Object arg) {
         String[] arguments = ((String) arg).split(":");
@@ -221,6 +255,9 @@ public class WelcomePageController implements Observer, Initializable {
         }
     }
 
+    /**
+     * moves to the lobby screen of the application
+     */
     private void moveToLobby() {
         try {
             //close my window
