@@ -52,11 +52,11 @@ public class ViewModelTest {
 //            viewModel.takeTileFromBag();
 
             DataChanges d1 = new DataChanges('a', 6, 7);
-            DataChanges d2 = new DataChanges('i', 7, 7);
+//            DataChanges d2 = new DataChanges('i', 7, 7);
             DataChanges d3 = new DataChanges('r', 8, 7);
             DataChanges d4 = new DataChanges('n', 9, 7);
-//            viewModel.changesList.add(d1);
-            viewModel.changesList.add(d2);
+            viewModel.changesList.add(d1);
+//            viewModel.changesList.add(d2);
             viewModel.changesList.add(d3);
             viewModel.changesList.add(d4);
             viewModel.tryPlaceWord();
