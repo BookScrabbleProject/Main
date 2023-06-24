@@ -102,7 +102,6 @@ public class InGameController implements Observer, Initializable {
     private Text waitingChallengeText;
 
     boolean isGameStarted = false;
-    boolean isBoardEmpty = true;
     private Alert challengeAlert;
     private Image userIcon = new Image(getClass().getResource("/Images/userIcon.jpg").toExternalForm());
 
@@ -136,10 +135,7 @@ public class InGameController implements Observer, Initializable {
      * @param e the mouse event
      */
     public void boardClickHandler(MouseEvent e){
-<<<<<<< HEAD
 
-=======
->>>>>>> b6cf0d05500f5928db6d87c17814ef52c0637155
         if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
             return;
         if(lastPickedTile== null || lastPickedTileIndex == -1)
@@ -167,10 +163,7 @@ public class InGameController implements Observer, Initializable {
             boardImage.setVisible(true);
         if(resetBtn.isDisable() || undoBtn.isDisable() || finishTurnBtn.isDisable()) {
             setDisableButtons(false);
-<<<<<<< HEAD
 
-=======
->>>>>>> b6cf0d05500f5928db6d87c17814ef52c0637155
         }
 
 //        if(!isGameStarted) {
@@ -193,12 +186,6 @@ public class InGameController implements Observer, Initializable {
 //        }
 
 
-    }
-
-    private void setDisableButtons(boolean b) {
-        resetBtn.setDisable(b);
-        undoBtn.setDisable(b);
-        finishTurnBtn.setDisable(b);
     }
 
     private void newPlayerTurn() {
@@ -350,12 +337,10 @@ public class InGameController implements Observer, Initializable {
         //todo show to all the players the score that the player will get
     }
 
-<<<<<<< HEAD
-=======
     /**
      * This alert is triggered when the host disconnects from the game, it redirects the guest to the login page
      */
->>>>>>> b6cf0d05500f5928db6d87c17814ef52c0637155
+
     public void showDisconnectionAlert(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Host Has Disconnected");
@@ -721,25 +706,20 @@ public class InGameController implements Observer, Initializable {
         String contentText="The winner is: ";
         for(int i=0;i<playersIdScoreArray.length;i++){
             String[] splitedPlayerIdScore=playersIdScoreArray[i].split("-");
-<<<<<<< HEAD
-            contentText+=playersNames[Integer.parseInt(splitedPlayerIdScore[0])]+" with score: "+splitedPlayerIdScore[1];
-=======
             contentText+=playersNames[Integer.parseInt(splitedPlayerIdScore[0])].getText()+" with score: "+splitedPlayerIdScore[1];
->>>>>>> b6cf0d05500f5928db6d87c17814ef52c0637155
+
             if(i!=playersIdScoreArray.length-1)
                 contentText+="\n";
         }
         alert.setContentText(contentText);
         alert.setOnCloseRequest(event -> {
-<<<<<<< HEAD
+
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
             Platform.runLater(this::moveToLoginScene);
-=======
             System.out.println("Alert Closed");
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
             Platform.runLater(this::moveToLoginScene);
 
->>>>>>> b6cf0d05500f5928db6d87c17814ef52c0637155
         });
         alert.showAndWait();
     }
