@@ -28,6 +28,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import General.MethodsNames;
@@ -97,6 +98,8 @@ public class InGameController implements Observer, Initializable {
     private Circle player3ImageCircle;
     @FXML
     private Circle myPlayerImageCircle;
+    @FXML
+    private Text waitingChallengeText;
 
     boolean isGameStarted = false;
     private Alert challengeAlert;
@@ -111,6 +114,7 @@ public class InGameController implements Observer, Initializable {
     final int BOARD_HGAP = 11;
     final int BOARD_VGAP = 4;
     final int HAND_HGAP = 20;
+    boolean isBoardEmpty = true;
 
     double SQUARE_WIDTH; //the width of each square in the board
     double SQUARE_HEIGHT; //the height of each square in the board
@@ -124,17 +128,13 @@ public class InGameController implements Observer, Initializable {
     ArrayList<DataChanges> dataChangesList = new ArrayList<>();
     ArrayList<Integer> indexChangesList = new ArrayList<>();
 
-
+    /**
+     * this method is called when the user clicks on the board. it checks if the click was on a square in the board
+     * it checks if the user has the turn to play.
+     * it checks if the user has already picked a tile from his hand and if so, it puts the tile on the board
+     * @param e the mouse event
+     */
     public void boardClickHandler(MouseEvent e){
-//        DataChanges data1 = new DataChanges('w', 7,7);
-//        DataChanges data2 = new DataChanges('e', 7,8);
-//        DataChanges data3 = new DataChanges('e', 7,9);
-//        DataChanges data4 = new DataChanges('k', 7,10);
-//        ViewModel.getViewModel().changesList.add(data1);
-//        ViewModel.getViewModel().changesList.add(data2);
-//        ViewModel.getViewModel().changesList.add(data3);
-//        ViewModel.getViewModel().changesList.add(data4);
-//        ViewModel.getViewModel().tryPlaceWord();
         if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
             return;
         if(lastPickedTile== null || lastPickedTileIndex == -1)
@@ -161,34 +161,34 @@ public class InGameController implements Observer, Initializable {
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
         if(resetBtn.isDisable() || undoBtn.isDisable() || finishTurnBtn.isDisable()) {
-            resetBtn.setDisable(false);
-            undoBtn.setDisable(false);
-            finishTurnBtn.setDisable(false);
+            setDisableButtons(false);
         }
 
-        if(!isGameStarted) {
-            char myC = 'a';
-            for(int i=0; i<15;i++){
-                for(int j=0; j<15;j++){
-                    Image tile = new Image(getClass().getResource("/Images/Tiles/"+myC+"Letter.png").toExternalForm());
-                    myC++;
-                    if(myC>'z') myC = 'a';
-                    ImageView iv = new ImageView(tile);
-                    iv.setFitWidth(SQUARE_WIDTH-3);
-                    iv.setFitHeight(SQUARE_HEIGHT-2);
-                    StackPane sp = new StackPane(iv);
-                    sp.setAlignment(Pos.CENTER);
-                    gridPane.add(sp, j, i);
-                    System.out.println(i+","+j);
-                    System.out.println("Added stackpane to gridpane");
-                }
-            }
-        }
+//        if(!isGameStarted) {
+//            char myC = 'a';
+//            for(int i=0; i<15;i++){
+//                for(int j=0; j<15;j++){
+//                    Image tile = new Image(getClass().getResource("/Images/Tiles/"+myC+"Letter.png").toExternalForm());
+//                    myC++;
+//                    if(myC>'z') myC = 'a';
+//                    ImageView iv = new ImageView(tile);
+//                    iv.setFitWidth(SQUARE_WIDTH-3);
+//                    iv.setFitHeight(SQUARE_HEIGHT-2);
+//                    StackPane sp = new StackPane(iv);
+//                    sp.setAlignment(Pos.CENTER);
+//                    gridPane.add(sp, j, i);
+//                    System.out.println(i+","+j);
+//                    System.out.println("Added stackpane to gridpane");
+//                }
+//            }
+//        }
 
 
     }
 
     private void newPlayerTurn() {
+        waitingChallengeText.setVisible(false);
+        tilesInHandGrid.setDisable(false);
         dataChangesList.clear();
         indexChangesList.clear();
         for(int i=0; i<4; i++){
@@ -203,19 +203,19 @@ public class InGameController implements Observer, Initializable {
         }
 
         if (ViewModel.getViewModel().getMyPlayer().getId() == ViewModel.getViewModel().getCurrentPlayerId()) {
-//            resetBtn.setDisable(false);
-//            undoBtn.setDisable(false);
-//            finishTurnBtn.setDisable(false);
+
         }
         else{
-            resetBtn.setDisable(true);
-            undoBtn.setDisable(true);
-            finishTurnBtn.setDisable(true);
+            setDisableButtons(true);
         }
         setHand();
 
     }
 
+    /**
+     * this method is called when the view model notifies the view that the current player's hand has changed
+     * it updates the hand of the current player from the view model
+     */
     private void setHand() {
         double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*6) / 7; //the width of each square
         double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()); //the height of each square
@@ -243,6 +243,13 @@ public class InGameController implements Observer, Initializable {
         }
     }
 
+
+    /**
+     * this method is called when the user clicks on a tile in his hand - it selects the tile and deselects the rest (and keep the character and the index in a variable);
+     * @param event the mouse click
+     * @param index the index of the triggered tile
+     * @param myC the character of the triggered tile
+     */
     private void tileInHandClickHandler(MouseEvent event, int index, Character myC) {
         if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
             return;
@@ -267,6 +274,13 @@ public class InGameController implements Observer, Initializable {
         }
     }
 
+    /**
+     * this method is called when a user wants to add a tile to the board. it updated the board status and the hand status
+     * @param letter the letter of the tile
+     * @param indexInHand the index of the tile in the hand
+     * @param row the row of the desire placement in the board
+     * @param col the column of the desire placement in the board
+     */
     private void addTileToBoard(Character letter, int indexInHand, int row, int col ){
         if(letter==null || indexInHand<0 || indexInHand >=7 || row>14 || row<0 || col>14 || col<0) return;
         if(boardStatus[row][col]!=null && boardStatus[row][col].charValue()>='A' && boardStatus[row][col].charValue()<='Z') return;
@@ -290,6 +304,10 @@ public class InGameController implements Observer, Initializable {
 
     }
 
+    /**
+     * this method is called when a user got a positive answer from the server about his move, and it lets the other players to challenge the server decision.
+     * @param words the words that were created during the turn
+     */
     public void showChallengeAlert(String... words){
         challengeAlert = new Alert(Alert.AlertType.INFORMATION);
         challengeAlert.setTitle("Challenge");
@@ -317,7 +335,10 @@ public class InGameController implements Observer, Initializable {
         //todo show to all the players the score that the player will get
     }
 
-    public void showBackAlert(){
+    /**
+     * This alert is triggered when the host disconnects from the game, it redirects the guest to the login page
+     */
+    public void showDisconnectionAlert(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Host Has Disconnected");
         alert.setHeaderText("Host Has Disconnected");
@@ -336,6 +357,9 @@ public class InGameController implements Observer, Initializable {
         alert.showAndWait();
     }
 
+    /**
+     * This method redirects the user to the login page
+     */
     public void moveToLoginScene(){
         try {
             Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
@@ -355,6 +379,11 @@ public class InGameController implements Observer, Initializable {
         }
     }
 
+    /**
+     * This method is called when the InGame scene is initialized. in this method - all the required parameters are initialized before starting the game.
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ViewModel.getViewModel().addObserver(this);
@@ -367,9 +396,9 @@ public class InGameController implements Observer, Initializable {
         fillPlayersDetails();
         myPlayerImageCircle.setFill(new ImagePattern(userIcon));
 
-        //numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
+        numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
         numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
-        //myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty);
+        myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty);
         newPlayerTurn();
         for(int i=0;i<15;i++){
             for(int j=0;j<15;j++){
@@ -379,6 +408,9 @@ public class InGameController implements Observer, Initializable {
 
     }
 
+    /**
+     * This method is called when the game starts, and it fills the players details in the window.
+     */
     private void fillPlayersDetails() {
         int myID = ViewModel.getViewModel().getMyPlayer().getId();
         for(int i=0;i<=3;i++){
@@ -395,10 +427,15 @@ public class InGameController implements Observer, Initializable {
         }
     }
 
+    /**
+     * This method place the user details on the left side of the screen and binds the details to the player's details in the ViewModel.
+     * @param name the name of the player
+     * @param id the id of the player
+     */
     public void insertPlayerDetails(String name, int id){
         if(player1Name.getText().equals("")){
             player1Name.setText(name);
-            //player1Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
+            player1Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
             player1Name.setVisible(true);
             player1Score.setVisible(true);
             player1ImageCircle.setFill(new ImagePattern(userIcon));
@@ -411,7 +448,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player2Name.getText().equals("")){
             player2Name.setText(name);
-            //player2Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
+            ViewModel.getViewModel().getPlayers().get(id).scoreProperty.bindBidirectional(player2Score.textProperty());
             player2Name.setVisible(true);
             player2Score.setVisible(true);
             player2ImageCircle.setFill(new ImagePattern(userIcon));
@@ -426,7 +463,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player3Name.getText().equals("")){
             player3Name.setText(name);
-            //player3Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty.concat(" pts"));
+            ViewModel.getViewModel().getPlayers().get(id).scoreProperty.bindBidirectional(player3Score.textProperty());
             player3Name.setVisible(true);
             player3Score.setVisible(true);
             player3ImageCircle.setFill(new ImagePattern(userIcon));
@@ -453,9 +490,7 @@ public class InGameController implements Observer, Initializable {
         dataChangesList.remove(dataChangesList.size()-1);
         indexChangesList.remove(indexChangesList.size()-1);
         if(dataChangesList.size()==0){
-            undoBtn.setDisable(true);
-            resetBtn.setDisable(true);
-            finishTurnBtn.setDisable(true);
+            setDisableButtons(true);
         }
     }
 
@@ -482,8 +517,9 @@ public class InGameController implements Observer, Initializable {
                     System.out.println("boardStatus["+i+"]["+j+"] lowerCase = "+Character.toLowerCase(boardStatus[i][j]));
                     Image tile = new Image(getClass().getResource("/Images/Tiles/" + Character.toLowerCase(boardStatus[i][j]) + "Letter.png").toExternalForm());
                     ImageView iv = new ImageView(tile);
-                    iv.setFitWidth(SQUARE_WIDTH-3);
-                    iv.setFitHeight(SQUARE_HEIGHT-2);
+                    iv.setPreserveRatio(false);
+                    iv.setFitWidth(SQUARE_WIDTH);
+                    iv.setFitHeight(SQUARE_HEIGHT);
                     StackPane sp = new StackPane(iv);
                     sp.setAlignment(Pos.CENTER);
                     gridPane.add(sp, j, i);
@@ -503,8 +539,6 @@ public class InGameController implements Observer, Initializable {
             ViewModel.getViewModel().changesList.add(data);
         }
 
-
-
         System.out.println("------------------View Board before try place word --------------------");
         for(int i=0;i<15;i++){
             for(int j=0;j<15;j++){
@@ -516,6 +550,15 @@ public class InGameController implements Observer, Initializable {
             ViewModel.getViewModel().tryPlaceWord();
     }
 
+    /**
+     * This method disables all the buttons
+     */
+    private void setDisableButtons(boolean disable){
+        undoBtn.setDisable(disable);
+        resetBtn.setDisable(disable);
+        finishTurnBtn.setDisable(disable);
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         System.out.println("View update "+arg);
@@ -525,7 +568,7 @@ public class InGameController implements Observer, Initializable {
         switch (methodName){
             case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
-                Platform.runLater(this::showBackAlert);
+                Platform.runLater(this::showDisconnectionAlert);
                 System.out.println("Alert Created");
                 break;
             case MethodsNames.SET_HAND:
@@ -538,18 +581,25 @@ public class InGameController implements Observer, Initializable {
                 break;
             case MethodsNames.TRY_PLACE_WORD:
                 Platform.runLater(()->{
+                    tilesInHandGrid.setDisable(true);
                     System.out.println("In Try Place Word Case");
                     String[] splitedArguments=arguments.split(",");
                     if(splitedArguments[0].equals("0"))
                     {
+                        tilesInHandGrid.setDisable(false);
                         //todo : need to make popUp for the player that his word is invalid
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Invalid word");
                         alert.setHeaderText("Invalid word");
                         alert.setContentText("The word that you placed \\ created is invalid, please try again");
+                        if(isBoardEmpty){
+                            alert.setContentText(alert.getContentText() + "\n" + "You must place the first word on the star");
+                        }
                         alert.showAndWait();
                     }
                     else{
+                        setDisableButtons(true);
+                        isBoardEmpty=false;
                         if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
                             List<String>words=new ArrayList<>(splitedArguments.length-1);
                             for(int i=1;i<splitedArguments.length;i++){
@@ -558,6 +608,9 @@ public class InGameController implements Observer, Initializable {
                             String[] wordsArray=new String[words.size()];
                             wordsArray=words.toArray(wordsArray);
                             showChallengeAlert(wordsArray);
+                        }
+                        else{
+                            waitingChallengeText.setVisible(true);
                         }
                         dataChangesList.clear();
                         indexChangesList.clear();
@@ -627,6 +680,7 @@ public class InGameController implements Observer, Initializable {
                     }
                     String[] playersIdScoreArray=new String[playersIdScoreList.size()];
                     playersIdScoreArray=playersIdScoreList.toArray(playersIdScoreArray);
+                    ViewModel.getViewModel().close();
                     showEndGameAlert(playersIdScoreArray);
                 });
                 break;
@@ -646,14 +700,20 @@ public class InGameController implements Observer, Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Ended");
         alert.setHeaderText("Game Ended");
-        String contentText="The game has ended, the winner is: ";
+        String contentText="The winner is: ";
         for(int i=0;i<playersIdScoreArray.length;i++){
-            String[] splitedPlayerIdScore=playersIdScoreArray[i].split(" ");
-            contentText+=splitedPlayerIdScore[0]+" with score: "+splitedPlayerIdScore[1];
+            String[] splitedPlayerIdScore=playersIdScoreArray[i].split("-");
+            contentText+=playersNames[Integer.parseInt(splitedPlayerIdScore[0])].getText()+" with score: "+splitedPlayerIdScore[1];
             if(i!=playersIdScoreArray.length-1)
                 contentText+="\n";
         }
         alert.setContentText(contentText);
+        alert.setOnCloseRequest(event -> {
+            System.out.println("Alert Closed");
+            ((Stage) alert.getDialogPane().getScene().getWindow()).close();
+            Platform.runLater(this::moveToLoginScene);
+
+        });
         alert.showAndWait();
     }
 
