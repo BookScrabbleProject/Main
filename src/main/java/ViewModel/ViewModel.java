@@ -183,7 +183,7 @@ public class ViewModel extends Observable implements Observer {
                     sb.append(sortedChangesList.get(changeIndex).getLetter());
                 } else {
                     sb.append('_');
-                    i--;
+                    changeIndex--;
                 }
             }
 
