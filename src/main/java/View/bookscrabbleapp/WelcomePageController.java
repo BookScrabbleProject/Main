@@ -17,8 +17,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -57,6 +57,8 @@ public class WelcomePageController implements Observer, Initializable {
     Label nameWarningLabel;
     @FXML
     Label serverWarning;
+    @FXML
+    AnchorPane welcomePane;
     Boolean isHost = false;
 
 
@@ -187,6 +189,12 @@ public class WelcomePageController implements Observer, Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ViewModel.getViewModel().addObserver(this);
+        BackgroundImage myBI = new BackgroundImage(new Image("file:src/main/resources/Images/LobbyBG.jpeg", 800, 600, false, true),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        welcomePane.setBackground(new Background(myBI));
+
+
     }
 
     @Override

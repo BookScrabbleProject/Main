@@ -10,14 +10,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="444.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.WelcomePageController">
+<AnchorPane fx:id="welcomePane" prefHeight="444.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.WelcomePageController">
    <children>
-      <Label fx:id="title" alignment="CENTER" layoutX="233.0" layoutY="30.0" prefHeight="39.0" prefWidth="163.0" style="-fx-underline: true;" text="Welcome">
+      <Label fx:id="title" alignment="CENTER" layoutX="238.0" layoutY="24.0" prefHeight="39.0" prefWidth="163.0" style="-fx-underline: true;" text="Welcome">
          <font>
             <Font name="System Bold" size="27.0" />
          </font>
       </Label>
-      <Button fx:id="joinBtn" layoutX="404.0" layoutY="111.0" mnemonicParsing="false" onAction="#joinBtnHandler" prefHeight="52.0" prefWidth="176.666666666" style="-fx-background-color: LightBlue;" text="Join Game">
+      <Button fx:id="joinBtn" layoutX="404.0" layoutY="93.0" mnemonicParsing="false" onAction="#joinBtnHandler" prefHeight="52.0" prefWidth="176.666666666" style="-fx-background-color: LightBlue;" text="Join Game">
          <font>
             <Font size="25.0" />
          </font>
@@ -25,7 +25,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button fx:id="createBtn" layoutX="67.0" layoutY="111.0" mnemonicParsing="false" onAction="#createBtnHandler" prefHeight="52.0" prefWidth="176.666666" style="-fx-background-color: GREY;" text="Create Game">
+      <Button fx:id="createBtn" layoutX="67.0" layoutY="93.0" mnemonicParsing="false" onAction="#createBtnHandler" prefHeight="52.0" prefWidth="176.666666" style="-fx-background-color: GREY;" text="Create Game">
          <font>
             <Font size="25.0" />
          </font>
@@ -33,7 +33,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <VBox fx:id="userInputDiv" alignment="CENTER" layoutX="201.0" layoutY="166.0" prefHeight="174.0" prefWidth="441.0" spacing="25.0">
+      <VBox fx:id="userInputDiv" alignment="CENTER" layoutX="201.0" layoutY="148.0" prefHeight="174.0" prefWidth="441.0" spacing="25.0">
          <children>
             <HBox fx:id="nameDiv" prefHeight="27.0" prefWidth="225.0">
                <children>
@@ -116,7 +116,7 @@
             </HBox>
          </children>
       </VBox>
-      <Button fx:id="initBtn" layoutX="262.0" layoutY="357.0" mnemonicParsing="false" onAction="#initBtnHandler" prefHeight="31.0" prefWidth="134.0" style="-fx-background-color: GREEN;" text="Join" textFill="WHITE">
+      <Button fx:id="initBtn" layoutX="262.0" layoutY="343.0" mnemonicParsing="false" onAction="#initBtnHandler" prefHeight="31.0" prefWidth="134.0" style="-fx-background-color: GREEN;" text="Join" textFill="WHITE">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>

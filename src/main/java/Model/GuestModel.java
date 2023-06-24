@@ -200,7 +200,7 @@ public class GuestModel extends PlayerModel implements Observer {
             try {
                 arguments = splitedArgString[2].split(",");
             } catch (Exception e) {
-                System.out.println("error");
+//                System.out.println(">>>> GM update: try to split arguments from splitedArgString[2] but there are no arguments\nmsg: " + argString + " <<<");
             }
 
 
@@ -293,6 +293,10 @@ public class GuestModel extends PlayerModel implements Observer {
                     System.out.println(argString);
                     setChanged();
                     notifyObservers(MethodsNames.END_GAME + ":" + splitedArgString[2]);
+                    break;
+                case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT);
                     break;
             }
         }

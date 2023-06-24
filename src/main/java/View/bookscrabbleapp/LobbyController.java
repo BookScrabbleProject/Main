@@ -1,6 +1,7 @@
 package View.bookscrabbleapp;
 import ViewModel.*;
 import View.LoginData;
+import ViewModel.ViewModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,10 +38,6 @@ public class LobbyController implements Initializable, Observer {
     Label port;
     @FXML
     Text welcomeText;
-    @FXML
-    Label waitingForHost;
-    @FXML
-    Button backBtn;
 
     LoginData ld = LoginData.getLoginData();
     Stage currentStage = new Stage();
@@ -65,10 +62,8 @@ public class LobbyController implements Initializable, Observer {
             startGameBtn.setVisible(true);
             player1Name.setText("Me");
         }
-        else {
+        else
             handlerPlayerList();
-            waitingForHost.setVisible(true);
-        }
         ip.setText(ld.getIp());
         port.setText(String.valueOf(ld.getPort()));
     }
@@ -87,6 +82,7 @@ public class LobbyController implements Initializable, Observer {
         player3Name.setText(arr[2]);
         player4Name.setText(arr[3]);
     }
+
 
     /**
      * method that - when the player click on the button backToLogin it will go to the login page
