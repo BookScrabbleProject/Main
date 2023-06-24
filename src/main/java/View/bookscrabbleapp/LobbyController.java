@@ -92,7 +92,11 @@ public class LobbyController implements Initializable, Observer {
             Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
             //close the current window and change to the root
             Scene scene = new Scene(root, 650, 500);
+<<<<<<< HEAD
             Stage stage = (Stage) startGameBtn.getScene().getWindow();
+=======
+            Stage stage = (Stage) backBtn.getScene().getWindow();
+>>>>>>> 6a571e042fc4adcecf9a7bfac88ee25fb533da46
             stage.close();
             stage = new Stage();
             stage.setScene(scene);
