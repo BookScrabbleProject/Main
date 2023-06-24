@@ -93,7 +93,6 @@ public class LobbyController implements Initializable, Observer {
             //close the current window and change to the root
             Scene scene = new Scene(root, 650, 500);
             Stage stage = (Stage) startGameBtn.getScene().getWindow();
-            Stage stage = (Stage) backBtn.getScene().getWindow();
 
             stage.close();
             stage = new Stage();

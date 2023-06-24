@@ -630,9 +630,9 @@ public class InGameController implements Observer, Initializable {
                         Popup popup = new Popup();
                         popup.setX(300);
                         popup.setY(200);
-                        popup.getContent().add(new Label("Someone challenged. The challenge was successful, the word will be removed from the board"));
+                        popup.getContent().add(new Label("Someone challenged. \nThe challenge was successful, \nthe word will be removed from the board"));
                         PauseTransition visiblePause = new PauseTransition(
-                                Duration.seconds(3)
+                                Duration.seconds(5)
                         );
                         visiblePause.setOnFinished(
                                 event -> popup.hide()
@@ -645,7 +645,7 @@ public class InGameController implements Observer, Initializable {
                         Popup popup = new Popup();
                         popup.setX(300);
                         popup.setY(200);
-                        popup.getContent().add(new Label("Someone challenged. The challenge was unsuccessful, the word will stay on the board"));
+                        popup.getContent().add(new Label("Someone challenged. \nThe challenge was unsuccessful,\n the word will stay on the board"));
                         PauseTransition visiblePause = new PauseTransition(
                                 Duration.seconds(3)
                         );
