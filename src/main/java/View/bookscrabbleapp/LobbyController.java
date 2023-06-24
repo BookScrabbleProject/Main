@@ -41,10 +41,20 @@ public class LobbyController implements Initializable, Observer {
 
     LoginData ld = LoginData.getLoginData();
     Stage currentStage = new Stage();
+
+    /**
+     *
+     * @param mouseEvent when click on join game or create game it start the game
+     */
     public void startGame(MouseEvent mouseEvent) {
         ViewModel.getViewModel().startGame();
     }
 
+    /**
+     * method that call all the function that needed to run when the page load
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ViewModel.getViewModel().addObserver(this);
@@ -57,6 +67,10 @@ public class LobbyController implements Initializable, Observer {
         ip.setText(ld.getIp());
         port.setText(String.valueOf(ld.getPort()));
     }
+
+    /**
+     * create the list of the players that connected with their names
+     */
     public void handlerPlayerList(){
         String[] arr = new String[4];
         for (int i = 0; i < 4; i++)
@@ -68,6 +82,35 @@ public class LobbyController implements Initializable, Observer {
         player3Name.setText(arr[2]);
         player4Name.setText(arr[3]);
     }
+
+
+    /**
+     * method that - when the player click on the button backToLogin it will go to the login page
+     */
+    public void moveToLoginScene(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
+            //close the current window and change to the root
+            Scene scene = new Scene(root, 650, 500);
+            Stage stage = (Stage) startGameBtn.getScene().getWindow();
+            Stage stage = (Stage) backBtn.getScene().getWindow();
+
+            stage.close();
+            stage = new Stage();
+            stage.setScene(scene);
+            stage.setOnCloseRequest(e -> {
+                Platform.exit();
+                System.exit(0);
+            });
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * when the host click on the button start game it will move all the players into the IngGme page
+     */
     public void moveInGameScene(){
         try {
             //close my window
@@ -85,6 +128,13 @@ public class LobbyController implements Initializable, Observer {
             stage.show();
         } catch (IOException e) {throw new RuntimeException(e);}
     }
+
+    /**
+     * update the guests that we need to move to game page and moves them all or update the guests player list.
+     * @param o     the observable object.
+     * @param arg   an argument passed to the {@code notifyObservers}
+     *                 method.
+     */
     @Override
     public void update(Observable o, Object arg) {
         String args =   (String)arg;
@@ -93,7 +143,8 @@ public class LobbyController implements Initializable, Observer {
                 Platform.runLater(()->handlerPlayerList());
                 break;
             case MethodsNames.START_GAME:
-                Platform.runLater(()->moveInGameScene());
+                Platform.runLater(()->
+                        moveInGameScene());
                 break;
         }
     }
