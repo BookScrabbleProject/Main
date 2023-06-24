@@ -51,23 +51,25 @@ public class ViewModelTest {
             System.out.println("\n>>> taking tile from bag <<<");
 //            viewModel.takeTileFromBag();
 
-            DataChanges d1 = new DataChanges('w', 7, 6);
-            DataChanges d2 = new DataChanges('e', 7, 7);
-            DataChanges d3 = new DataChanges('e', 7, 8);
-            DataChanges d4 = new DataChanges('k', 7, 9);
-            viewModel.changesList.add(d1);
+            DataChanges d1 = new DataChanges('a', 6, 7);
+            DataChanges d2 = new DataChanges('i', 7, 7);
+            DataChanges d3 = new DataChanges('r', 8, 7);
+            DataChanges d4 = new DataChanges('n', 9, 7);
+//            viewModel.changesList.add(d1);
             viewModel.changesList.add(d2);
             viewModel.changesList.add(d3);
             viewModel.changesList.add(d4);
             viewModel.tryPlaceWord();
             Thread.sleep(8000);
             viewModel.changesList.clear();
-            DataChanges d10 = new DataChanges('e', 7, 10);
-            DataChanges d20 = new DataChanges('n', 7, 11);
-            DataChanges d30 = new DataChanges('d', 7, 12);
-            viewModel.resetModel();
-            viewModel.setModel(guest2);
+
+            DataChanges d10 = new DataChanges('c', 10, 7);
+            DataChanges d20 = new DataChanges('o', 11, 7);
+            DataChanges d30 = new DataChanges('d', 12, 7);
+//            viewModel.resetModel();
+//            viewModel.setModel(guest2);
 //            DataChanges d40 = new DataChanges('k', 7, 7);
+            viewModel.changesList.add(d1);
             viewModel.changesList.add(d10);
             viewModel.changesList.add(d20);
             viewModel.changesList.add(d30);
