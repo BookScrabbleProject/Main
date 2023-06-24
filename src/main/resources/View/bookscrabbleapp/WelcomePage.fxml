@@ -10,14 +10,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="444.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.WelcomePageController">
+<AnchorPane fx:id="welcomePane" prefHeight="444.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.WelcomePageController">
    <children>
-      <Label fx:id="title" alignment="CENTER" layoutX="233.0" layoutY="30.0" prefHeight="39.0" prefWidth="163.0" style="-fx-underline: true;" text="Welcome">
+      <Label fx:id="title" alignment="CENTER" layoutX="238.0" layoutY="24.0" prefHeight="39.0" prefWidth="163.0" style="-fx-underline: true;" text="Welcome">
          <font>
             <Font name="System Bold" size="27.0" />
          </font>
       </Label>
-      <Button fx:id="joinBtn" layoutX="404.0" layoutY="111.0" mnemonicParsing="false" onAction="#joinBtnHandler" prefHeight="52.0" prefWidth="176.666666666" style="-fx-background-color: LightBlue;" text="Join Game">
+      <Button fx:id="joinBtn" layoutX="404.0" layoutY="93.0" mnemonicParsing="false" onAction="#joinBtnHandler" prefHeight="52.0" prefWidth="176.666666666" style="-fx-background-color: LightBlue;" text="Join Game">
          <font>
             <Font size="25.0" />
          </font>
@@ -25,7 +25,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button fx:id="createBtn" layoutX="67.0" layoutY="111.0" mnemonicParsing="false" onAction="#createBtnHandler" prefHeight="52.0" prefWidth="176.666666" style="-fx-background-color: GREY;" text="Create Game">
+      <Button fx:id="createBtn" layoutX="67.0" layoutY="93.0" mnemonicParsing="false" onAction="#createBtnHandler" prefHeight="52.0" prefWidth="176.666666" style="-fx-background-color: GREY;" text="Create Game">
          <font>
             <Font size="25.0" />
          </font>
@@ -33,37 +33,37 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <VBox fx:id="userInputDiv" alignment="CENTER" layoutX="201.0" layoutY="166.0" prefHeight="174.0" prefWidth="441.0" spacing="25.0">
+      <VBox fx:id="userInputDiv" alignment="CENTER" layoutX="201.0" layoutY="148.0" prefHeight="174.0" prefWidth="441.0" spacing="25.0">
          <children>
-            <HBox fx:id="nameDiv" prefHeight="27.0" prefWidth="225.0" spacing="3.0">
+            <HBox fx:id="nameDiv" prefHeight="27.0" prefWidth="225.0">
                <children>
-                  <Label fx:id="nameLabel" alignment="TOP_LEFT" prefHeight="18.0" prefWidth="67.0" text="Name:">
+                  <Label fx:id="nameLabel" graphicTextGap="0.0" maxWidth="-Infinity" prefHeight="18.0" prefWidth="50.0" text="Name:">
                      <HBox.margin>
                         <Insets top="5.0" />
                      </HBox.margin>
                   </Label>
                   <TextField fx:id="nameInput" prefHeight="27.0" prefWidth="160.0">
                      <HBox.margin>
-                        <Insets left="-16.0" />
+                        <Insets />
                      </HBox.margin>
                   </TextField>
                   <Label fx:id="nameWarningLabel" text="Please insert a name" textFill="RED" visible="false">
                      <HBox.margin>
-                        <Insets left="12.0" top="2.0" />
+                        <Insets left="30.0" top="5.0" />
                      </HBox.margin>
                   </Label>
                </children>
             </HBox>
             <HBox fx:id="portDiv">
                <children>
-                  <Label fx:id="portLabel" alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="33.0" text="Port:">
+                  <Label fx:id="portLabel" graphicTextGap="0.0" maxWidth="-Infinity" prefHeight="18.0" prefWidth="50.0" text="Port:">
                      <HBox.margin>
-                        <Insets left="-5.0" top="5.0" />
+                        <Insets top="5.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="portInput" prefHeight="27.0" prefWidth="160.0" translateX="13.0">
+                  <TextField fx:id="portInput" prefHeight="27.0" prefWidth="160.0">
                      <HBox.margin>
-                        <Insets left="13.0" />
+                        <Insets />
                      </HBox.margin>
                   </TextField>
                   <VBox fx:id="portWarningDiv" prefHeight="33.0" prefWidth="195.0" visible="false">
@@ -89,14 +89,14 @@
             </HBox>
             <HBox fx:id="ipDiv" prefHeight="27.0" prefWidth="205.0">
                <children>
-                  <Label fx:id="ipLabel" prefHeight="18.0" prefWidth="45.0" text=" IP:">
+                  <Label fx:id="ipLabel" graphicTextGap="0.0" maxWidth="-Infinity" prefHeight="18.0" prefWidth="50.0" text="IP:">
                      <HBox.margin>
-                        <Insets left="-1.0" top="5.0" />
+                        <Insets top="5.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="ipInput" prefHeight="27.0" prefWidth="160.0" translateX="14.0">
+                  <TextField fx:id="ipInput" prefHeight="27.0" prefWidth="160.0">
                      <HBox.margin>
-                        <Insets left="-3.0" />
+                        <Insets />
                      </HBox.margin>
                   </TextField>
                   <VBox fx:id="ipWarningDiv" visible="false">
@@ -116,15 +116,13 @@
             </HBox>
          </children>
       </VBox>
-      <Button fx:id="initBtn" layoutX="269.0" layoutY="359.0" mnemonicParsing="false" onAction="#initBtnHandler" prefHeight="31.0" prefWidth="134.0" style="-fx-background-color: GREEN;" text="Join" textFill="WHITE">
+      <Button fx:id="initBtn" layoutX="262.0" layoutY="343.0" mnemonicParsing="false" onAction="#initBtnHandler" prefHeight="31.0" prefWidth="134.0" style="-fx-background-color: GREEN;" text="Join" textFill="WHITE">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Button>
+      <Label fx:id="serverWarning" layoutX="435.0" layoutY="365.0" prefHeight="17.0" prefWidth="71.0" text="Server is full" textFill="RED" visible="false" />
    </children>
-   <padding>
-      <Insets left="10.0" />
-   </padding>
 </AnchorPane>

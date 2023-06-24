@@ -3,40 +3,45 @@ package ViewModel;
 import Model.Model;
 import Model.gameClasses.Player;
 import General.MethodsNames;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
     public static ViewModel vm = null;
-    public Character[][] board;
     public List<DataChanges> changesList;
-    public int currentPlayerId;
-    public int numberOfTilesInBag;
-    public Map<Integer, PlayerVVM> players;
-    public MyPlayerVVM myPlayer;
+    public StringProperty numberOfTilesInBagProperty;
+    private Character[][] board;
+    private int currentPlayerId;
+    private int numberOfTilesInBag;
+    private Map<Integer, PlayerVVM> players;
+    private MyPlayerVVM myPlayer;
     //    data binding
-    Map<Character, Integer> tilesScores;
-    Model model;
+    private Map<Character, Integer> tilesScores;
+    private Model model;
     private String word;
     private int wordStartRow;
     private int wordStartCol;
 
     /**
-     * default Ctor for ViewModel - initialize the data members (for the singleton)
+     * The ViewModel function is the constructor of the ViewModel class.
+     * It initializes all of its fields to their default values.
      */
     private ViewModel() {
         model = null;
         this.tilesScores = new HashMap<>();
         this.board = new Character[15][15];
+        for (int i = 0; i < this.board.length; i++) {
+            Arrays.fill(this.board[i], '_');
+        }
         this.changesList = new ArrayList<>();
         this.currentPlayerId = -1;
         this.numberOfTilesInBag = 0;
+//        this.numberOfTilesInBagProperty = new SimpleStringProperty("");
         this.players = new HashMap<>();
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
-    }
-
-    public void startGame() {
-        model.startGame();
     }
 
     /**
@@ -51,6 +56,36 @@ public class ViewModel extends Observable implements Observer {
         return vm;
     }
 
+    public Map<Integer, PlayerVVM> getPlayers() {
+        return players;
+    }
+
+    public MyPlayerVVM getMyPlayer() {
+        return myPlayer;
+    }
+
+    public int getCurrentPlayerId() {
+        return currentPlayerId;
+    }
+
+    private void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+        setChanged();
+        notifyObservers(MethodsNames.NEW_PLAYER_TURN);
+    }
+
+    public Character[][] getBoard() {
+        return board;
+    }
+
+    private void setBoard(Character[][] boardStatus) {
+        this.board = boardStatus;
+    }
+
+    public void startGame() {
+        model.startGame();
+    }
+
     /**
      * set the model only if it is null (to avoid setting it twice)
      *
@@ -62,16 +97,25 @@ public class ViewModel extends Observable implements Observer {
             this.model.addObserver(this);
         }
     }
+
+    /**
+     * The resetModel function is used to reset the model of the game.
+     * This function is called when a new game is started, and it deletes
+     * any observers that are attached to the old model. It then sets
+     * this.model = null; so that we can create a new instance of our
+     * GameModel class in our startGame function in GameController class.
+     */
     public void resetModel() {
         this.model = null;
     }
 
+    /**
+     * The close function closes the connection.
+     * If the model is GuestModel, it closes the connection to the server.
+     * If the model is HostModel, it closes the connection to the BookScrabbleServer (MyServer) and close the HostServer.
+     */
     public void close() {
         model.closeConnection();
-    }
-
-    public Model getModel() {
-        return model;
     }
 
     /**
@@ -81,14 +125,14 @@ public class ViewModel extends Observable implements Observer {
      */
     public void tryPlaceWord() {
         if (isChangeValid()) {
-            model.tryPlaceWord(getWord(), getWordStartRow(), getWordStartCol(), isWordVertical());
+            model.tryPlaceWord(getWord(), getWordStartCol(), getWordStartRow(), isWordVertical());
             word = null;
             wordStartRow = -1;
             wordStartCol = -1;
             return;
         }
         setChanged();
-        notifyObservers("tryPlaceWordInvalid"); // Todo: update Yuval about it (the case he has to handle)
+        notifyObservers(MethodsNames.INVALID_PLACEMENT); // Todo: update Yuval about it (the case he has to handle)
     }
 
     public void challenge(String word) {
@@ -102,7 +146,7 @@ public class ViewModel extends Observable implements Observer {
     /**
      * @return true if the word is valid, false otherwise (from changesList)
      */
-    public boolean isChangeValid() {
+    private boolean isChangeValid() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         int numberOfColRowChanges = 0;
         int colForCheck = sortedChangesList.get(0).getNewCol();
@@ -121,15 +165,76 @@ public class ViewModel extends Observable implements Observer {
         return numberOfColRowChanges == sortedChangesList.size() - 1;
     }
 
+    private String getWord() {
+        List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
+        StringBuilder sb = new StringBuilder();
+        this.wordStartCol = sortedChangesList.get(0).getNewCol();
+        this.wordStartRow = sortedChangesList.get(0).getNewRow();
+        if (isWordVertical()) {
+            while (this.wordStartRow > 0 && board[this.wordStartRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                this.wordStartRow--;
+            }
+            for (int i = this.wordStartRow; i < sortedChangesList.get(0).getNewRow(); i++) {
+                sb.append('_');
+            }
+            int changeIndex = 0;
+            for (int i = sortedChangesList.get(0).getNewRow(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i++, changeIndex++) {
+                if (board[i][sortedChangesList.get(0).getNewCol()] == '_') {
+                    sb.append(sortedChangesList.get(changeIndex).getLetter());
+                } else {
+                    sb.append('_');
+                    changeIndex--;
+                }
+            }
+
+            int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                endRow++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow() + 1; i <= endRow; i++) {
+                sb.append('_');
+            }
+        } else {
+            while (this.wordStartCol > 0 && board[sortedChangesList.get(0).getNewRow()][this.wordStartCol - 1] != '_') {
+                this.wordStartCol--;
+            }
+            for (int i = this.wordStartCol; i < sortedChangesList.get(0).getNewCol(); i++) {
+                sb.append('_');
+            }
+
+            int changeIndex = 0;
+            for (int i = sortedChangesList.get(0).getNewCol(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewCol(); i++, changeIndex++) {
+                if (board[sortedChangesList.get(0).getNewRow()][i] == '_') {
+                    sb.append(sortedChangesList.get(changeIndex).getLetter());
+                } else {
+                    sb.append('_');
+                    changeIndex--;
+                }
+            }
+
+            int endCol = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol();
+            while (endCol < 14 && board[sortedChangesList.get(0).getNewRow()][endCol + 1] != '_') {
+                endCol++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol() + 1; i <= endCol; i++) {
+                sb.append('_');
+            }
+        }
+
+        this.word = sb.toString().toLowerCase();
+        System.out.println("word: " + this.word);
+        return this.word;
+    }
+
     /**
      * @return the word that the player is trying to place
      */
-    public String getWord() {
+    private String getWord_old() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         StringBuilder sb = new StringBuilder();
         if (isWordVertical()) {
             int startRow = sortedChangesList.get(0).getNewRow();
-            while (startRow > 0 && board[startRow - 1][sortedChangesList.get(0).getNewCol()] != null) {
+            while (startRow > 0 && board[startRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
                 startRow--;
             }
             for (int i = startRow; i < sortedChangesList.get(0).getNewRow(); i++) {
@@ -159,7 +264,7 @@ public class ViewModel extends Observable implements Observer {
 
         if (isWordVertical()) {
             int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
-            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != null) {
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
                 endRow++;
             }
             for (int i = endRow; i > sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i--) {
@@ -181,43 +286,43 @@ public class ViewModel extends Observable implements Observer {
     /**
      * @return the row of the first letter of the word
      */
-    public int getWordStartRow() {
-        int minRow = changesList.get(0).getNewRow();
-        for (DataChanges dc : changesList) {
-            if (dc.getNewRow() < minRow) minRow = dc.getNewRow();
-        }
-        if (isWordVertical()) {
-            for (Character c : this.word.toCharArray()) {
-                if (c == '_') minRow--;
-                else break;
-            }
-        }
-        this.wordStartRow = minRow;
+    private int getWordStartRow() {
+//        int minRow = changesList.get(0).getNewRow();
+//        for (DataChanges dc : changesList) {
+//            if (dc.getNewRow() < minRow) minRow = dc.getNewRow();
+//        }
+//        if (isWordVertical()) {
+//            for (Character c : this.word.toCharArray()) {
+//                if (c == '_') minRow--;
+//                else break;
+//            }
+//        }
+//        this.wordStartRow = minRow;
         return this.wordStartRow;
     }
 
     /**
      * @return the column of the first letter of the word
      */
-    public int getWordStartCol() {
-        int minCol = changesList.get(0).getNewCol();
-        for (DataChanges dc : changesList) {
-            if (dc.getNewCol() < minCol) minCol = dc.getNewCol();
-        }
-        if (!isWordVertical()) {
-            for (Character c : this.word.toCharArray()) {
-                if (c == '_') minCol--;
-                else break;
-            }
-        }
-        this.wordStartCol = minCol;
+    private int getWordStartCol() {
+//        int minCol = changesList.get(0).getNewCol();
+//        for (DataChanges dc : changesList) {
+//            if (dc.getNewCol() < minCol) minCol = dc.getNewCol();
+//        }
+//        if (!isWordVertical()) {
+//            for (Character c : this.word.toCharArray()) {
+//                if (c == '_') minCol--;
+//                else break;
+//            }
+//        }
+//        this.wordStartCol = minCol;
         return this.wordStartCol;
     }
 
     /**
      * @return true if the word is vertical, false if it is horizontal
      */
-    public boolean isWordVertical() {
+    private boolean isWordVertical() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         return sortedChangesList.get(0).getNewCol() == sortedChangesList.get(1).getNewCol();
     }
@@ -234,16 +339,9 @@ public class ViewModel extends Observable implements Observer {
         return sortedChangesList;
     }
 
-    private void setBoard(Character[][] boardStatus) {
-        this.board = boardStatus;
-    }
-
-    public void setNumberOfTilesInBag(int numberOfTilesInBag) {
+    private void setNumberOfTilesInBag(int numberOfTilesInBag) {
         this.numberOfTilesInBag = numberOfTilesInBag;
-    }
-
-    public void setCurrentPlayerId(int currentPlayerId) {
-        this.currentPlayerId = currentPlayerId;
+        this.numberOfTilesInBagProperty = new SimpleStringProperty(String.valueOf(this.numberOfTilesInBag));
     }
 
     /**
@@ -261,7 +359,7 @@ public class ViewModel extends Observable implements Observer {
         Queue<String> messagesQ = new LinkedList<>(Arrays.asList(messages.split("\n")));
         while (!messagesQ.isEmpty()) {
             String message = messagesQ.poll();
-            System.out.println("VM update: " + message);
+            System.out.println("VM update: " + message); // Todo: delete this line after debug
             String methodName = message.split(":")[0];
             String[] args = null;
 
@@ -273,6 +371,8 @@ public class ViewModel extends Observable implements Observer {
             switch (methodName) {
                 case MethodsNames.BOARD_UPDATED:
                     setBoard(model.getBoardStatus());
+                    setChanged();
+                    notifyObservers(MethodsNames.BOARD_UPDATED);
                     break;
 
                 case MethodsNames.SCORE_UPDATED:
@@ -289,10 +389,13 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.SET_HAND:
                     this.myPlayer.setHand(model.getMyHand());
+                    setChanged();
+                    notifyObservers(MethodsNames.SET_HAND);
                     break;
 
                 case MethodsNames.NEW_PLAYER_TURN:
                     setCurrentPlayerId(model.getCurrentPlayerId());
+                    changesList.clear();
                     setChanged();
                     notifyObservers(MethodsNames.NEW_PLAYER_TURN);
                     break;
@@ -328,11 +431,25 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.TRY_PLACE_WORD:
                 case MethodsNames.DISCONNECT_FROM_SERVER:
                     setChanged();
-                    notifyObservers(methodName);
+                    notifyObservers(message);
                     break;
 
                 case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:
                     setNumberOfTilesInBag(model.getNumberOfTilesInBag());
+                    break;
+
+                case MethodsNames.CONNECT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CONNECT + ":" + args[0]);
+                    break;
+
+                case MethodsNames.END_GAME:
+                    setChanged();
+                    notifyObservers(MethodsNames.END_GAME + ":" + String.join(",", args));
+                    break;
+                case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT);
                     break;
             }
 
