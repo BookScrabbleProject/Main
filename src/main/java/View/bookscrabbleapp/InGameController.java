@@ -99,6 +99,7 @@ public class InGameController implements Observer, Initializable {
     private Circle myPlayerImageCircle;
 
     boolean isGameStarted = false;
+    boolean isBoardEmpty = true;
     private Alert challengeAlert;
     private Image userIcon = new Image(getClass().getResource("/Images/userIcon.jpg").toExternalForm());
 
@@ -126,15 +127,7 @@ public class InGameController implements Observer, Initializable {
 
 
     public void boardClickHandler(MouseEvent e){
-//        DataChanges data1 = new DataChanges('w', 7,7);
-//        DataChanges data2 = new DataChanges('e', 7,8);
-//        DataChanges data3 = new DataChanges('e', 7,9);
-//        DataChanges data4 = new DataChanges('k', 7,10);
-//        ViewModel.getViewModel().changesList.add(data1);
-//        ViewModel.getViewModel().changesList.add(data2);
-//        ViewModel.getViewModel().changesList.add(data3);
-//        ViewModel.getViewModel().changesList.add(data4);
-//        ViewModel.getViewModel().tryPlaceWord();
+
         if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
             return;
         if(lastPickedTile== null || lastPickedTileIndex == -1)
@@ -161,9 +154,8 @@ public class InGameController implements Observer, Initializable {
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
         if(resetBtn.isDisable() || undoBtn.isDisable() || finishTurnBtn.isDisable()) {
-            resetBtn.setDisable(false);
-            undoBtn.setDisable(false);
-            finishTurnBtn.setDisable(false);
+            setDisableButtons(false);
+
         }
 
         if(!isGameStarted) {
@@ -188,6 +180,12 @@ public class InGameController implements Observer, Initializable {
 
     }
 
+    private void setDisableButtons(boolean b) {
+        resetBtn.setDisable(b);
+        undoBtn.setDisable(b);
+        finishTurnBtn.setDisable(b);
+    }
+
     private void newPlayerTurn() {
         dataChangesList.clear();
         indexChangesList.clear();
@@ -208,9 +206,7 @@ public class InGameController implements Observer, Initializable {
 //            finishTurnBtn.setDisable(false);
         }
         else{
-            resetBtn.setDisable(true);
-            undoBtn.setDisable(true);
-            finishTurnBtn.setDisable(true);
+            setDisableButtons(true);
         }
         setHand();
 
@@ -317,7 +313,7 @@ public class InGameController implements Observer, Initializable {
         //todo show to all the players the score that the player will get
     }
 
-    public void showBackAlert(){
+    public void showDisconnectionAlert(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Host Has Disconnected");
         alert.setHeaderText("Host Has Disconnected");
@@ -453,9 +449,7 @@ public class InGameController implements Observer, Initializable {
         dataChangesList.remove(dataChangesList.size()-1);
         indexChangesList.remove(indexChangesList.size()-1);
         if(dataChangesList.size()==0){
-            undoBtn.setDisable(true);
-            resetBtn.setDisable(true);
-            finishTurnBtn.setDisable(true);
+            setDisableButtons(true);
         }
     }
 
@@ -525,7 +519,7 @@ public class InGameController implements Observer, Initializable {
         switch (methodName){
             case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
-                Platform.runLater(this::showBackAlert);
+                Platform.runLater(this::showDisconnectionAlert);
                 System.out.println("Alert Created");
                 break;
             case MethodsNames.SET_HAND:
@@ -550,6 +544,7 @@ public class InGameController implements Observer, Initializable {
                         alert.showAndWait();
                     }
                     else{
+                        setDisableButtons(true);
                         if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
                             List<String>words=new ArrayList<>(splitedArguments.length-1);
                             for(int i=1;i<splitedArguments.length;i++){
@@ -646,14 +641,18 @@ public class InGameController implements Observer, Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Ended");
         alert.setHeaderText("Game Ended");
-        String contentText="The game has ended, the winner is: ";
+        String contentText="The winner is: ";
         for(int i=0;i<playersIdScoreArray.length;i++){
-            String[] splitedPlayerIdScore=playersIdScoreArray[i].split(" ");
-            contentText+=splitedPlayerIdScore[0]+" with score: "+splitedPlayerIdScore[1];
+            String[] splitedPlayerIdScore=playersIdScoreArray[i].split("-");
+            contentText+=playersNames[Integer.parseInt(splitedPlayerIdScore[0])]+" with score: "+splitedPlayerIdScore[1];
             if(i!=playersIdScoreArray.length-1)
                 contentText+="\n";
         }
         alert.setContentText(contentText);
+        alert.setOnCloseRequest(event -> {
+            ((Stage) alert.getDialogPane().getScene().getWindow()).close();
+            Platform.runLater(this::moveToLoginScene);
+        });
         alert.showAndWait();
     }
 
