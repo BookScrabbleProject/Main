@@ -1,7 +1,9 @@
 package View.bookscrabbleapp;
 
 import ViewModel.*;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.application.Preloader;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -26,8 +28,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import General.MethodsNames;
+import javafx.util.Duration;
 
 
 import java.io.IOException;
@@ -156,6 +160,11 @@ public class InGameController implements Observer, Initializable {
         addTileToBoard(lastPickedTile, lastPickedTileIndex, cr, cc);
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
+        if(resetBtn.isDisable() || undoBtn.isDisable() || finishTurnBtn.isDisable()) {
+            resetBtn.setDisable(false);
+            undoBtn.setDisable(false);
+            finishTurnBtn.setDisable(false);
+        }
 
         if(!isGameStarted) {
             char myC = 'a';
@@ -180,6 +189,8 @@ public class InGameController implements Observer, Initializable {
     }
 
     private void newPlayerTurn() {
+        dataChangesList.clear();
+        indexChangesList.clear();
         for(int i=0; i<4; i++){
             if(ViewModel.getViewModel().getPlayers().get(i)==null) continue;
             if(playersNames[i]==null) continue;
@@ -192,9 +203,9 @@ public class InGameController implements Observer, Initializable {
         }
 
         if (ViewModel.getViewModel().getMyPlayer().getId() == ViewModel.getViewModel().getCurrentPlayerId()) {
-            resetBtn.setDisable(false);
-            undoBtn.setDisable(false);
-            finishTurnBtn.setDisable(false);
+//            resetBtn.setDisable(false);
+//            undoBtn.setDisable(false);
+//            finishTurnBtn.setDisable(false);
         }
         else{
             resetBtn.setDisable(true);
@@ -357,7 +368,7 @@ public class InGameController implements Observer, Initializable {
         myPlayerImageCircle.setFill(new ImagePattern(userIcon));
 
         //numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
-        //numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
+        numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
         //myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty);
         newPlayerTurn();
         for(int i=0;i<15;i++){
@@ -372,7 +383,7 @@ public class InGameController implements Observer, Initializable {
         int myID = ViewModel.getViewModel().getMyPlayer().getId();
         for(int i=0;i<=3;i++){
             if(ViewModel.getViewModel().getPlayers().get(i) == null) continue;
-            if(ViewModel.getViewModel().getPlayers().get(i).getId() == myID) {
+            if(i == myID) {
                 playersPosition[i]=4;
                 playersNames[i] = myPlayerName;
                 playersImagesCircles[i] = myPlayerImageCircle;
@@ -387,7 +398,7 @@ public class InGameController implements Observer, Initializable {
     public void insertPlayerDetails(String name, int id){
         if(player1Name.getText().equals("")){
             player1Name.setText(name);
-            //player1Score.textProperty().bindBidirectional(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
+            //player1Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
             player1Name.setVisible(true);
             player1Score.setVisible(true);
             player1ImageCircle.setFill(new ImagePattern(userIcon));
@@ -441,6 +452,11 @@ public class InGameController implements Observer, Initializable {
         tilesInHandGrid.getChildren().get(indexChangesList.get(indexChangesList.size()-1)).setVisible(true);
         dataChangesList.remove(dataChangesList.size()-1);
         indexChangesList.remove(indexChangesList.size()-1);
+        if(dataChangesList.size()==0){
+            undoBtn.setDisable(true);
+            resetBtn.setDisable(true);
+            finishTurnBtn.setDisable(true);
+        }
     }
 
     /**
@@ -496,7 +512,8 @@ public class InGameController implements Observer, Initializable {
             }
             System.out.println("");
         }
-        ViewModel.getViewModel().tryPlaceWord();
+        if(ViewModel.getViewModel().changesList.size()>0)
+            ViewModel.getViewModel().tryPlaceWord();
     }
 
     @Override
@@ -515,7 +532,9 @@ public class InGameController implements Observer, Initializable {
                 Platform.runLater(this::setHand);
                 break;
             case MethodsNames.NEW_PLAYER_TURN:
-                Platform.runLater(this::newPlayerTurn);
+                Platform.runLater(()->{
+                    newPlayerTurn();
+                });
                 break;
             case MethodsNames.TRY_PLACE_WORD:
                 Platform.runLater(()->{
@@ -524,6 +543,11 @@ public class InGameController implements Observer, Initializable {
                     if(splitedArguments[0].equals("0"))
                     {
                         //todo : need to make popUp for the player that his word is invalid
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid word");
+                        alert.setHeaderText("Invalid word");
+                        alert.setContentText("The word that you placed \\ created is invalid, please try again");
+                        alert.showAndWait();
                     }
                     else{
                         if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
@@ -541,7 +565,40 @@ public class InGameController implements Observer, Initializable {
                 });
                 break;
             case MethodsNames.CHALLENGE:
-                //todo challenge success/fail logic
+                System.out.println(arguments);
+                String[] splitedArguments=arguments.split(",");
+                if(splitedArguments[0].equals("0"))
+                    Platform.runLater(()->{
+                        if(ViewModel.getViewModel().getMyPlayer().getId()==ViewModel.getViewModel().getCurrentPlayerId())
+                            resetBtnClickHandler();
+                        Popup popup = new Popup();
+                        popup.setX(300);
+                        popup.setY(200);
+                        popup.getContent().add(new Label("Someone challenged. The challenge was successful, the word will be removed from the board"));
+                        PauseTransition visiblePause = new PauseTransition(
+                                Duration.seconds(3)
+                        );
+                        visiblePause.setOnFinished(
+                                event -> popup.hide()
+                        );
+                        popup.show(gridPane.getScene().getWindow());
+                        visiblePause.play();
+                    });
+                else
+                    Platform.runLater(()->{
+                        Popup popup = new Popup();
+                        popup.setX(300);
+                        popup.setY(200);
+                        popup.getContent().add(new Label("Someone challenged. The challenge was unsuccessful, the word will stay on the board"));
+                        PauseTransition visiblePause = new PauseTransition(
+                                Duration.seconds(3)
+                        );
+                        visiblePause.setOnFinished(
+                                event -> popup.hide()
+                        );
+                        popup.show(gridPane.getScene().getWindow());
+                        visiblePause.play();
+                    });
                 break;
             case MethodsNames.CLOSE_CHALLENGE_ALERT:
                 Platform.runLater(()->{
@@ -551,10 +608,27 @@ public class InGameController implements Observer, Initializable {
                 break;
             case MethodsNames.INVALID_PLACEMENT:
                 //todo pop a popUp for the player that tried to put the word, that his placement is invalid
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Invalid Placement");
+                    alert.setHeaderText("Invalid Placement");
+                    alert.setContentText("You can't place the word in this way");
+                    alert.showAndWait();
+                });
                 break;
             case MethodsNames.END_GAME:
                 //todo pop a popUp that the game has ended->victory popUp
                 //we get the players id-score list ordered by the descending scores
+                Platform.runLater(()->{
+                    String[] splitedArguments1=arguments.split(",");
+                    List<String> playersIdScoreList=new ArrayList<>(splitedArguments1.length);
+                    for(int i=0;i<splitedArguments1.length;i++){
+                        playersIdScoreList.add(splitedArguments1[i]);
+                    }
+                    String[] playersIdScoreArray=new String[playersIdScoreList.size()];
+                    playersIdScoreArray=playersIdScoreList.toArray(playersIdScoreArray);
+                    showEndGameAlert(playersIdScoreArray);
+                });
                 break;
 
             case MethodsNames.BOARD_UPDATED:
@@ -565,6 +639,22 @@ public class InGameController implements Observer, Initializable {
                 break;
         }
 
+    }
+
+    private void showEndGameAlert(String[] playersIdScoreArray) {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Ended");
+        alert.setHeaderText("Game Ended");
+        String contentText="The game has ended, the winner is: ";
+        for(int i=0;i<playersIdScoreArray.length;i++){
+            String[] splitedPlayerIdScore=playersIdScoreArray[i].split(" ");
+            contentText+=splitedPlayerIdScore[0]+" with score: "+splitedPlayerIdScore[1];
+            if(i!=playersIdScoreArray.length-1)
+                contentText+="\n";
+        }
+        alert.setContentText(contentText);
+        alert.showAndWait();
     }
 
     private void copyBoardStatus() {
