@@ -125,7 +125,12 @@ public class ViewModel extends Observable implements Observer {
      */
     public void tryPlaceWord() {
         if (isChangeValid()) {
-            model.tryPlaceWord(getWord(), getWordStartCol(), getWordStartRow(), isWordVertical());
+            word = getWord();
+            if(word == null)
+                return;
+            wordStartRow = getWordStartRow();
+            wordStartCol = getWordStartCol();
+            model.tryPlaceWord(word, wordStartCol, wordStartRow, isWordVertical());
             word = null;
             wordStartRow = -1;
             wordStartCol = -1;
@@ -171,6 +176,23 @@ public class ViewModel extends Observable implements Observer {
         this.wordStartCol = sortedChangesList.get(0).getNewCol();
         this.wordStartRow = sortedChangesList.get(0).getNewRow();
         if (isWordVertical()) {
+            List<DataChanges> sortedChangesListClone = new ArrayList<>(sortedChangesList);
+            for (int i = 0; i < sortedChangesListClone.size()-1; i++) {
+                int distance = sortedChangesListClone.get(i+1).getNewRow() - sortedChangesListClone.get(i).getNewRow();
+                if(distance > 1){
+                    for(int j = sortedChangesListClone.get(i).getNewRow()+1; j < sortedChangesListClone.get(i+1).getNewRow(); j++){
+                        if (board[j][sortedChangesListClone.get(i).getNewCol()] == '_'){
+                            setChanged();
+                            notifyObservers(MethodsNames.INVALID_PLACEMENT);
+                            return null;
+                        }
+
+                    }
+                }
+            }
+            sortedChangesList = getSortedChangesListByRowCol();
+
+
             while (this.wordStartRow > 0 && board[this.wordStartRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
                 this.wordStartRow--;
             }
@@ -195,6 +217,24 @@ public class ViewModel extends Observable implements Observer {
                 sb.append('_');
             }
         } else {
+            List<DataChanges> sortedChangesListClone = new ArrayList<>(sortedChangesList);
+            for (int i = 0; i < sortedChangesListClone.size()-1; i++) {
+                int distance = sortedChangesListClone.get(i+1).getNewCol() - sortedChangesListClone.get(i).getNewCol();
+                if(distance > 1){
+                    for(int j = sortedChangesListClone.get(i).getNewCol()+1; j < sortedChangesListClone.get(i+1).getNewCol(); j++){
+                        if (board[sortedChangesListClone.get(i).getNewRow()][j] == '_'){
+                            setChanged();
+                            notifyObservers(MethodsNames.INVALID_PLACEMENT);
+                            return null;
+                        }
+
+                    }
+                }
+            }
+            sortedChangesList = getSortedChangesListByRowCol();
+
+
+
             while (this.wordStartCol > 0 && board[sortedChangesList.get(0).getNewRow()][this.wordStartCol - 1] != '_') {
                 this.wordStartCol--;
             }
