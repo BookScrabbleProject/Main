@@ -303,11 +303,14 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder toNotify = new StringBuilder();
         if (requestedId == -1)
             requestedId = myPlayer.getId();
+
         List<Tile> t = Board.getBoard().getWord(word);
         Tile[] tilesArray = new Tile[t.size()];
         for (int i = 0; i < t.size(); i++)
             tilesArray[i] = t.get(i);
+
         Word w = new Word(tilesArray, row, col, isVertical);
+
         if (requestedId == myPlayer.getId()) {
             Socket bookScrabbleSocket = hostServer.sendToBookScrabbleServer("Q", word);
             try {
@@ -329,14 +332,15 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder toSpecificPlayer = new StringBuilder();
         StringBuilder toAllPlayers = new StringBuilder();
 
-
+        String strHand = handToString(connectedPlayers.get(requestedId).getTiles());
         if (score > 0) {
             for (Character c : wordFromPlayers.toCharArray())
-                connectedPlayers.get(requestedId).getTiles().remove(c);
+                strHand = strHand.replaceFirst(c.toString().toUpperCase(), "");
 
+
+            connectedPlayers.get(requestedId).setHand(strHand);
             List<Word> words = board.getWords(w);
             List<String> wordsStrings = words.stream().map(currentWord->tilesToString(currentWord.getTiles())).collect(Collectors.toList());
-
 
             connectedPlayers.get(requestedId).addScore(lastWordScore);
             toAllPlayers.append(requestedId).append(":" + MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append("\n");

@@ -48,6 +48,13 @@ public class Player {
         this.hand = hand;
     }
 
+    public void setHand(String hand) {
+        this.hand = new ArrayList<>();
+        for (int i = 0; i < hand.length(); i++) {
+            this.hand.add(hand.charAt(i));
+        }
+    }
+
     public void setName(String name) {
         this.name = name;
     }
