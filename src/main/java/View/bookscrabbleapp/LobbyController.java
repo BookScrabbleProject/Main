@@ -38,6 +38,12 @@ public class LobbyController implements Initializable, Observer {
     Label port;
     @FXML
     Text welcomeText;
+    @FXML
+    Button quitBtn;
+    @FXML
+    Text waitingHostText;
+
+
 
     LoginData ld = LoginData.getLoginData();
     Stage currentStage = new Stage();
@@ -62,8 +68,10 @@ public class LobbyController implements Initializable, Observer {
             startGameBtn.setVisible(true);
             player1Name.setText("Me");
         }
-        else
+        else {
             handlerPlayerList();
+            waitingHostText.setVisible(true);
+        }
         ip.setText(ld.getIp());
         port.setText(String.valueOf(ld.getPort()));
     }
@@ -126,6 +134,11 @@ public class LobbyController implements Initializable, Observer {
             } );
             stage.show();
         } catch (IOException e) {throw new RuntimeException(e);}
+    }
+
+    public void quitBtnHandler(){
+        ViewModel.getViewModel().close();
+        moveToLoginScene();
     }
 
     /**

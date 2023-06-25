@@ -101,7 +101,7 @@ public class InGameController implements Observer, Initializable {
     @FXML
     private Text waitingChallengeText;
 
-    boolean isGameStarted = false;
+    boolean isGameFinished = false;
     private Alert challengeAlert;
     private Image userIcon = new Image(getClass().getResource("/Images/userIcon.jpg").toExternalForm());
 
@@ -394,7 +394,7 @@ public class InGameController implements Observer, Initializable {
         for(int i=0;i<3;i++){
             playersPosition[i] = -1;
         }
-        isGameStarted = true;
+        isGameFinished = false;
         setHand();
         fillPlayersDetails();
         myPlayerImageCircle.setFill(new ImagePattern(userIcon));
@@ -571,6 +571,7 @@ public class InGameController implements Observer, Initializable {
         switch (methodName){
             case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
+                if(isGameFinished) break;
                 Platform.runLater(this::showDisconnectionAlert);
                 System.out.println("Alert Created");
                 break;
@@ -676,6 +677,7 @@ public class InGameController implements Observer, Initializable {
                 //todo pop a popUp that the game has ended->victory popUp
                 //we get the players id-score list ordered by the descending scores
                 Platform.runLater(()->{
+                    isGameFinished=true;
                     String[] splitedArguments1=arguments.split(",");
                     List<String> playersIdScoreList=new ArrayList<>(splitedArguments1.length);
                     for(int i=0;i<splitedArguments1.length;i++){
@@ -683,7 +685,6 @@ public class InGameController implements Observer, Initializable {
                     }
                     String[] playersIdScoreArray=new String[playersIdScoreList.size()];
                     playersIdScoreArray=playersIdScoreList.toArray(playersIdScoreArray);
-                    ViewModel.getViewModel().close();
                     showEndGameAlert(playersIdScoreArray);
                 });
                 break;
@@ -717,9 +718,7 @@ public class InGameController implements Observer, Initializable {
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
             Platform.runLater(this::moveToLoginScene);
             System.out.println("Alert Closed");
-            ((Stage) alert.getDialogPane().getScene().getWindow()).close();
-            Platform.runLater(this::moveToLoginScene);
-
+            ViewModel.getViewModel().close();
         });
         alert.showAndWait();
     }
