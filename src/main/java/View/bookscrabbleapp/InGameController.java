@@ -361,6 +361,7 @@ public class InGameController implements Observer, Initializable {
     }
 
     public void takeTileFromBag(){
+        if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()) return;
         resetBtnClickHandler();
         finishMyTurnBtnHandler();
         ViewModel.getViewModel().takeTileFromBag();

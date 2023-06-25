@@ -21,7 +21,7 @@ public class IOSearcher {
                     Scanner scanner = new Scanner(file);
                     while(scanner.hasNextLine()){
                         String line = scanner.nextLine();
-                        if(line.toUpperCase().contains(word)) {
+                        if(line.toLowerCase().contains(word)) {
                             return true;
                         }
                     }

@@ -29,7 +29,7 @@ public class Dictionary {
             try {
                 Scanner s = new Scanner(new BufferedReader(new FileReader(file)));
                 while(s.hasNext()) {
-                    bloomFilter.add(s.next());
+                    bloomFilter.add(s.next().toLowerCase());
                 }
             }
             catch(FileNotFoundException e){
