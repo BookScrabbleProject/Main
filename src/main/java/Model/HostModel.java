@@ -66,6 +66,33 @@ public class HostModel extends PlayerModel implements Observer {
         return hostModel;
     }
 
+    public String getFixedWord(String word, int row, int col, boolean isVertical) {
+        StringBuilder fixedWord = new StringBuilder();
+        int stringIndex = 0;
+        if (isVertical) {
+            for(int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == '_') {
+                    fixedWord.append(getCharInPosition(row + i, col));
+                }else {
+                    fixedWord.append(word.charAt(i));
+                }
+            }
+        }else {
+            for (int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == '_') {
+                    fixedWord.append(getCharInPosition(row, col + i));
+                }else {
+                    fixedWord.append(word.charAt(i));
+                }
+            }
+        }
+
+        return fixedWord.toString();
+    }
+    public char getCharInPosition(int row, int col) {
+        return board.getTiles()[row][col].getLetter();
+    }
+
     /**
      * @return the host server
      */
