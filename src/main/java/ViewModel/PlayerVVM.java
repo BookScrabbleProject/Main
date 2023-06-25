@@ -1,5 +1,6 @@
 package ViewModel;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -47,7 +48,7 @@ public class PlayerVVM {
 
     public void setName(String name) {
         this.name = name;
-        this.nameProperty.setValue(name);
+        Platform.runLater(()->this.nameProperty.setValue(name));
     }
 
     public int getScore() {
@@ -56,7 +57,8 @@ public class PlayerVVM {
 
     public void setScore(int score) {
         this.score = score;
-        this.scoreProperty.setValue(score + " pts");
+        Platform.runLater(()->this.scoreProperty.setValue(score + " pts"));
+
     }
 
     public int getNumberOfTiles() {
@@ -65,6 +67,6 @@ public class PlayerVVM {
 
     public void setNumberOfTiles(int numberOfTiles) {
         this.numberOfTiles = numberOfTiles;
-        this.numberOfTilesProperty.setValue(String.valueOf(numberOfTiles));
+        Platform.runLater(()->this.numberOfTilesProperty.setValue(String.valueOf(numberOfTiles)));
     }
 }
