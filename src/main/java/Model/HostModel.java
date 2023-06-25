@@ -440,6 +440,7 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.sendToAllPlayers(toAllPlayers.toString());
         setChanged();
         notifyObservers(toNotify.toString());
+        passTheTurn();
     }
 
     private void challenge1(String word) {
@@ -451,8 +452,9 @@ public class HostModel extends PlayerModel implements Observer {
         connectedPlayers.get(requestedId).setScore(connectedPlayers.get(requestedId).getScore() - lastWordScore);
         toSpecificPlayer.append(currentPlayerId).append(":" + MethodsNames.SET_HAND + ":").append(handToString(connectedPlayers.get(currentPlayerId).getTiles())).append("\n");
         toAllPlayers.append(currentPlayerId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(currentPlayerId).getTiles().size()).append("\n");
+        toAllPlayers.append(0).append(":" + MethodsNames.SCORE_UPDATED + ":").append(String.valueOf(connectedPlayers.get(currentPlayerId).getScore())).append("\n");
+        toNotify.append(MethodsNames.SCORE_UPDATED).append("\n");
 
-        passTheTurn();
         toAllPlayers.append(requestedId).append(":" + MethodsNames.CHALLENGE + ":1,").append(word).append("\n");
         requestedId = -1;
         toNotify.append(MethodsNames.CHALLENGE + ":").append(word).append("\n");
@@ -461,6 +463,7 @@ public class HostModel extends PlayerModel implements Observer {
 
         setChanged();
         notifyObservers(toNotify.toString());
+        passTheTurn();
     }
 
     /**
