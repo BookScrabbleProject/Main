@@ -320,6 +320,7 @@ public class HostModel extends PlayerModel implements Observer {
                     toNotify.append(MethodsNames.TRY_PLACE_WORD + ":").append(0).append('\n');
                     setChanged();
                     notifyObservers(toNotify.toString());
+                    return;
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
