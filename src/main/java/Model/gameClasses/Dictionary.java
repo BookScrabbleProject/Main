@@ -21,7 +21,7 @@ public class Dictionary {
         this.fileNames = fileNames.clone();
         exists = new CacheManager(400, new LRU());
         notExists = new CacheManager(100, new LFU());
-        bloomFilter = new BloomFilter(256, "MD5", "SHA1");
+        bloomFilter = new BloomFilter(32768*4, "MD5","SHA1","MD2","SHA256","SHA512", "SHA-384", "SHA-224" );
         /*for(String file : fileNames){
             bloomFilter.add(file);
         }*/
@@ -34,6 +34,14 @@ public class Dictionary {
             }
             catch(FileNotFoundException e){
                 System.out.println("File not found");
+            }
+        }
+        for(int i=0;i<bloomFilter.bitSet.length();i++){
+            if(bloomFilter.bitSet.get(i)){
+                System.out.print("1");
+            }
+            else {
+                System.out.print("0");
             }
         }
     }

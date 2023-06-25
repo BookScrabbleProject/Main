@@ -145,6 +145,7 @@ public class InGameController implements Observer, Initializable {
 
         System.out.println("x: " + MOUSE_CLICKED_X + " y: " + MOUSE_CLICKED_Y);
         SQUARE_WIDTH = (gridPane.getWidth()-BOARD_HGAP*14) / 15;
+        System.out.println(SQUARE_WIDTH + " " + SQUARE_HEIGHT);
         SQUARE_HEIGHT= (gridPane.getHeight()-BOARD_VGAP*14) / 15; //the height of each square in the board
 
         int cr = (int) Math.floor (MOUSE_CLICKED_Y / (SQUARE_HEIGHT+BOARD_VGAP)); //the row of the square clicked
@@ -210,7 +211,6 @@ public class InGameController implements Observer, Initializable {
         else{
             setDisableButtons(true);
         }
-        setHand();
 
     }
 
@@ -360,6 +360,12 @@ public class InGameController implements Observer, Initializable {
         alert.showAndWait();
     }
 
+    public void takeTileFromBag(){
+        resetBtnClickHandler();
+        finishMyTurnBtnHandler();
+        ViewModel.getViewModel().takeTileFromBag();
+    }
+
     /**
      * This method redirects the user to the login page
      */
@@ -408,6 +414,7 @@ public class InGameController implements Observer, Initializable {
                 boardStatus[i][j] = '_';
             }
         }
+        drawBoard();
 
     }
 
@@ -518,11 +525,12 @@ public class InGameController implements Observer, Initializable {
                 if(boardStatus[i][j]!='_'){
                     System.out.println("boardStatus["+i+"]["+j+"] = "+boardStatus[i][j]);
                     System.out.println("boardStatus["+i+"]["+j+"] lowerCase = "+Character.toLowerCase(boardStatus[i][j]));
-                    Image tile = new Image(getClass().getResource("/Images/Tiles/" + Character.toLowerCase(boardStatus[i][j]) + "Letter.png").toExternalForm());
+                    Image tile = new Image(getClass().getResource("/Images/Tiles/" + Character.toLowerCase(boardStatus[i][j]) + "LetterBoard.png").toExternalForm());
                     ImageView iv = new ImageView(tile);
-                    iv.setPreserveRatio(false);
-                    iv.setFitWidth(SQUARE_WIDTH);
-                    iv.setFitHeight(SQUARE_HEIGHT);
+                    iv.setPreserveRatio(true);
+                    iv.setFitWidth(38);
+                    iv.setFitHeight(38);
+                    System.out.println(iv.getFitWidth() + " " + iv.getFitHeight());
                     StackPane sp = new StackPane(iv);
                     sp.setAlignment(Pos.CENTER);
                     gridPane.add(sp, j, i);
@@ -537,6 +545,7 @@ public class InGameController implements Observer, Initializable {
      * it will send the changes that the user did to the viewModel and will try to place the word
      */
     public void finishMyTurnBtnHandler(){
+        setDisableButtons(true);
         ViewModel.getViewModel().changesList.clear();
         for(DataChanges data: dataChangesList){
             ViewModel.getViewModel().changesList.add(data);
@@ -590,18 +599,22 @@ public class InGameController implements Observer, Initializable {
                     String[] splitedArguments=arguments.split(",");
                     if(splitedArguments[0].equals("0"))
                     {
-                        tilesInHandGrid.setDisable(false);
                         //todo : need to make popUp for the player that his word is invalid
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Invalid word");
                         alert.setHeaderText("Invalid word");
                         alert.setContentText("The word that you placed \\ created is invalid, please try again");
                         if(isBoardEmpty){
-                            alert.setContentText(alert.getContentText() + "\n" + "You must place the first word on the star");
+                            alert.setContentText(alert.getContentText() + "\n" + "Pay attention you must place the first word on the star");
                         }
+                        alert.setOnCloseRequest(event -> {
+                            tilesInHandGrid.setDisable(false);
+                            setDisableButtons(false);
+                        });
                         alert.showAndWait();
                     }
                     else{
+                        tilesInHandGrid.setDisable(true);
                         setDisableButtons(true);
                         isBoardEmpty=false;
                         if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
@@ -626,8 +639,8 @@ public class InGameController implements Observer, Initializable {
                 String[] splitedArguments=arguments.split(",");
                 if(splitedArguments[0].equals("0"))
                     Platform.runLater(()->{
-                        if(ViewModel.getViewModel().getMyPlayer().getId()==ViewModel.getViewModel().getCurrentPlayerId())
-                            resetBtnClickHandler();
+//                        if(ViewModel.getViewModel().getMyPlayer().getId()==ViewModel.getViewModel().getCurrentPlayerId())
+//                            resetBtnClickHandler();
                         Popup popup = new Popup();
                         popup.setX(300);
                         popup.setY(200);
@@ -666,6 +679,7 @@ public class InGameController implements Observer, Initializable {
             case MethodsNames.INVALID_PLACEMENT:
                 //todo pop a popUp for the player that tried to put the word, that his placement is invalid
                 Platform.runLater(()->{
+                    setDisableButtons(false);
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Invalid Placement");
                     alert.setHeaderText("Invalid Placement");

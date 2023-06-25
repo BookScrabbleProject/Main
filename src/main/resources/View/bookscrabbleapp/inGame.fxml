@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -180,7 +181,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <ImageView fx:id="bagImage" accessibleRole="BUTTON" fitHeight="106.0" fitWidth="105.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="bagImage" accessibleRole="BUTTON" fitHeight="106.0" fitWidth="105.0" onMouseClicked="#takeTileFromBag" pickOnBounds="true" preserveRatio="true">
                      <viewport>
                         <Rectangle2D />
                      </viewport>
@@ -190,7 +191,11 @@
                      <VBox.margin>
                         <Insets right="8.0" />
                      </VBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </ImageView>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Click to take tile!" wrappingWidth="103.357421875" />
                </children>
             </VBox>
             <VBox alignment="CENTER" prefHeight="132.0" prefWidth="216.0" spacing="6.0">
