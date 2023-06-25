@@ -339,7 +339,9 @@ public class HostModel extends PlayerModel implements Observer {
         Word w = new Word(tilesArray, row, col, isVertical);
 
         if (requestedId == myPlayer.getId()) {
-            Socket bookScrabbleSocket = hostServer.sendToBookScrabbleServer("Q", word);
+
+            String fixedWord = HostModel.getHost().getFixedWord(word, row, col, isVertical);
+            Socket bookScrabbleSocket = hostServer.sendToBookScrabbleServer("Q", fixedWord);
             try {
                 Scanner s = new Scanner(bookScrabbleSocket.getInputStream());
                 String answerFromBookScrabble = s.next();
