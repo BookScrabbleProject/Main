@@ -38,6 +38,12 @@ public class LobbyController implements Initializable, Observer {
     Label port;
     @FXML
     Text welcomeText;
+    @FXML
+    Button quitBtn;
+    @FXML
+    Text waitingHostText;
+
+
 
     LoginData ld = LoginData.getLoginData();
     Stage currentStage = new Stage();
@@ -62,8 +68,10 @@ public class LobbyController implements Initializable, Observer {
             startGameBtn.setVisible(true);
             player1Name.setText("Me");
         }
-        else
+        else {
             handlerPlayerList();
+            waitingHostText.setVisible(true);
+        }
         ip.setText(ld.getIp());
         port.setText(String.valueOf(ld.getPort()));
     }
@@ -92,7 +100,8 @@ public class LobbyController implements Initializable, Observer {
             Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
             //close the current window and change to the root
             Scene scene = new Scene(root, 650, 500);
-            Stage stage = (Stage) backBtn.getScene().getWindow();
+            Stage stage = (Stage) startGameBtn.getScene().getWindow();
+
             stage.close();
             stage = new Stage();
             stage.setScene(scene);
@@ -127,6 +136,11 @@ public class LobbyController implements Initializable, Observer {
         } catch (IOException e) {throw new RuntimeException(e);}
     }
 
+    public void quitBtnHandler(){
+        ViewModel.getViewModel().close();
+        moveToLoginScene();
+    }
+
     /**
      * update the guests that we need to move to game page and moves them all or update the guests player list.
      * @param o     the observable object.
@@ -141,7 +155,8 @@ public class LobbyController implements Initializable, Observer {
                 Platform.runLater(()->handlerPlayerList());
                 break;
             case MethodsNames.START_GAME:
-                Platform.runLater(()->moveInGameScene());
+                Platform.runLater(()->
+                        moveInGameScene());
                 break;
         }
     }

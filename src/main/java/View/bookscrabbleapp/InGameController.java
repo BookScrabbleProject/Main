@@ -101,7 +101,7 @@ public class InGameController implements Observer, Initializable {
     @FXML
     private Text waitingChallengeText;
 
-    boolean isGameStarted = false;
+    boolean isGameFinished = false;
     private Alert challengeAlert;
     private Image userIcon = new Image(getClass().getResource("/Images/userIcon.jpg").toExternalForm());
 
@@ -135,6 +135,7 @@ public class InGameController implements Observer, Initializable {
      * @param e the mouse event
      */
     public void boardClickHandler(MouseEvent e){
+
         if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
             return;
         if(lastPickedTile== null || lastPickedTileIndex == -1)
@@ -162,6 +163,7 @@ public class InGameController implements Observer, Initializable {
             boardImage.setVisible(true);
         if(resetBtn.isDisable() || undoBtn.isDisable() || finishTurnBtn.isDisable()) {
             setDisableButtons(false);
+
         }
 
 //        if(!isGameStarted) {
@@ -338,6 +340,7 @@ public class InGameController implements Observer, Initializable {
     /**
      * This alert is triggered when the host disconnects from the game, it redirects the guest to the login page
      */
+
     public void showDisconnectionAlert(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Host Has Disconnected");
@@ -391,7 +394,7 @@ public class InGameController implements Observer, Initializable {
         for(int i=0;i<3;i++){
             playersPosition[i] = -1;
         }
-        isGameStarted = true;
+        isGameFinished = false;
         setHand();
         fillPlayersDetails();
         myPlayerImageCircle.setFill(new ImagePattern(userIcon));
@@ -568,6 +571,7 @@ public class InGameController implements Observer, Initializable {
         switch (methodName){
             case MethodsNames.DISCONNECT_FROM_SERVER:
                 System.out.println("In Case Disconnect");
+                if(isGameFinished) break;
                 Platform.runLater(this::showDisconnectionAlert);
                 System.out.println("Alert Created");
                 break;
@@ -627,9 +631,9 @@ public class InGameController implements Observer, Initializable {
                         Popup popup = new Popup();
                         popup.setX(300);
                         popup.setY(200);
-                        popup.getContent().add(new Label("Someone challenged. The challenge was successful, the word will be removed from the board"));
+                        popup.getContent().add(new Label("Someone challenged. \nThe challenge was successful, \nthe word will be removed from the board"));
                         PauseTransition visiblePause = new PauseTransition(
-                                Duration.seconds(3)
+                                Duration.seconds(5)
                         );
                         visiblePause.setOnFinished(
                                 event -> popup.hide()
@@ -642,7 +646,7 @@ public class InGameController implements Observer, Initializable {
                         Popup popup = new Popup();
                         popup.setX(300);
                         popup.setY(200);
-                        popup.getContent().add(new Label("Someone challenged. The challenge was unsuccessful, the word will stay on the board"));
+                        popup.getContent().add(new Label("Someone challenged. \nThe challenge was unsuccessful,\n the word will stay on the board"));
                         PauseTransition visiblePause = new PauseTransition(
                                 Duration.seconds(3)
                         );
@@ -673,6 +677,7 @@ public class InGameController implements Observer, Initializable {
                 //todo pop a popUp that the game has ended->victory popUp
                 //we get the players id-score list ordered by the descending scores
                 Platform.runLater(()->{
+                    isGameFinished=true;
                     String[] splitedArguments1=arguments.split(",");
                     List<String> playersIdScoreList=new ArrayList<>(splitedArguments1.length);
                     for(int i=0;i<splitedArguments1.length;i++){
@@ -680,7 +685,6 @@ public class InGameController implements Observer, Initializable {
                     }
                     String[] playersIdScoreArray=new String[playersIdScoreList.size()];
                     playersIdScoreArray=playersIdScoreList.toArray(playersIdScoreArray);
-                    ViewModel.getViewModel().close();
                     showEndGameAlert(playersIdScoreArray);
                 });
                 break;
@@ -704,15 +708,17 @@ public class InGameController implements Observer, Initializable {
         for(int i=0;i<playersIdScoreArray.length;i++){
             String[] splitedPlayerIdScore=playersIdScoreArray[i].split("-");
             contentText+=playersNames[Integer.parseInt(splitedPlayerIdScore[0])].getText()+" with score: "+splitedPlayerIdScore[1];
+
             if(i!=playersIdScoreArray.length-1)
                 contentText+="\n";
         }
         alert.setContentText(contentText);
         alert.setOnCloseRequest(event -> {
-            System.out.println("Alert Closed");
+
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
             Platform.runLater(this::moveToLoginScene);
-
+            System.out.println("Alert Closed");
+            ViewModel.getViewModel().close();
         });
         alert.showAndWait();
     }
