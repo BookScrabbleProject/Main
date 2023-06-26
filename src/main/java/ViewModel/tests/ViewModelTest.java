@@ -42,7 +42,6 @@ public class ViewModelTest {
 
             Thread.sleep(1000);
 
-//            TODO: fix this - socket invokes close() method on server
             System.out.println("\n>>> starting game <<<");
             host.startGame();
 

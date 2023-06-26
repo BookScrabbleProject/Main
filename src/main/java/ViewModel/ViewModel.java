@@ -138,7 +138,7 @@ public class ViewModel extends Observable implements Observer {
             return;
         }
         setChanged();
-        notifyObservers(MethodsNames.INVALID_PLACEMENT); // Todo: update Yuval about it (the case he has to handle)
+        notifyObservers(MethodsNames.INVALID_PLACEMENT);
     }
 
     public void challenge(String word) {
