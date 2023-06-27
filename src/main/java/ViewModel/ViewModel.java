@@ -125,6 +125,11 @@ public class ViewModel extends Observable implements Observer {
      * If the word is invalid, notify the view
      */
     public void tryPlaceWord() {
+        if(changesList.size() < 2) {
+            setChanged();
+            notifyObservers(MethodsNames.INVALID_PLACEMENT);
+            return;
+        }
         if (isChangeValid()) {
             word = getWord();
             if(word == null)
