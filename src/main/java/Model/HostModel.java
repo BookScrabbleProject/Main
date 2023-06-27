@@ -52,7 +52,7 @@ public class HostModel extends PlayerModel implements Observer {
         lastWordScore = 0;
         wordFromPlayers = null;
         isGameStarted = false;
-        maxScore = 100;
+        maxScore = 30;
     }
 
     /**
