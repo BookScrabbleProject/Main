@@ -423,6 +423,11 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.SCORE_UPDATED:
                     Map<Integer, Integer> scores = model.getPlayersScores();
+
+                    System.out.println(">>>VM update: SCORE_UPDATED<<<");
+                    for(Integer key : scores.keySet())
+                        System.out.println("key: "+key+" value: "+scores.get(key));
+
                     for (Integer key : scores.keySet())
                         this.players.get(key).setScore(scores.get(key));
                     break;
