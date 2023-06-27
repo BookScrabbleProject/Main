@@ -187,6 +187,7 @@ public class InGameController implements Observer, Initializable {
 
     private void newPlayerTurn() {
         waitingChallengeText.setVisible(false);
+        waitingChallengeText.setText("Waiting for other players to challenge your words");
         tilesInHandGrid.setDisable(true);
         dataChangesList.clear();
         indexChangesList.clear();
@@ -623,37 +624,16 @@ public class InGameController implements Observer, Initializable {
             case MethodsNames.CHALLENGE:
                 System.out.println("In Case CHALLENGE");
                 String[] splitedArguments=arguments.split(",");
+                waitingChallengeText.setVisible(true);
                 if(splitedArguments[0].equals("0"))
                     Platform.runLater(()->{
 //                        if(ViewModel.getViewModel().getMyPlayer().getId()==ViewModel.getViewModel().getCurrentPlayerId())
 //                            resetBtnClickHandler();
-                        Popup popup = new Popup();
-                        popup.setX(300);
-                        popup.setY(200);
-                        popup.getContent().add(new Label("Someone challenged. \nThe challenge was successful, \nthe word will be removed from the board"));
-                        PauseTransition visiblePause = new PauseTransition(
-                                Duration.seconds(5)
-                        );
-                        visiblePause.setOnFinished(
-                                event -> popup.hide()
-                        );
-                        popup.show(gridPane.getScene().getWindow());
-                        visiblePause.play();
+                        waitingChallengeText.setText("The challenge was successfull,\n the word will be removed from the board");
                     });
                 else
                     Platform.runLater(()->{
-                        Popup popup = new Popup();
-                        popup.setX(300);
-                        popup.setY(200);
-                        popup.getContent().add(new Label("Someone challenged. \nThe challenge was unsuccessful,\n the word will stay on the board"));
-                        PauseTransition visiblePause = new PauseTransition(
-                                Duration.seconds(3)
-                        );
-                        visiblePause.setOnFinished(
-                                event -> popup.hide()
-                        );
-                        popup.show(gridPane.getScene().getWindow());
-                        visiblePause.play();
+                        waitingChallengeText.setText("The challenge was not successfull,\n the word will stay on the board");
                     });
                 break;
             case MethodsNames.CLOSE_CHALLENGE_ALERT:
