@@ -378,18 +378,18 @@ public class HostModel extends PlayerModel implements Observer {
             List<Word> words = board.getWords(w);
             List<String> wordsStrings = words.stream().map(currentWord -> tilesToString(currentWord.getTiles())).collect(Collectors.toList());
 
-            connectedPlayers.get(requestedId).addScore(lastWordScore);
             toAllPlayers.append(requestedId).append(":" + MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append("\n");
             toNotify.append(MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append('\n');
 
+            connectedPlayers.get(requestedId).addScore(lastWordScore);
             toAllPlayers.append(requestedId).append(":" + MethodsNames.SCORE_UPDATED + ":").append(String.valueOf(connectedPlayers.get(requestedId).getScore())).append("\n");
             toNotify.append(MethodsNames.SCORE_UPDATED + ":").append(String.valueOf(connectedPlayers.get(requestedId).getScore())).append("\n");
 
             if (requestedId != myPlayer.getId()) {
                 String playerHand = handToString(connectedPlayers.get(requestedId).getTiles());
                 toSpecificPlayer.append(requestedId).append(":" + MethodsNames.SET_HAND + ":").append(playerHand.equals("") ? "_" : playerHand).append("\n");
-                String handToSend = handToString(connectedPlayers.get(requestedId).getTiles());
-                toNotify.append(MethodsNames.SET_HAND + ":").append(handToSend.equals("") ? "_" : handToSend).append("\n");
+//                String handToSend = handToString(connectedPlayers.get(requestedId).getTiles());
+//                toNotify.append(MethodsNames.SET_HAND + ":").append(handToSend.equals("") ? "_" : handToSend).append("\n");
             }
             toAllPlayers.append(requestedId).append(":" + MethodsNames.NUM_OF_TILES_UPDATED + ":").append(connectedPlayers.get(requestedId).getTiles().size()).append("\n");
             toNotify.append(MethodsNames.NUM_OF_TILES_UPDATED).append('\n');
@@ -408,6 +408,11 @@ public class HostModel extends PlayerModel implements Observer {
         setChanged();
         notifyObservers(toNotify.toString());
         requestedId = -1;
+
+        System.out.println(">>>HostModel: tryPlaceWord<<<\n");
+        for(Integer key : connectedPlayers.keySet())
+            System.out.println("Player " + key + " score: " + connectedPlayers.get(key).getScore());
+
     }
 
     private void startChallengeTimer() {
@@ -475,7 +480,6 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.sendToAllPlayers(toAllPlayers.toString());
         setChanged();
         notifyObservers(toNotify.toString());
-//        passTheTurn();
     }
 
     private void challenge1(String word) {
@@ -498,7 +502,6 @@ public class HostModel extends PlayerModel implements Observer {
 
         setChanged();
         notifyObservers(toNotify.toString());
-//        passTheTurn();
     }
 
     /**
