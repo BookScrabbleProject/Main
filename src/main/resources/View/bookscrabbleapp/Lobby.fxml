@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.LobbyController">
+<AnchorPane prefHeight="450.0" prefWidth="603.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.bookscrabbleapp.LobbyController">
    <children>
       <Button fx:id="startGameBtn" layoutX="220.0" layoutY="285.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="39.0" prefWidth="170.0" style="-fx-background-color: GREEN;" text="Start Game" textAlignment="CENTER" textFill="WHITE" visible="false">
          <font>
@@ -33,13 +33,13 @@
          <children>
             <HBox>
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="IP:" wrappingWidth="15.21630859375" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="IP:" underline="true" wrappingWidth="15.21630859375" />
                   <Label fx:id="ip" prefHeight="17.0" prefWidth="116.0" />
                </children>
             </HBox>
             <HBox>
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Port:" wrappingWidth="29.21630859375">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Port:" underline="true" wrappingWidth="29.21630859375">
                      <HBox.margin>
                         <Insets top="1.0" />
                      </HBox.margin>
@@ -49,5 +49,7 @@
             </HBox>
          </children>
       </VBox>
+      <Text fx:id="waitingHostText" layoutX="203.0" layoutY="318.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting for the host to start the game!" visible="false" />
+      <Button fx:id="quitBtn" layoutX="16.0" layoutY="416.0" mnemonicParsing="false" onMouseClicked="#quitBtnHandler" prefHeight="25.0" prefWidth="56.0" style="-fx-background-color: #DC3545;" text="Quit" />
    </children>
 </AnchorPane>

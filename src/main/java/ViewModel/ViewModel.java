@@ -3,21 +3,25 @@ package ViewModel;
 import Model.Model;
 import Model.gameClasses.Player;
 import General.MethodsNames;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class ViewModel extends Observable implements Observer {
     public static ViewModel vm = null;
-    public Character[][] board;
     public List<DataChanges> changesList;
-    public int currentPlayerId;
-    public int numberOfTilesInBag;
-    public Map<Integer, PlayerVVM> players;
-    public MyPlayerVVM myPlayer;
+    public StringProperty numberOfTilesInBagProperty;
+    private Character[][] board;
+    private int currentPlayerId;
+    private int numberOfTilesInBag;
+    private Map<Integer, PlayerVVM> players;
+    private MyPlayerVVM myPlayer;
     //    data binding
-    Map<Character, Integer> tilesScores;
-    Model model;
+    private Map<Character, Integer> tilesScores;
+    private Model model;
     private String word;
     private int wordStartRow;
     private int wordStartCol;
@@ -30,15 +34,15 @@ public class ViewModel extends Observable implements Observer {
         model = null;
         this.tilesScores = new HashMap<>();
         this.board = new Character[15][15];
+        for (int i = 0; i < this.board.length; i++) {
+            Arrays.fill(this.board[i], '_');
+        }
         this.changesList = new ArrayList<>();
         this.currentPlayerId = -1;
         this.numberOfTilesInBag = 0;
+        this.numberOfTilesInBagProperty = new SimpleStringProperty("");
         this.players = new HashMap<>();
         this.myPlayer = new MyPlayerVVM(-1, "Me", 0, 0);
-    }
-
-    public void startGame() {
-        model.startGame();
     }
 
     /**
@@ -51,6 +55,36 @@ public class ViewModel extends Observable implements Observer {
             vm = new ViewModel();
         }
         return vm;
+    }
+
+    public Map<Integer, PlayerVVM> getPlayers() {
+        return players;
+    }
+
+    public MyPlayerVVM getMyPlayer() {
+        return myPlayer;
+    }
+
+    public int getCurrentPlayerId() {
+        return currentPlayerId;
+    }
+
+    private void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+        setChanged();
+        notifyObservers(MethodsNames.NEW_PLAYER_TURN);
+    }
+
+    public Character[][] getBoard() {
+        return board;
+    }
+
+    private void setBoard(Character[][] boardStatus) {
+        this.board = boardStatus;
+    }
+
+    public void startGame() {
+        model.startGame();
     }
 
     /**
@@ -91,15 +125,25 @@ public class ViewModel extends Observable implements Observer {
      * If the word is invalid, notify the view
      */
     public void tryPlaceWord() {
+        if(changesList.size() < 2) {
+            setChanged();
+            notifyObservers(MethodsNames.INVALID_PLACEMENT);
+            return;
+        }
         if (isChangeValid()) {
-            model.tryPlaceWord(getWord(), getWordStartRow(), getWordStartCol(), isWordVertical());
+            word = getWord();
+            if(word == null)
+                return;
+            wordStartRow = getWordStartRow();
+            wordStartCol = getWordStartCol();
+            model.tryPlaceWord(word, wordStartCol, wordStartRow, isWordVertical());
             word = null;
             wordStartRow = -1;
             wordStartCol = -1;
             return;
         }
         setChanged();
-        notifyObservers("tryPlaceWordInvalid"); // Todo: update Yuval about it (the case he has to handle)
+        notifyObservers(MethodsNames.INVALID_PLACEMENT);
     }
 
     public void challenge(String word) {
@@ -132,15 +176,111 @@ public class ViewModel extends Observable implements Observer {
         return numberOfColRowChanges == sortedChangesList.size() - 1;
     }
 
+    private String getWord() {
+        List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
+        StringBuilder sb = new StringBuilder();
+        this.wordStartCol = sortedChangesList.get(0).getNewCol();
+        this.wordStartRow = sortedChangesList.get(0).getNewRow();
+        if (isWordVertical()) {
+            List<DataChanges> sortedChangesListClone = new ArrayList<>(sortedChangesList);
+            for (int i = 0; i < sortedChangesListClone.size()-1; i++) {
+                int distance = sortedChangesListClone.get(i+1).getNewRow() - sortedChangesListClone.get(i).getNewRow();
+                if(distance > 1){
+                    for(int j = sortedChangesListClone.get(i).getNewRow()+1; j < sortedChangesListClone.get(i+1).getNewRow(); j++){
+                        if (board[j][sortedChangesListClone.get(i).getNewCol()] == '_'){
+                            setChanged();
+                            notifyObservers(MethodsNames.INVALID_PLACEMENT);
+                            return null;
+                        }
+
+                    }
+                }
+            }
+            sortedChangesList = getSortedChangesListByRowCol();
+
+
+            while (this.wordStartRow > 0 && board[this.wordStartRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                this.wordStartRow--;
+            }
+            for (int i = this.wordStartRow; i < sortedChangesList.get(0).getNewRow(); i++) {
+                sb.append('_');
+            }
+            int changeIndex = 0;
+            for (int i = sortedChangesList.get(0).getNewRow(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i++, changeIndex++) {
+                if (board[i][sortedChangesList.get(0).getNewCol()] == '_') {
+                    sb.append(sortedChangesList.get(changeIndex).getLetter());
+                } else {
+                    sb.append('_');
+                    changeIndex--;
+                }
+            }
+
+            int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
+                endRow++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow() + 1; i <= endRow; i++) {
+                sb.append('_');
+            }
+        } else {
+            List<DataChanges> sortedChangesListClone = new ArrayList<>(sortedChangesList);
+            for (int i = 0; i < sortedChangesListClone.size()-1; i++) {
+                int distance = sortedChangesListClone.get(i+1).getNewCol() - sortedChangesListClone.get(i).getNewCol();
+                if(distance > 1){
+                    for(int j = sortedChangesListClone.get(i).getNewCol()+1; j < sortedChangesListClone.get(i+1).getNewCol(); j++){
+                        if (board[sortedChangesListClone.get(i).getNewRow()][j] == '_'){
+                            setChanged();
+                            notifyObservers(MethodsNames.INVALID_PLACEMENT);
+                            return null;
+                        }
+
+                    }
+                }
+            }
+            sortedChangesList = getSortedChangesListByRowCol();
+
+
+
+            while (this.wordStartCol > 0 && board[sortedChangesList.get(0).getNewRow()][this.wordStartCol - 1] != '_') {
+                this.wordStartCol--;
+            }
+            for (int i = this.wordStartCol; i < sortedChangesList.get(0).getNewCol(); i++) {
+                sb.append('_');
+            }
+
+            int changeIndex = 0;
+            for (int i = sortedChangesList.get(0).getNewCol(); i <= sortedChangesList.get(sortedChangesList.size() - 1).getNewCol(); i++, changeIndex++) {
+                if (board[sortedChangesList.get(0).getNewRow()][i] == '_') {
+                    sb.append(sortedChangesList.get(changeIndex).getLetter());
+                } else {
+                    sb.append('_');
+                    changeIndex--;
+                }
+            }
+
+            int endCol = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol();
+            while (endCol < 14 && board[sortedChangesList.get(0).getNewRow()][endCol + 1] != '_') {
+                endCol++;
+            }
+            for (int i = sortedChangesList.get(sortedChangesList.size() - 1).getNewCol() + 1; i <= endCol; i++) {
+                sb.append('_');
+            }
+        }
+
+        this.word = sb.toString().toLowerCase();
+        System.out.println("word: " + this.word);
+        return this.word;
+    }
+
     /**
      * @return the word that the player is trying to place
      */
-    private String getWord() {
+    private String getWord_old() {
         List<DataChanges> sortedChangesList = getSortedChangesListByRowCol();
         StringBuilder sb = new StringBuilder();
         if (isWordVertical()) {
             int startRow = sortedChangesList.get(0).getNewRow();
-            while (startRow > 0 && board[startRow - 1][sortedChangesList.get(0).getNewCol()] != null) {
+            while (startRow > 0 && board[startRow - 1][sortedChangesList.get(0).getNewCol()] != '_') {
                 startRow--;
             }
             for (int i = startRow; i < sortedChangesList.get(0).getNewRow(); i++) {
@@ -170,7 +310,7 @@ public class ViewModel extends Observable implements Observer {
 
         if (isWordVertical()) {
             int endRow = sortedChangesList.get(sortedChangesList.size() - 1).getNewRow();
-            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != null) {
+            while (endRow < 14 && board[endRow + 1][sortedChangesList.get(0).getNewCol()] != '_') {
                 endRow++;
             }
             for (int i = endRow; i > sortedChangesList.get(sortedChangesList.size() - 1).getNewRow(); i--) {
@@ -193,17 +333,17 @@ public class ViewModel extends Observable implements Observer {
      * @return the row of the first letter of the word
      */
     private int getWordStartRow() {
-        int minRow = changesList.get(0).getNewRow();
-        for (DataChanges dc : changesList) {
-            if (dc.getNewRow() < minRow) minRow = dc.getNewRow();
-        }
-        if (isWordVertical()) {
-            for (Character c : this.word.toCharArray()) {
-                if (c == '_') minRow--;
-                else break;
-            }
-        }
-        this.wordStartRow = minRow;
+//        int minRow = changesList.get(0).getNewRow();
+//        for (DataChanges dc : changesList) {
+//            if (dc.getNewRow() < minRow) minRow = dc.getNewRow();
+//        }
+//        if (isWordVertical()) {
+//            for (Character c : this.word.toCharArray()) {
+//                if (c == '_') minRow--;
+//                else break;
+//            }
+//        }
+//        this.wordStartRow = minRow;
         return this.wordStartRow;
     }
 
@@ -211,17 +351,17 @@ public class ViewModel extends Observable implements Observer {
      * @return the column of the first letter of the word
      */
     private int getWordStartCol() {
-        int minCol = changesList.get(0).getNewCol();
-        for (DataChanges dc : changesList) {
-            if (dc.getNewCol() < minCol) minCol = dc.getNewCol();
-        }
-        if (!isWordVertical()) {
-            for (Character c : this.word.toCharArray()) {
-                if (c == '_') minCol--;
-                else break;
-            }
-        }
-        this.wordStartCol = minCol;
+//        int minCol = changesList.get(0).getNewCol();
+//        for (DataChanges dc : changesList) {
+//            if (dc.getNewCol() < minCol) minCol = dc.getNewCol();
+//        }
+//        if (!isWordVertical()) {
+//            for (Character c : this.word.toCharArray()) {
+//                if (c == '_') minCol--;
+//                else break;
+//            }
+//        }
+//        this.wordStartCol = minCol;
         return this.wordStartCol;
     }
 
@@ -245,18 +385,9 @@ public class ViewModel extends Observable implements Observer {
         return sortedChangesList;
     }
 
-    private void setBoard(Character[][] boardStatus) {
-        this.board = boardStatus;
-    }
-
     private void setNumberOfTilesInBag(int numberOfTilesInBag) {
         this.numberOfTilesInBag = numberOfTilesInBag;
-    }
-
-    private void setCurrentPlayerId(int currentPlayerId) {
-        this.currentPlayerId = currentPlayerId;
-        setChanged();
-        notifyObservers(MethodsNames.NEW_PLAYER_TURN);
+        Platform.runLater(()->this.numberOfTilesInBagProperty.setValue(numberOfTilesInBag+""));
     }
 
     /**
@@ -280,15 +411,23 @@ public class ViewModel extends Observable implements Observer {
 
             try {
                 args = message.split(":")[1].split(",");
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
 
             switch (methodName) {
                 case MethodsNames.BOARD_UPDATED:
                     setBoard(model.getBoardStatus());
+                    setChanged();
+                    notifyObservers(MethodsNames.BOARD_UPDATED);
                     break;
 
                 case MethodsNames.SCORE_UPDATED:
                     Map<Integer, Integer> scores = model.getPlayersScores();
+
+                    System.out.println(">>>VM update: SCORE_UPDATED<<<");
+                    for(Integer key : scores.keySet())
+                        System.out.println("key: "+key+" value: "+scores.get(key));
+
                     for (Integer key : scores.keySet())
                         this.players.get(key).setScore(scores.get(key));
                     break;
@@ -301,10 +440,13 @@ public class ViewModel extends Observable implements Observer {
 
                 case MethodsNames.SET_HAND:
                     this.myPlayer.setHand(model.getMyHand());
+                    setChanged();
+                    notifyObservers(MethodsNames.SET_HAND);
                     break;
 
                 case MethodsNames.NEW_PLAYER_TURN:
                     setCurrentPlayerId(model.getCurrentPlayerId());
+                    changesList.clear();
                     setChanged();
                     notifyObservers(MethodsNames.NEW_PLAYER_TURN);
                     break;
@@ -340,11 +482,25 @@ public class ViewModel extends Observable implements Observer {
                 case MethodsNames.TRY_PLACE_WORD:
                 case MethodsNames.DISCONNECT_FROM_SERVER:
                     setChanged();
-                    notifyObservers(methodName);
+                    notifyObservers(message);
                     break;
 
                 case MethodsNames.NUMBER_OF_TILES_IN_BAG_UPDATED:
                     setNumberOfTilesInBag(model.getNumberOfTilesInBag());
+                    break;
+
+                case MethodsNames.CONNECT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CONNECT + ":" + args[0]);
+                    break;
+
+                case MethodsNames.END_GAME:
+                    setChanged();
+                    notifyObservers(MethodsNames.END_GAME + ":" + String.join(",", args));
+                    break;
+                case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT);
                     break;
             }
 

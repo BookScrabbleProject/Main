@@ -72,7 +72,7 @@ public class BloomFilter {
             bytes = md.digest(word.getBytes());
             bigInt = new BigInteger(bytes);
             int bigVal = bigInt.intValue();
-            if(!bitSet.get(Math.abs(bigVal)%256)){
+            if(!bitSet.get(Math.abs(bigVal)%size)){
                 return false;
             }
         }

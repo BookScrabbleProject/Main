@@ -16,6 +16,7 @@ public class GuestModelHandler implements ClientHandler {
             Scanner lineScanner =  new Scanner(new BufferedReader(new InputStreamReader(inFromclient)));
             PrintWriter sendToGuest = new PrintWriter(outToClient);
             line = lineScanner.next();
+            System.out.println("GuestModelHandler: " + line);
             String[] splitted = line.split(":");
             String id = splitted[0];
             String methodName = splitted[1];
@@ -25,7 +26,9 @@ public class GuestModelHandler implements ClientHandler {
             String answer;
             switch (methodName){
                 case MethodsNames.TRY_PLACE_WORD: {
-                    Socket bookScrabbleServerSocket = hostServer.sendToBookScrabbleServer("Q", inputs.split(",")[0]);
+                    String[] inputsSplitted = inputs.split(",");
+                    String fixedWord = HostModel.getHost().getFixedWord(inputsSplitted[0], Integer.parseInt(inputsSplitted[2]), Integer.parseInt(inputsSplitted[1]), inputsSplitted[3].equals("1"));
+                    Socket bookScrabbleServerSocket = hostServer.sendToBookScrabbleServer("Q", fixedWord);
                     Scanner scanner = new Scanner(bookScrabbleServerSocket.getInputStream());
                     answer = scanner.next();
                     hostServer.setChanged();
@@ -48,6 +51,8 @@ public class GuestModelHandler implements ClientHandler {
             }
 
         } catch (Exception e) {
+//            System.out.println("GuestModelHandler Catch: ");
+//            e.printStackTrace();
         }
     }
 

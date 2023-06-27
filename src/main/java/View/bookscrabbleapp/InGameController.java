@@ -1,36 +1,47 @@
 package View.bookscrabbleapp;
 
-import ViewModel.ViewModel;
+import ViewModel.*;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.application.Preloader;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import General.MethodsNames;
+import javafx.util.Duration;
 
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
-
-public class InGameController implements Observer {
+//testing
+public class InGameController implements Observer, Initializable {
     @FXML
     private Label welcomeText;
     @FXML
@@ -58,7 +69,7 @@ public class InGameController implements Observer {
     @FXML
     private Label myPlayerScore;
     @FXML
-    private GridPane tilesGrid;
+    private GridPane tilesInHandGrid;
     @FXML
     private Label numOfTilesInBag;
     @FXML
@@ -87,107 +98,255 @@ public class InGameController implements Observer {
     private Circle player3ImageCircle;
     @FXML
     private Circle myPlayerImageCircle;
+    @FXML
+    private Text waitingChallengeText;
 
-    boolean isGameStarted = false;
+    boolean isGameFinished = false;
+    private Alert challengeAlert;
+    private Image userIcon = new Image(getClass().getResource("/Images/userIcon.jpg").toExternalForm());
+
+    //in every index we can find the player's id. the first player that we see in the game is the player in index 0 with id X
+    int[] playersPosition = new int[4];
+    Label[] playersNames = new Label[4];
+    Label[] playersScores = new Label[4];
+    ImageView[] playersImages = new ImageView[4];
+    Circle[] playersImagesCircles = new Circle[4];
+    final int BOARD_HGAP = 11;
+    final int BOARD_VGAP = 4;
+    final int HAND_HGAP = 20;
+    boolean isBoardEmpty = true;
+
+    double SQUARE_WIDTH; //the width of each square in the board
+    double SQUARE_HEIGHT; //the height of each square in the board
 
 
+    Character lastPickedTile = null;
+    int lastPickedTileIndex = -1;
+    Character[][] boardStatus = new Character[15][15];
 
-    final int HGAP = 11;
-    final int VGAP = 4;
-    public void init(MouseEvent e){
 
-        ViewModel.getViewModel().addObserver(this);
+    ArrayList<DataChanges> dataChangesList = new ArrayList<>();
+    ArrayList<Integer> indexChangesList = new ArrayList<>();
+
+    /**
+     * this method is called when the user clicks on the board. it checks if the click was on a square in the board
+     * it checks if the user has the turn to play.
+     * it checks if the user has already picked a tile from his hand and if so, it puts the tile on the board
+     * @param e the mouse event
+     */
+    public void boardClickHandler(MouseEvent e){
+
+        if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
+            return;
+        if(lastPickedTile== null || lastPickedTileIndex == -1)
+            return;
         double MOUSE_CLICKED_X = e.getX(); //the y of the mouse click relative to the scene
         double MOUSE_CLICKED_Y = e.getY(); //the x of the mouse click relative to the scene
 
         System.out.println("x: " + MOUSE_CLICKED_X + " y: " + MOUSE_CLICKED_Y);
-        double SQUARE_WIDTH = (gridPane.getWidth()-HGAP*14) / 15; //the width of each square
-        double SQUARE_HEIGHT = (gridPane.getHeight()-VGAP*14) / 15; //the height of each square
-        int cr = (int) Math.floor (MOUSE_CLICKED_Y / (SQUARE_HEIGHT+VGAP)); //the row of the square clicked
-        int cc = (int) Math.floor (MOUSE_CLICKED_X / (SQUARE_WIDTH+HGAP)); //the column of the square clicked
-        boolean clickedInGap = (MOUSE_CLICKED_X - (cc * (SQUARE_WIDTH + HGAP))) > SQUARE_WIDTH;
+        SQUARE_WIDTH = (gridPane.getWidth()-BOARD_HGAP*14) / 15;
+        SQUARE_HEIGHT= (gridPane.getHeight()-BOARD_VGAP*14) / 15; //the height of each square in the board
+
+        int cr = (int) Math.floor (MOUSE_CLICKED_Y / (SQUARE_HEIGHT+BOARD_VGAP)); //the row of the square clicked
+        int cc = (int) Math.floor (MOUSE_CLICKED_X / (SQUARE_WIDTH+BOARD_HGAP)); //the column of the square clicked
+        boolean clickedInGap = (MOUSE_CLICKED_X - (cc * (SQUARE_WIDTH + BOARD_HGAP))) > SQUARE_WIDTH;
 //                sp.setStyle("-fx-background-color: #ff0000");
         //((Label)sp.getChildren().get(0)).setTextFill(Color.WHITE);
         if(clickedInGap) return;
-        System.out.println("row: " + cr + " col: " + cc);
-        System.out.println("clicked");
-        System.out.println("clicked in gap: " + clickedInGap);
         System.out.println("square width: " + SQUARE_WIDTH + " square height: " + SQUARE_HEIGHT + " grid width: " + gridPane.getWidth() + " grid height: " + gridPane.getHeight() + " "+ (MOUSE_CLICKED_X-cc*(SQUARE_WIDTH+8)));
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
+        addTileToBoard(lastPickedTile, lastPickedTileIndex, cr, cc);
         if(!boardImage.isVisible())
             boardImage.setVisible(true);
+        if(resetBtn.isDisable() || undoBtn.isDisable() || finishTurnBtn.isDisable()) {
+            setDisableButtons(false);
 
-//        gc.strokeRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
-//        gc.setFill(Paint.valueOf("#43B14F"));
-//        gc.fillRect(0, 0, gameBoard.getWidth(), gameBoard.getHeight());
-//        final double width = gameBoard.getWidth();
-//        final double height = gameBoard.getHeight();
-//        final double cellWidth = width / 15 ;
-//        final double cellHeight = height / 15 ;
+        }
 
-//        gc.setFill(Paint.valueOf("#43B14F"));
-//        for( int i=0; i<15; i++) {
-//            for (int j = 0; j < 15; j++) {
-//                if(i==7 && j==7) continue;
-//                gc.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
+//        if(!isGameStarted) {
+//            char myC = 'a';
+//            for(int i=0; i<15;i++){
+//                for(int j=0; j<15;j++){
+//                    Image tile = new Image(getClass().getResource("/Images/Tiles/"+myC+"Letter.png").toExternalForm());
+//                    myC++;
+//                    if(myC>'z') myC = 'a';
+//                    ImageView iv = new ImageView(tile);
+//                    iv.setFitWidth(SQUARE_WIDTH-3);
+//                    iv.setFitHeight(SQUARE_HEIGHT-2);
+//                    StackPane sp = new StackPane(iv);
+//                    sp.setAlignment(Pos.CENTER);
+//                    gridPane.add(sp, j, i);
+//                    System.out.println(i+","+j);
+//                    System.out.println("Added stackpane to gridpane");
+//                }
 //            }
 //        }
-        //put a label on every square
-//        gc.setFill(Color.BLACK);
-//        for( int i=0; i<15; i++) {
-//            for (int j = 0; j < 15; j++) {
-//                if(i==7 && j==7) continue;
-//                gc.fillText(i + "," + j, i * cellWidth+15, j * cellHeight + 15);
-//            }
-//        }
-        if(!isGameStarted) {
 
-            char myC = 'a';
-            //paintTheSquares();
-            for(int i=0; i<15;i++){
-                for(int j=0; j<15;j++){
 
-                    Image tile = new Image(getClass().getResource("/Images/Tiles/"+myC+"Letter.png").toExternalForm());
-                    myC++;
-                    if(myC>'z') myC = 'a';
-                    ImageView iv = new ImageView(tile);
-                    iv.setFitWidth(SQUARE_WIDTH-3);
-                    iv.setFitHeight(SQUARE_HEIGHT-2);
-                    StackPane sp = new StackPane(iv);
-                    sp.setAlignment(Pos.CENTER);
-                    gridPane.add(sp, j, i);
-                    System.out.println(i+","+j);
-                    System.out.println("Added stackpane to gridpane");
+    }
+
+    private void newPlayerTurn() {
+        waitingChallengeText.setVisible(false);
+        waitingChallengeText.setText("Waiting for other players to challenge your words");
+        tilesInHandGrid.setDisable(true);
+        dataChangesList.clear();
+        indexChangesList.clear();
+        for(int i=0; i<4; i++){
+            if(ViewModel.getViewModel().getPlayers().get(i)==null) continue;
+            if(playersNames[i]==null) continue;
+            if(ViewModel.getViewModel().getPlayers().get(i).getId()==ViewModel.getViewModel().getCurrentPlayerId()){
+                playersImagesCircles[i].setStroke(Color.RED);
+            }
+            else{
+                playersImagesCircles[i].setStroke(Color.BLACK);
+            }
+        }
+
+        if (ViewModel.getViewModel().getMyPlayer().getId() == ViewModel.getViewModel().getCurrentPlayerId()) {
+            tilesInHandGrid.setDisable(false);
+        }
+        else{
+            setDisableButtons(true);
+        }
+
+    }
+
+    /**
+     * this method is called when the view model notifies the view that the current player's hand has changed
+     * it updates the hand of the current player from the view model
+     */
+    private void setHand() {
+        double HAND_SQUARE_WIDTH = (tilesInHandGrid.getWidth()-HAND_HGAP*6) / 7; //the width of each square
+        double HAND_SQUARE_HEIGHT = (tilesInHandGrid.getHeight()); //the height of each square
+        if(tilesInHandGrid.getChildren().size() > 0)
+            tilesInHandGrid.getChildren().clear();
+        if(ViewModel.getViewModel().getMyPlayer().getHand() == null || ViewModel.getViewModel().getMyPlayer().getHand().size()==0 ) return;
+        System.out.println("NEW HAND: "+String.join(",", ViewModel.getViewModel().getMyPlayer().getHand().stream().map(c->c.toString()).collect(Collectors.toList())));
+        for(int i = 0; i< ViewModel.getViewModel().getMyPlayer().getHand().size(); i++) {
+            Character myC = ViewModel.getViewModel().getMyPlayer().getHand().get(i);
+            Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
+            ImageView iv = new ImageView(tile);
+            iv.setFitWidth(HAND_SQUARE_WIDTH);
+            iv.setFitHeight(HAND_SQUARE_HEIGHT);
+            StackPane sp = new StackPane(iv);
+            sp.setAlignment(Pos.CENTER);
+            int finalI = i;
+            sp.setOnMouseClicked((event)-> {
+                if(sp.isVisible())
+                    tileInHandClickHandler(event, finalI, myC);
+            });
+            sp.setVisible(true);
+            tilesInHandGrid.add(sp, i, 0);
+
+        }
+    }
+
+
+    /**
+     * this method is called when the user clicks on a tile in his hand - it selects the tile and deselects the rest (and keep the character and the index in a variable);
+     * @param event the mouse click
+     * @param index the index of the triggered tile
+     * @param myC the character of the triggered tile
+     */
+    private void tileInHandClickHandler(MouseEvent event, int index, Character myC) {
+        if(ViewModel.getViewModel().getMyPlayer().getId()!=ViewModel.getViewModel().getCurrentPlayerId())
+            return;
+        if(event.getButton() == MouseButton.PRIMARY) {
+            for(int i=0; i<7; i++){
+                if(i==index && tilesInHandGrid.getChildren().get(i).getStyle().equals("")){ //if the tile is not selected
+                    tilesInHandGrid.getChildren().get(i).setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0, 0, 0);");
+                }
+                else{
+                    tilesInHandGrid.getChildren().get(i).setStyle("");
                 }
             }
-            isGameStarted = true;
+            if(lastPickedTileIndex == index){
+                lastPickedTileIndex = -1;
+                lastPickedTile = null;
+            }
+            else{
+                lastPickedTileIndex = index;
+                lastPickedTile = myC;
+            }
+
         }
     }
 
+    /**
+     * this method is called when a user wants to add a tile to the board. it updated the board status and the hand status
+     * @param letter the letter of the tile
+     * @param indexInHand the index of the tile in the hand
+     * @param row the row of the desire placement in the board
+     * @param col the column of the desire placement in the board
+     */
+    private void addTileToBoard(Character letter, int indexInHand, int row, int col ){
+        if(letter==null || indexInHand<0 || indexInHand >=7 || row>14 || row<0 || col>14 || col<0) return;
+        if(boardStatus[row][col]!=null && boardStatus[row][col].charValue()>='A' && boardStatus[row][col].charValue()<='Z') return;
+        if(boardStatus[row][col]!=null && boardStatus[row][col].charValue()>='a' && boardStatus[row][col].charValue()<='z') return;
+        tilesInHandGrid.getChildren().get(indexInHand).setVisible(false);
+        tilesInHandGrid.getChildren().get(indexInHand).setStyle("");
+        boardStatus[row][col] = letter;
+//        Image tile = new Image(getClass().getResource("/Images/Tiles/" + letter + "Letter.png").toExternalForm());
+//        ImageView iv = new ImageView(tile);
+//        iv.setFitWidth(SQUARE_WIDTH-3);
+//        iv.setFitHeight(SQUARE_HEIGHT-2);
+//        StackPane sp = new StackPane(iv);
+//        sp.setAlignment(Pos.CENTER);
+//        gridPane.add(sp, col, row);
+        drawBoard();
+        dataChangesList.add(new DataChanges(letter, row, col));
+        indexChangesList.add(indexInHand);
+        lastPickedTile = null;
+        lastPickedTileIndex = -1;
 
-    @Override
-    public void update(Observable o, Object arg) {
-        System.out.println("View update "+arg);
-        switch ((String) arg){
-            case MethodsNames.DISCONNECT_FROM_SERVER:
-                System.out.println("In Case Disconnect");
-                Platform.runLater(()->showBackAlert());
-                System.out.println("Alert Created");
-                break;
-        }
+
     }
 
-    public void showBackAlert(){
+    /**
+     * this method is called when a user got a positive answer from the server about his move, and it lets the other players to challenge the server decision.
+     * @param words the words that were created during the turn
+     */
+    public void showChallengeAlert(String... words){
+        challengeAlert = new Alert(Alert.AlertType.INFORMATION);
+        challengeAlert.setTitle("Challenge");
+        challengeAlert.setHeaderText("Would You Like To Challenge The Player?");
+        challengeAlert.setContentText("The List Of Words That Were Created During This Turn:");
+        VBox wordsCreated=new VBox();
+        for(String word : words)
+        {
+            Button b=new Button(word);
+            b.setOnMouseClicked((event)-> {
+                ViewModel.getViewModel().challenge(word);
+                ((Stage) challengeAlert.getDialogPane().getScene().getWindow()).close();
+            });
+            wordsCreated.getChildren().add(b);
+        }
+        wordsCreated.setSpacing(10);
+        challengeAlert.getDialogPane().setContent(wordsCreated);
+        ButtonType buttonTypeOne = new ButtonType("Close");
+        challengeAlert.getButtonTypes().setAll(buttonTypeOne);
+        challengeAlert.setOnCloseRequest(event -> {
+            ((Stage) challengeAlert.getDialogPane().getScene().getWindow()).close();
+        });
+        challengeAlert.showAndWait();
+        //todo show to all the players the score that the player will get
+    }
+
+    /**
+     * This alert is triggered when the host disconnects from the game, it redirects the guest to the login page
+     */
+
+    public void showDisconnectionAlert(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Host Has Disconnected");
         alert.setHeaderText("Host Has Disconnected");
         alert.setContentText("The Host Has Disconnected, You Will Be Redirected To The Main Menu");
         //add a button of go back
         ButtonType buttonTypeOne = new ButtonType("Go Back");
-
         alert.getButtonTypes().setAll(buttonTypeOne);
+
+
         alert.setOnCloseRequest(event -> {
-            System.out.println("Alert Closed");
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
             Platform.runLater(this::moveToLoginScene);
 
@@ -195,11 +354,22 @@ public class InGameController implements Observer {
         alert.showAndWait();
     }
 
+    public void takeTileFromBag(){
+        if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()) return;
+        resetBtnClickHandler();
+        setDisableButtons(true);
+        ViewModel.getViewModel().changesList.clear();
+        ViewModel.getViewModel().takeTileFromBag();
+    }
+
+    /**
+     * This method redirects the user to the login page
+     */
     public void moveToLoginScene(){
         try {
             Parent root = FXMLLoader.load(getClass().getResource("WelcomePage.fxml"));
             //close the current window and change to the root
-            Scene scene = new Scene(root, 650, 650);
+            Scene scene = new Scene(root, 650, 500);
             Stage stage = (Stage) gameBoard.getScene().getWindow();
             stage.close();
             stage = new Stage();
@@ -211,6 +381,336 @@ public class InGameController implements Observer {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is called when the InGame scene is initialized. in this method - all the required parameters are initialized before starting the game.
+     * @param url
+     * @param resourceBundle
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ViewModel.getViewModel().addObserver(this);
+        challengeAlert = new Alert(Alert.AlertType.INFORMATION);
+        for(int i=0;i<3;i++){
+            playersPosition[i] = -1;
+        }
+        isGameFinished = false;
+        setHand();
+        fillPlayersDetails();
+        myPlayerImageCircle.setFill(new ImagePattern(userIcon));
+
+        numOfTilesInHand.textProperty().bind(ViewModel.getViewModel().getMyPlayer().numberOfTilesProperty);
+        numOfTilesInBag.textProperty().bind(ViewModel.getViewModel().numberOfTilesInBagProperty);
+        myPlayerScore.textProperty().bind(ViewModel.getViewModel().getMyPlayer().scoreProperty);
+        newPlayerTurn();
+        for(int i=0;i<15;i++){
+            for(int j=0;j<15;j++){
+                boardStatus[i][j] = '_';
+            }
+        }
+        drawBoard();
+
+    }
+
+    /**
+     * This method is called when the game starts, and it fills the players details in the window.
+     */
+    private void fillPlayersDetails() {
+        int myID = ViewModel.getViewModel().getMyPlayer().getId();
+        for(int i=0;i<=3;i++){
+            if(ViewModel.getViewModel().getPlayers().get(i) == null) continue;
+            if(i == myID) {
+                playersPosition[i]=4;
+                playersNames[i] = myPlayerName;
+                playersImagesCircles[i] = myPlayerImageCircle;
+                playersImages[i] = myPlayerImage;
+                continue;
+            }
+            String name = ViewModel.getViewModel().getPlayers().get(i).getName();
+            insertPlayerDetails(name, i);
+        }
+    }
+
+    /**
+     * This method place the user details on the left side of the screen and binds the details to the player's details in the ViewModel.
+     * @param name the name of the player
+     * @param id the id of the player
+     */
+    public void insertPlayerDetails(String name, int id){
+        if(player1Name.getText().equals("")){
+            player1Name.setText(name);
+            player1Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
+            player1Name.setVisible(true);
+            player1Score.setVisible(true);
+            player1ImageCircle.setFill(new ImagePattern(userIcon));
+            player1ImageCircle.setVisible(true);
+            playersPosition[id] = 1;
+            playersNames[id] = player1Name;
+            playersScores[id] = player1Score;
+            playersImagesCircles[id] = player1ImageCircle;
+            playersImages[id] = player1Image;
+        }
+        else if(player2Name.getText().equals("")){
+            player2Name.setText(name);
+            player2Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
+            player2Name.setVisible(true);
+            player2Score.setVisible(true);
+            player2ImageCircle.setFill(new ImagePattern(userIcon));
+            player2ImageCircle.setVisible(true);
+            playersPosition[id] = 2;
+            playersNames[id] = player2Name;
+            playersScores[id] = player2Score;
+            playersImagesCircles[id] = player2ImageCircle;
+            playersImages[id] = player2Image;
+
+
+        }
+        else if(player3Name.getText().equals("")){
+            player3Name.setText(name);
+            player3Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
+            player3Name.setVisible(true);
+            player3Score.setVisible(true);
+            player3ImageCircle.setFill(new ImagePattern(userIcon));
+            player3ImageCircle.setVisible(true);
+            playersPosition[id] = 3;
+            playersNames[id] = player3Name;
+            playersScores[id] = player3Score;
+            playersImagesCircles[id] = player3ImageCircle;
+            playersImages[id] = player3Image;
+        }
+    }
+
+    /**
+     * this function is called when the user clicks on undo button
+     * it will undo the last move that the user did
+     * it will remove the last tile that the user put on the board and will return it to the hand
+     */
+    public void undoBtnClickHandler(){
+        if(dataChangesList.size()==0 || indexChangesList.size()==0) return;
+        DataChanges toRemove = dataChangesList.get(dataChangesList.size()-1);
+        boardStatus[toRemove.getNewRow()][toRemove.getNewCol()]='_';
+        drawBoard();
+        tilesInHandGrid.getChildren().get(indexChangesList.get(indexChangesList.size()-1)).setVisible(true);
+        dataChangesList.remove(dataChangesList.size()-1);
+        indexChangesList.remove(indexChangesList.size()-1);
+        if(dataChangesList.size()==0){
+            setDisableButtons(true);
+        }
+    }
+
+    /**
+     * this function is called when the user clicks on reset button
+     * it will undo all the moves that the user did
+     * it will remove all the tiles that the user put on the board and will return them to the hand
+     */
+    public void resetBtnClickHandler(){
+        while(dataChangesList.size()!=0){
+            undoBtnClickHandler();
+        }
+    }
+
+    /**
+     * this function iterates through the boardStatus and draws the board
+     */
+    public void drawBoard(){
+        gridPane.getChildren().clear();
+        for(int i=0;i<15;i++){
+            for(int j=0;j<15;j++){
+                if(boardStatus[i][j]!='_'){
+                    Image tile = new Image(getClass().getResource("/Images/Tiles/" + Character.toLowerCase(boardStatus[i][j]) + "LetterBoard.png").toExternalForm());
+                    ImageView iv = new ImageView(tile);
+                    iv.setPreserveRatio(true);
+                    iv.setFitWidth(38);
+                    iv.setFitHeight(38);
+                    StackPane sp = new StackPane(iv);
+                    sp.setAlignment(Pos.CENTER);
+                    gridPane.add(sp, j, i);
+                }
+            }
+        }
+    }
+
+    /**
+     * this function is called when the user clicks on the finish my turn button
+     * it will clear the changes list in the viewModel
+     * it will send the changes that the user did to the viewModel and will try to place the word
+     */
+    public void finishMyTurnBtnHandler(){
+        setDisableButtons(true);
+        ViewModel.getViewModel().changesList.clear();
+        for(DataChanges data: dataChangesList){
+            ViewModel.getViewModel().changesList.add(data);
+        }
+
+        if(ViewModel.getViewModel().changesList.size()>0)
+            ViewModel.getViewModel().tryPlaceWord();
+    }
+
+    /**
+     * This method disables all the buttons
+     */
+    private void setDisableButtons(boolean disable){
+        undoBtn.setDisable(disable);
+        resetBtn.setDisable(disable);
+        finishTurnBtn.setDisable(disable);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        System.out.println("View update "+arg);
+        String[] splitedArgString = ((String)arg).split(":");
+        String methodName = splitedArgString[0];
+        String arguments=splitedArgString.length>1?splitedArgString[1]:"";
+        switch (methodName){
+            case MethodsNames.DISCONNECT_FROM_SERVER:
+                System.out.println("In Case Disconnect");
+                if(isGameFinished) break;
+                Platform.runLater(this::showDisconnectionAlert);
+                break;
+            case MethodsNames.SET_HAND:
+                System.out.println("In Case SET HAND");
+                Platform.runLater(this::setHand);
+                break;
+            case MethodsNames.NEW_PLAYER_TURN:
+                System.out.println("In Case NEW_PLAYER_TURN");
+                Platform.runLater(()->{
+                    newPlayerTurn();
+                });
+                break;
+            case MethodsNames.TRY_PLACE_WORD:
+                System.out.println("In Case TRY PLACE WORD");
+                Platform.runLater(()->{
+                    tilesInHandGrid.setDisable(true);
+                    String[] splitedArguments=arguments.split(",");
+                    if(splitedArguments[0].equals("0"))
+                    {
+                        //todo : need to make popUp for the player that his word is invalid
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid word");
+                        alert.setHeaderText("Invalid word");
+                        alert.setContentText("The word that you placed \\ created is invalid, please try again");
+                        if(isBoardEmpty){
+                            alert.setContentText(alert.getContentText() + "\n" + "Pay attention you must place the first word on the star");
+                        }
+                        alert.setOnCloseRequest(event -> {
+                            tilesInHandGrid.setDisable(false);
+                            setDisableButtons(false);
+                        });
+                        alert.showAndWait();
+                    }
+                    else{
+                        tilesInHandGrid.setDisable(true);
+                        setDisableButtons(true);
+                        isBoardEmpty=false;
+                        if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()){
+                            List<String>words=new ArrayList<>(splitedArguments.length-1);
+                            for(int i=1;i<splitedArguments.length;i++){
+                                words.add(splitedArguments[i]);
+                            }
+                            String[] wordsArray=new String[words.size()];
+                            wordsArray=words.toArray(wordsArray);
+                            showChallengeAlert(wordsArray);
+                        }
+                        else{
+                            waitingChallengeText.setVisible(true);
+                        }
+                        dataChangesList.clear();
+                        indexChangesList.clear();
+                    }
+                });
+                break;
+            case MethodsNames.CHALLENGE:
+                System.out.println("In Case CHALLENGE");
+                String[] splitedArguments=arguments.split(",");
+                waitingChallengeText.setVisible(true);
+                if(splitedArguments[0].equals("0"))
+                    Platform.runLater(()->{
+//                        if(ViewModel.getViewModel().getMyPlayer().getId()==ViewModel.getViewModel().getCurrentPlayerId())
+//                            resetBtnClickHandler();
+                        waitingChallengeText.setText("The challenge was successfull,\n the word will be removed from the board");
+                    });
+                else
+                    Platform.runLater(()->{
+                        waitingChallengeText.setText("The challenge was not successfull,\n the word will stay on the board");
+                    });
+                break;
+            case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                System.out.println("In Case CLOSE_CHALLENGE_ALERT");
+                Platform.runLater(()->{
+                    if(challengeAlert.isShowing())
+                        challengeAlert.close();
+                });
+                break;
+            case MethodsNames.INVALID_PLACEMENT:
+                System.out.println("In Case INVALID_PLACEMENT");
+                //todo pop a popUp for the player that tried to put the word, that his placement is invalid
+                Platform.runLater(()->{
+                    setDisableButtons(false);
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Invalid Placement");
+                    alert.setHeaderText("Invalid Placement");
+                    alert.setContentText("You can't place the word in this way");
+                    alert.showAndWait();
+                });
+                break;
+            case MethodsNames.END_GAME:
+                System.out.println("In Case END_GAME");
+                //todo pop a popUp that the game has ended->victory popUp
+                //we get the players id-score list ordered by the descending scores
+                Platform.runLater(()->{
+                    isGameFinished=true;
+                    String[] splitedArguments1=arguments.split(",");
+                    List<String> playersIdScoreList=new ArrayList<>(splitedArguments1.length);
+                    for(int i=0;i<splitedArguments1.length;i++){
+                        playersIdScoreList.add(splitedArguments1[i]);
+                    }
+                    String[] playersIdScoreArray=new String[playersIdScoreList.size()];
+                    playersIdScoreArray=playersIdScoreList.toArray(playersIdScoreArray);
+                    showEndGameAlert(playersIdScoreArray);
+                });
+                break;
+
+            case MethodsNames.BOARD_UPDATED:
+                System.out.println("In Case BOARD_UPDATED");
+                Platform.runLater(()->{
+                    copyBoardStatus();
+                    drawBoard();
+                });
+                break;
+        }
+
+    }
+
+    private void showEndGameAlert(String[] playersIdScoreArray) {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Ended");
+        alert.setHeaderText("Game Ended");
+        String contentText="The winner is: ";
+        for(int i=0;i<playersIdScoreArray.length;i++){
+            String[] splitedPlayerIdScore=playersIdScoreArray[i].split("-");
+            contentText+=playersNames[Integer.parseInt(splitedPlayerIdScore[0])].getText()+" with score: "+splitedPlayerIdScore[1];
+
+            if(i!=playersIdScoreArray.length-1)
+                contentText+="\n";
+        }
+        alert.setContentText(contentText);
+        alert.setOnCloseRequest(event -> {
+
+            ((Stage) alert.getDialogPane().getScene().getWindow()).close();
+            Platform.runLater(this::moveToLoginScene);
+            ViewModel.getViewModel().close();
+        });
+        alert.showAndWait();
+    }
+
+    private void copyBoardStatus() {
+        for(int i=0;i<15;i++){
+            for(int j=0;j<15;j++){
+                boardStatus[i][j]=ViewModel.getViewModel().getBoard()[i][j];
+            }
         }
     }
 }

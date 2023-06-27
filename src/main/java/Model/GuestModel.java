@@ -41,8 +41,6 @@ public class GuestModel extends PlayerModel implements Observer {
         }
         clientCommunication = new ClientCommunication();
         clientCommunication.addObserver(this);
-//        clientCommunication = new ClientCommunication(ip, port);
-//        clientCommunication.addObserver(this);
     }
 
     @Override
@@ -74,12 +72,7 @@ public class GuestModel extends PlayerModel implements Observer {
         if (isVertical)
             vertical = "1";
 
-        String methodName = new Object() {
-        }
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(), methodName, word, String.valueOf(col), String.valueOf(row), vertical);
+        clientCommunication.send(this.myPlayer.getId(), MethodsNames.TRY_PLACE_WORD, word, String.valueOf(col), String.valueOf(row), vertical);
     }
 
     /**
@@ -89,12 +82,7 @@ public class GuestModel extends PlayerModel implements Observer {
      */
     @Override
     public void challenge(String word) {
-        String methodName = new Object() {
-        }
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(), methodName, word);
+        clientCommunication.send(this.myPlayer.getId(), MethodsNames.CHALLENGE, word);
     }
 
     /**
@@ -200,7 +188,7 @@ public class GuestModel extends PlayerModel implements Observer {
             try {
                 arguments = splitedArgString[2].split(",");
             } catch (Exception e) {
-                System.out.println("error");
+//                System.out.println(">>>> GM update: try to split arguments from splitedArgString[2] but there are no arguments\nmsg: " + argString + " <<<");
             }
 
 
@@ -217,6 +205,7 @@ public class GuestModel extends PlayerModel implements Observer {
                     break;
 
                 case MethodsNames.SCORE_UPDATED:
+                    System.out.println("GuestModel score updated: " + arguments[0]);
                     scoreMap.put(id, Integer.parseInt(arguments[0]));
                     setChanged();
                     notifyObservers(MethodsNames.SCORE_UPDATED);
@@ -282,6 +271,21 @@ public class GuestModel extends PlayerModel implements Observer {
                     closeConnection();
                     setChanged();
                     notifyObservers(MethodsNames.DISCONNECT_FROM_SERVER);
+                    break;
+
+                case MethodsNames.CONNECT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CONNECT + ":" + splitedArgString[2]);
+                    break;
+
+                case MethodsNames.END_GAME:
+                    System.out.println(argString);
+                    setChanged();
+                    notifyObservers(MethodsNames.END_GAME + ":" + splitedArgString[2]);
+                    break;
+                case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                    setChanged();
+                    notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT);
                     break;
             }
         }

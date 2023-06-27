@@ -104,7 +104,7 @@
                <children>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Label fx:id="player1Name" text="Name">
+                        <Label fx:id="player1Name" visible="false">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
@@ -112,8 +112,8 @@
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Circle fx:id="player1ImageCircle" fill="WHITE" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" />
-                        <Label fx:id="player1Score" layoutX="152.0" layoutY="30.0" text="10pt" />
+                        <Circle fx:id="player1ImageCircle" fill="WHITE" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" visible="false" />
+                        <Label fx:id="player1Score" layoutX="152.0" layoutY="30.0" text="10pt" visible="false" />
                      </children>
                      <VBox.margin>
                         <Insets />
@@ -121,18 +121,7 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="378.0">
                      <children>
-                        <Label fx:id="player2Name" text="Name">
-                           <VBox.margin>
-                              <Insets top="20.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Circle fx:id="player2ImageCircle" fill="WHITE" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" />
-                        <Label fx:id="player2Score" layoutX="152.0" layoutY="30.0" text="10pt" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="210.0" prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <Label fx:id="player3Name" text="Name">
+                        <Label fx:id="player2Name" visible="false">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
@@ -140,8 +129,22 @@
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Circle fx:id="player3ImageCircle" fill="WHITE" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" />
-                        <Label fx:id="player3Score" layoutX="152.0" layoutY="30.0" text="10pt" />
+                        <Circle fx:id="player2ImageCircle" fill="WHITE" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" visible="false" />
+                        <Label fx:id="player2Score" layoutX="152.0" layoutY="30.0" text="10pt" visible="false" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="210.0" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label fx:id="player3Name" visible="false">
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Circle fx:id="player3ImageCircle" fill="WHITE" radius="49.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" visible="false" />
+                        <Label fx:id="player3Score" layoutX="152.0" layoutY="30.0" text="10pt" visible="false" />
                      </children>
                   </VBox>
                </children>
@@ -191,17 +194,17 @@
             </VBox>
             <VBox alignment="CENTER" prefHeight="132.0" prefWidth="216.0" spacing="6.0">
                <children>
-                  <Button fx:id="finishTurnBtn" mnemonicParsing="false" prefHeight="29.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Finish My Turn">
+                  <Button fx:id="finishTurnBtn" disable="true" mnemonicParsing="false" onMouseClicked="#finishMyTurnBtnHandler" prefHeight="29.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Finish My Turn">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
-                  <Button fx:id="undoBtn" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Undo">
+                  <Button fx:id="undoBtn" disable="true" mnemonicParsing="false" onMouseClicked="#undoBtnClickHandler" prefHeight="30.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Undo">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
-                  <Button fx:id="resetBtn" disable="true" mnemonicParsing="false" prefHeight="29.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Reset">
+                  <Button fx:id="resetBtn" disable="true" mnemonicParsing="false" onMouseClicked="#resetBtnClickHandler" prefHeight="29.0" prefWidth="106.0" style="-fx-border-radius: 20; -fx-background-radius: 25; -fx-border-insets: 0; -fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid inside;" text="Reset">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
@@ -256,13 +259,10 @@
                   </HBox>
                   <Pane prefHeight="146.0" prefWidth="824.0" style="-fx-background-color: orange; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 5;">
                      <children>
-                        <GridPane fx:id="tilesGrid" hgap="20.0" layoutX="56.0" layoutY="43.0" prefHeight="60.0" prefWidth="652.0">
+                        <GridPane fx:id="tilesInHandGrid" hgap="20.0" layoutX="56.0" layoutY="43.0" prefHeight="60.0" prefWidth="652.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -287,7 +287,7 @@
             <Insets bottom="5.0" />
          </padding>
       </HBox>
-      <Canvas fx:id="gameBoard" height="824.0" layoutX="492.0" layoutY="1.0" onMouseEntered="#init" translateZ="2.0" visible="false" width="836.0" AnchorPane.leftAnchor="492.0">
+      <Canvas fx:id="gameBoard" height="824.0" layoutX="492.0" layoutY="1.0" translateZ="2.0" visible="false" width="836.0" AnchorPane.leftAnchor="492.0">
          <effect>
             <InnerShadow choke="0.45" height="18.07" radius="11.465" width="29.79" />
          </effect>
@@ -297,7 +297,7 @@
             <Image url="@../../Images/board.jpeg" />
          </image>
       </ImageView>
-      <GridPane fx:id="gridPane" hgap="11.0" layoutX="522.0" layoutY="60.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#init" prefHeight="660.0" prefWidth="779.0" style="-fx-border-radius: 50;" vgap="4.0">
+      <GridPane fx:id="gridPane" hgap="11.0" layoutX="522.0" layoutY="60.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#boardClickHandler" prefHeight="660.0" prefWidth="779.0" style="-fx-border-radius: 50;" vgap="4.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
