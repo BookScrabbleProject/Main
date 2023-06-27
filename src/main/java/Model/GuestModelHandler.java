@@ -27,7 +27,7 @@ public class GuestModelHandler implements ClientHandler {
             switch (methodName){
                 case MethodsNames.TRY_PLACE_WORD: {
                     String[] inputsSplitted = inputs.split(",");
-                    String fixedWord = HostModel.getHost().getFixedWord(inputsSplitted[0], Integer.parseInt(inputsSplitted[1]), Integer.parseInt(inputsSplitted[2]), inputsSplitted[3].equals("1"));
+                    String fixedWord = HostModel.getHost().getFixedWord(inputsSplitted[0], Integer.parseInt(inputsSplitted[2]), Integer.parseInt(inputsSplitted[1]), inputsSplitted[3].equals("1"));
                     Socket bookScrabbleServerSocket = hostServer.sendToBookScrabbleServer("Q", fixedWord);
                     Scanner scanner = new Scanner(bookScrabbleServerSocket.getInputStream());
                     answer = scanner.next();
