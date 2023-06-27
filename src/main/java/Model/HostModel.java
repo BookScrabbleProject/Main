@@ -596,8 +596,10 @@ public class HostModel extends PlayerModel implements Observer {
         currentPlayerId++;
         currentPlayerId %= connectedPlayers.size();
         prevBoard = board.getTiles();
+        toAllPlayers.append(-1).append(":" + MethodsNames.CLOSE_CHALLENGE_ALERT).append("\n");
         toAllPlayers.append(-1).append(":" + MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         hostServer.sendToAllPlayers(toAllPlayers.toString());
+        toNotify.append(MethodsNames.CLOSE_CHALLENGE_ALERT).append("\n");
         toNotify.append(MethodsNames.NEW_PLAYER_TURN + ":").append(String.valueOf(currentPlayerId)).append("\n");
         setChanged();
         notifyObservers(toNotify.toString());
