@@ -205,6 +205,7 @@ public class GuestModel extends PlayerModel implements Observer {
                     break;
 
                 case MethodsNames.SCORE_UPDATED:
+                    System.out.println("GuestModel score updated: " + arguments[0]);
                     scoreMap.put(id, Integer.parseInt(arguments[0]));
                     setChanged();
                     notifyObservers(MethodsNames.SCORE_UPDATED);
