@@ -694,7 +694,9 @@ public class HostModel extends PlayerModel implements Observer {
     public HashMap<Integer, Integer> getPlayersScores() {
         HashMap<Integer, Integer> playersScore = new HashMap<>();
         for (Integer idP : connectedPlayers.keySet())
-            playersScore.put(idP, myPlayer.getScore());
+            playersScore.put(idP, connectedPlayers.get(idP).getScore());
+
+
         return playersScore;
     }
 
