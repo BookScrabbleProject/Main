@@ -41,8 +41,6 @@ public class GuestModel extends PlayerModel implements Observer {
         }
         clientCommunication = new ClientCommunication();
         clientCommunication.addObserver(this);
-//        clientCommunication = new ClientCommunication(ip, port);
-//        clientCommunication.addObserver(this);
     }
 
     @Override
@@ -74,12 +72,7 @@ public class GuestModel extends PlayerModel implements Observer {
         if (isVertical)
             vertical = "1";
 
-        String methodName = new Object() {
-        }
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(), methodName, word, String.valueOf(col), String.valueOf(row), vertical);
+        clientCommunication.send(this.myPlayer.getId(), MethodsNames.TRY_PLACE_WORD, word, String.valueOf(col), String.valueOf(row), vertical);
     }
 
     /**
@@ -89,12 +82,7 @@ public class GuestModel extends PlayerModel implements Observer {
      */
     @Override
     public void challenge(String word) {
-        String methodName = new Object() {
-        }
-                .getClass()
-                .getEnclosingMethod()
-                .getName();
-        clientCommunication.send(this.myPlayer.getId(), methodName, word);
+        clientCommunication.send(this.myPlayer.getId(), MethodsNames.CHALLENGE, word);
     }
 
     /**

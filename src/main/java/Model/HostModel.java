@@ -745,6 +745,7 @@ public class HostModel extends PlayerModel implements Observer {
                 break;
             }
             case MethodsNames.CHALLENGE: {
+                isChallengeClicked = true;
                 inputs = newRequest[2].split(",");
                 String word = inputs[0];
                 if (inputs[1].equals("0")) challenge0(word);
