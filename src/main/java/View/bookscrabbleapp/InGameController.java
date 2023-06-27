@@ -145,7 +145,6 @@ public class InGameController implements Observer, Initializable {
 
         System.out.println("x: " + MOUSE_CLICKED_X + " y: " + MOUSE_CLICKED_Y);
         SQUARE_WIDTH = (gridPane.getWidth()-BOARD_HGAP*14) / 15;
-        System.out.println(SQUARE_WIDTH + " " + SQUARE_HEIGHT);
         SQUARE_HEIGHT= (gridPane.getHeight()-BOARD_VGAP*14) / 15; //the height of each square in the board
 
         int cr = (int) Math.floor (MOUSE_CLICKED_Y / (SQUARE_HEIGHT+BOARD_VGAP)); //the row of the square clicked
@@ -154,9 +153,6 @@ public class InGameController implements Observer, Initializable {
 //                sp.setStyle("-fx-background-color: #ff0000");
         //((Label)sp.getChildren().get(0)).setTextFill(Color.WHITE);
         if(clickedInGap) return;
-        System.out.println("row: " + cr + " col: " + cc);
-        System.out.println("clicked");
-        System.out.println("clicked in gap: " + clickedInGap);
         System.out.println("square width: " + SQUARE_WIDTH + " square height: " + SQUARE_HEIGHT + " grid width: " + gridPane.getWidth() + " grid height: " + gridPane.getHeight() + " "+ (MOUSE_CLICKED_X-cc*(SQUARE_WIDTH+8)));
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
         addTileToBoard(lastPickedTile, lastPickedTileIndex, cr, cc);
@@ -191,7 +187,7 @@ public class InGameController implements Observer, Initializable {
 
     private void newPlayerTurn() {
         waitingChallengeText.setVisible(false);
-        tilesInHandGrid.setDisable(false);
+        tilesInHandGrid.setDisable(true);
         dataChangesList.clear();
         indexChangesList.clear();
         for(int i=0; i<4; i++){
@@ -206,7 +202,7 @@ public class InGameController implements Observer, Initializable {
         }
 
         if (ViewModel.getViewModel().getMyPlayer().getId() == ViewModel.getViewModel().getCurrentPlayerId()) {
-
+            tilesInHandGrid.setDisable(false);
         }
         else{
             setDisableButtons(true);
@@ -224,7 +220,7 @@ public class InGameController implements Observer, Initializable {
         if(tilesInHandGrid.getChildren().size() > 0)
             tilesInHandGrid.getChildren().clear();
         if(ViewModel.getViewModel().getMyPlayer().getHand() == null || ViewModel.getViewModel().getMyPlayer().getHand().size()==0 ) return;
-        System.out.println(String.join(",", ViewModel.getViewModel().getMyPlayer().getHand().stream().map(c->c.toString()).collect(Collectors.toList())));
+        System.out.println("NEW HAND: "+String.join(",", ViewModel.getViewModel().getMyPlayer().getHand().stream().map(c->c.toString()).collect(Collectors.toList())));
         for(int i = 0; i< ViewModel.getViewModel().getMyPlayer().getHand().size(); i++) {
             Character myC = ViewModel.getViewModel().getMyPlayer().getHand().get(i);
             Image tile = new Image(getClass().getResource("/Images/Tiles/" + myC + "Letter.png").toExternalForm());
@@ -241,7 +237,6 @@ public class InGameController implements Observer, Initializable {
             sp.setVisible(true);
             tilesInHandGrid.add(sp, i, 0);
 
-            System.out.println("Added stackpane to hand gridpane");
         }
     }
 
@@ -330,7 +325,6 @@ public class InGameController implements Observer, Initializable {
         ButtonType buttonTypeOne = new ButtonType("Close");
         challengeAlert.getButtonTypes().setAll(buttonTypeOne);
         challengeAlert.setOnCloseRequest(event -> {
-            System.out.println("Alert Closed");
             ((Stage) challengeAlert.getDialogPane().getScene().getWindow()).close();
         });
         challengeAlert.showAndWait();
@@ -352,7 +346,6 @@ public class InGameController implements Observer, Initializable {
 
 
         alert.setOnCloseRequest(event -> {
-            System.out.println("Alert Closed");
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
             Platform.runLater(this::moveToLoginScene);
 
@@ -363,7 +356,8 @@ public class InGameController implements Observer, Initializable {
     public void takeTileFromBag(){
         if(ViewModel.getViewModel().getCurrentPlayerId()!=ViewModel.getViewModel().getMyPlayer().getId()) return;
         resetBtnClickHandler();
-        finishMyTurnBtnHandler();
+        setDisableButtons(true);
+        ViewModel.getViewModel().changesList.clear();
         ViewModel.getViewModel().takeTileFromBag();
     }
 
@@ -459,7 +453,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player2Name.getText().equals("")){
             player2Name.setText(name);
-            ViewModel.getViewModel().getPlayers().get(id).scoreProperty.bindBidirectional(player2Score.textProperty());
+            player2Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
             player2Name.setVisible(true);
             player2Score.setVisible(true);
             player2ImageCircle.setFill(new ImagePattern(userIcon));
@@ -474,7 +468,7 @@ public class InGameController implements Observer, Initializable {
         }
         else if(player3Name.getText().equals("")){
             player3Name.setText(name);
-            ViewModel.getViewModel().getPlayers().get(id).scoreProperty.bindBidirectional(player3Score.textProperty());
+            player3Score.textProperty().bind(ViewModel.getViewModel().getPlayers().get(id).scoreProperty);
             player3Name.setVisible(true);
             player3Score.setVisible(true);
             player3ImageCircle.setFill(new ImagePattern(userIcon));
@@ -524,14 +518,11 @@ public class InGameController implements Observer, Initializable {
         for(int i=0;i<15;i++){
             for(int j=0;j<15;j++){
                 if(boardStatus[i][j]!='_'){
-                    System.out.println("boardStatus["+i+"]["+j+"] = "+boardStatus[i][j]);
-                    System.out.println("boardStatus["+i+"]["+j+"] lowerCase = "+Character.toLowerCase(boardStatus[i][j]));
                     Image tile = new Image(getClass().getResource("/Images/Tiles/" + Character.toLowerCase(boardStatus[i][j]) + "LetterBoard.png").toExternalForm());
                     ImageView iv = new ImageView(tile);
                     iv.setPreserveRatio(true);
                     iv.setFitWidth(38);
                     iv.setFitHeight(38);
-                    System.out.println(iv.getFitWidth() + " " + iv.getFitHeight());
                     StackPane sp = new StackPane(iv);
                     sp.setAlignment(Pos.CENTER);
                     gridPane.add(sp, j, i);
@@ -552,13 +543,6 @@ public class InGameController implements Observer, Initializable {
             ViewModel.getViewModel().changesList.add(data);
         }
 
-        System.out.println("------------------View Board before try place word --------------------");
-        for(int i=0;i<15;i++){
-            for(int j=0;j<15;j++){
-                System.out.print(boardStatus[i][j]);
-            }
-            System.out.println("");
-        }
         if(ViewModel.getViewModel().changesList.size()>0)
             ViewModel.getViewModel().tryPlaceWord();
     }
@@ -583,20 +567,21 @@ public class InGameController implements Observer, Initializable {
                 System.out.println("In Case Disconnect");
                 if(isGameFinished) break;
                 Platform.runLater(this::showDisconnectionAlert);
-                System.out.println("Alert Created");
                 break;
             case MethodsNames.SET_HAND:
+                System.out.println("In Case SET HAND");
                 Platform.runLater(this::setHand);
                 break;
             case MethodsNames.NEW_PLAYER_TURN:
+                System.out.println("In Case NEW_PLAYER_TURN");
                 Platform.runLater(()->{
                     newPlayerTurn();
                 });
                 break;
             case MethodsNames.TRY_PLACE_WORD:
+                System.out.println("In Case TRY PLACE WORD");
                 Platform.runLater(()->{
                     tilesInHandGrid.setDisable(true);
-                    System.out.println("In Try Place Word Case");
                     String[] splitedArguments=arguments.split(",");
                     if(splitedArguments[0].equals("0"))
                     {
@@ -636,7 +621,7 @@ public class InGameController implements Observer, Initializable {
                 });
                 break;
             case MethodsNames.CHALLENGE:
-                System.out.println(arguments);
+                System.out.println("In Case CHALLENGE");
                 String[] splitedArguments=arguments.split(",");
                 if(splitedArguments[0].equals("0"))
                     Platform.runLater(()->{
@@ -672,12 +657,14 @@ public class InGameController implements Observer, Initializable {
                     });
                 break;
             case MethodsNames.CLOSE_CHALLENGE_ALERT:
+                System.out.println("In Case CLOSE_CHALLENGE_ALERT");
                 Platform.runLater(()->{
                     if(challengeAlert.isShowing())
                         challengeAlert.close();
                 });
                 break;
             case MethodsNames.INVALID_PLACEMENT:
+                System.out.println("In Case INVALID_PLACEMENT");
                 //todo pop a popUp for the player that tried to put the word, that his placement is invalid
                 Platform.runLater(()->{
                     setDisableButtons(false);
@@ -689,6 +676,7 @@ public class InGameController implements Observer, Initializable {
                 });
                 break;
             case MethodsNames.END_GAME:
+                System.out.println("In Case END_GAME");
                 //todo pop a popUp that the game has ended->victory popUp
                 //we get the players id-score list ordered by the descending scores
                 Platform.runLater(()->{
@@ -705,6 +693,7 @@ public class InGameController implements Observer, Initializable {
                 break;
 
             case MethodsNames.BOARD_UPDATED:
+                System.out.println("In Case BOARD_UPDATED");
                 Platform.runLater(()->{
                     copyBoardStatus();
                     drawBoard();
@@ -732,7 +721,6 @@ public class InGameController implements Observer, Initializable {
 
             ((Stage) alert.getDialogPane().getScene().getWindow()).close();
             Platform.runLater(this::moveToLoginScene);
-            System.out.println("Alert Closed");
             ViewModel.getViewModel().close();
         });
         alert.showAndWait();
