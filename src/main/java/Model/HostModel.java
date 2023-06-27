@@ -90,12 +90,11 @@ public class HostModel extends PlayerModel implements Observer {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        finally {
+        } finally {
             return fixedWord.toString().toLowerCase();
         }
     }
+
     public char getCharInPosition(int row, int col) {
         return board.getTiles()[row][col].getLetter();
     }
@@ -377,7 +376,7 @@ public class HostModel extends PlayerModel implements Observer {
 
             connectedPlayers.get(requestedId).setHand(strHand);
             List<Word> words = board.getWords(w);
-            List<String> wordsStrings = words.stream().map(currentWord->tilesToString(currentWord.getTiles())).collect(Collectors.toList());
+            List<String> wordsStrings = words.stream().map(currentWord -> tilesToString(currentWord.getTiles())).collect(Collectors.toList());
 
             connectedPlayers.get(requestedId).addScore(lastWordScore);
             toAllPlayers.append(requestedId).append(":" + MethodsNames.BOARD_UPDATED + ":").append(boardToString(board.getTiles())).append("\n");
@@ -418,11 +417,10 @@ public class HostModel extends PlayerModel implements Observer {
                 Thread.sleep(7500);
                 StringBuilder toAllPlayers = new StringBuilder();
                 toAllPlayers.append("0:").append(MethodsNames.CLOSE_CHALLENGE_ALERT).append("\n");
-                if(!isChallengeClicked)
-                    passTheTurn();
                 hostServer.sendToAllPlayers(toAllPlayers.toString());
                 setChanged();
                 notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
+                passTheTurn();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -477,7 +475,7 @@ public class HostModel extends PlayerModel implements Observer {
         hostServer.sendToAllPlayers(toAllPlayers.toString());
         setChanged();
         notifyObservers(toNotify.toString());
-        passTheTurn();
+//        passTheTurn();
     }
 
     private void challenge1(String word) {
@@ -500,7 +498,7 @@ public class HostModel extends PlayerModel implements Observer {
 
         setChanged();
         notifyObservers(toNotify.toString());
-        passTheTurn();
+//        passTheTurn();
     }
 
     /**
@@ -586,7 +584,7 @@ public class HostModel extends PlayerModel implements Observer {
      */
     public void passTheTurn() {
         isChallengeClicked = false;
-        if(isPlayerWon()){
+        if (isPlayerWon()) {
             endGameWithWinner();
             return;
         }
@@ -607,6 +605,7 @@ public class HostModel extends PlayerModel implements Observer {
 
     /**
      * The isPlayerWon function checks to see if any of the players have reached the max score.
+     *
      * @return A boolean value, true if a player has reached the max score and false otherwise
      */
     private boolean isPlayerWon() {
@@ -627,7 +626,7 @@ public class HostModel extends PlayerModel implements Observer {
         StringBuilder playersIdScoreBuilder = new StringBuilder();
         // map to stream - sort by score highest score first - get the first player - get his id
         List<Player> sortedPlayers = connectedPlayers.values().stream().sorted(Comparator.comparing(Player::getScore).reversed()).collect(Collectors.toList());
-        for(Player p : sortedPlayers)
+        for (Player p : sortedPlayers)
             playersIdScoreBuilder.append(p.getId()).append("-").append(p.getScore()).append(",");
 
         toAllPlayers.append(0).append(":" + MethodsNames.END_GAME + ":").append(playersIdScoreBuilder.toString()).append("\n");
