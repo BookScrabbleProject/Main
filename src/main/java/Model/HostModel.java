@@ -418,8 +418,8 @@ public class HostModel extends PlayerModel implements Observer {
                 Thread.sleep(7500);
                 StringBuilder toAllPlayers = new StringBuilder();
                 toAllPlayers.append("0:").append(MethodsNames.CLOSE_CHALLENGE_ALERT).append("\n");
-                if(!isChallengeClicked)
-                    passTheTurn();
+//                if(!isChallengeClicked)
+//                    passTheTurn();
                 hostServer.sendToAllPlayers(toAllPlayers.toString());
                 setChanged();
                 notifyObservers(MethodsNames.CLOSE_CHALLENGE_ALERT + "\n");
