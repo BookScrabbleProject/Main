@@ -6,8 +6,7 @@ Book Scrabble is a Java and JavaFX software project that implements a word game 
 
 
 ## Demo Video
-* project presentation - will be uploaded soon.
-* 5 minutes video - will be uploaded soon.
+* Project presentation + demo video - [click here to video](https://drive.google.com/file/d/18GzZ4TB0Btf4CMhCDK1zNXPHXUjN32GM/view?usp=drive_link)
 
 
 ## Features
