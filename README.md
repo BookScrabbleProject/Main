@@ -21,7 +21,7 @@ Our software implementation of Book Scrabble includes the following features:
 * A dictionary that verifies the words created by players.
 * A point system that calculates the score for each player based on the words they create.
 
-##Architecture
+## Architecture
 ![Architecture](./architecture.png)
 
 ## Technologies Used
