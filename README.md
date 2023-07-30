@@ -24,6 +24,7 @@ Our software implementation of Book Scrabble includes the following features:
 
 ## Architecture
 ![Architecture](./architecture.png)
+![Architecture2](./MVVMARCH.png)
 
 ## Technologies Used
 Our project is built using the following technologies:
